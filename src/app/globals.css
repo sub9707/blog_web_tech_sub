@@ -2,7 +2,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111111;
 }
 
 @theme inline {
@@ -12,15 +12,148 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Markdown prose styles */
+.prose {
+  max-width: 72ch;
+  color: #111111;
+  line-height: 1.75;
+  font-size: 1rem;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2em;
+  margin-bottom: 0.75em;
+  color: #111111;
+}
+
+.prose h1 { font-size: 1.875rem; }
+.prose h2 { font-size: 1.5rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.4em; }
+.prose h3 { font-size: 1.25rem; }
+.prose h4 { font-size: 1.125rem; }
+
+.prose p {
+  margin-bottom: 1.25em;
+}
+
+.prose a {
+  color: #111111;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose a:hover {
+  color: #555555;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: #111111;
+}
+
+.prose ul,
+.prose ol {
+  margin: 1em 0 1.25em 1.5em;
+}
+
+.prose ul { list-style-type: disc; }
+.prose ol { list-style-type: decimal; }
+
+.prose li {
+  margin-bottom: 0.4em;
+}
+
+.prose blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1.25em;
+  margin: 1.5em 0;
+  color: #666666;
+  font-style: italic;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 2em 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.9rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5em 0.75em;
+  text-align: left;
+}
+
+.prose th {
+  background: #f9f9f9;
+  font-weight: 600;
+}
+
+/* Code inline */
+.prose code:not([data-language]) {
+  background: #f4f4f5;
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.875em;
+  font-family: var(--font-mono), monospace;
+  color: #e11d48;
+}
+
+/* Code blocks (rehype-pretty-code) */
+.prose [data-rehype-pretty-code-figure] {
+  margin: 1.5em 0;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.prose [data-rehype-pretty-code-title] {
+  background: #f9f9f9;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.5em 1em;
+  font-size: 0.8rem;
+  font-family: var(--font-mono), monospace;
+  color: #666666;
+}
+
+.prose pre {
+  margin: 0;
+  padding: 1.25em 1.5em;
+  overflow-x: auto;
+  background: #f9f9f9 !important;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  border-radius: 0;
+  font-family: var(--font-mono), monospace;
+}
+
+.prose img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 1.5em 0;
 }
