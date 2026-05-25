@@ -3,7 +3,7 @@ title: "라즈베리파이 홈서버에 Next.js 블로그 배포하기"
 date: "2026-05-26"
 description: "라즈베리파이 홈서버에 Next.js 블로그를 자동 배포하는 환경을 구축하고 이 과정을 정리함"
 tags: ["devops", "docker", "nginx", "raspberry-pi", "github-actions", "nextjs"]
-thumbnail: "/assets/devops-raspberry-pi-thumbnail.png"
+thumbnail: "/assets/thumbnails/devops-raspberry-pi-thumbnail.png"
 ---
 
 ## 배경
@@ -88,7 +88,7 @@ CPU 아키텍처가 다르면 같은 코드도 실행이 안 된다.
 
 GitHub Actions 서버(x86_64)에서 빌드한 이미지를 라즈베리파이(arm64)에서 실행하면 오류가 난다.
 
-해결 방법은 두 가지였다.
+devops-raspberry-pi-thumbnail.png해결 방법은 두 가지였다.
 
 **옵션 A: 라즈베리파이에서 직접 빌드**
 
