@@ -1,6 +1,6 @@
 services:
   blog:
-    image: ghcr.io/kimsub/blog:latest
+    image: ghcr.io/sub9707/blog:latest
     restart: always
     networks:
       - internal
