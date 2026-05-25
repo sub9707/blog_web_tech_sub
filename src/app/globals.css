@@ -19,6 +19,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+@media (pointer: fine) {
+  html, body, * {
+    cursor: none !important;
+  }
+}
+
 /* Markdown prose styles */
 .prose {
   max-width: 72ch;
@@ -156,4 +162,10 @@ body {
   max-width: 100%;
   border-radius: 6px;
   margin: 1.5em 0;
+  cursor: zoom-in;
+  transition: opacity 0.15s ease;
+}
+
+.prose img:hover {
+  opacity: 0.9;
 }
