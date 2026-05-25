@@ -15,15 +15,17 @@ export async function getPost(
 
   const files = fs.readdirSync(categoryDir).filter((f) => f.endsWith('.md'));
 
+  const decodedSlug = decodeURIComponent(slug);
+
   for (const file of files) {
     const filePath = path.join(categoryDir, file);
     const source = fs.readFileSync(filePath, 'utf-8');
     const { data, content } = matter(source);
     const title = data.title ?? file.replace(/\.md$/, '');
 
-    if (slugify(title) === slug) {
+    if (slugify(title) === decodedSlug) {
       return {
-        slug,
+        slug: decodedSlug,
         category,
         title,
         date: data.date ?? '',
