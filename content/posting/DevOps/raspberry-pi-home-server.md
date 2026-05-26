@@ -563,5 +563,3 @@ Detail: Fetching http://domain/.well-known/acme-challenge/...: Connection refuse
 직접 구성해보니 개념 자체는 단순하다. Docker는 실행 환경을 이미지로 묶는 것, Nginx는 요청을 적절한 서버로 연결해주는 것. 복잡해 보이는 이유는 처음 보는 개념들이 한꺼번에 등장하기 때문이다.
 
 한 번 구성해두면 이후에는 코드 작성하고 push하는 것 외에 서버를 건드릴 일이 없다.
-
-다음 과제는 한글 슬러그 URL에서 발생하는 Next.js params 인코딩 문제 해결이다.
