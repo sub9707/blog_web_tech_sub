@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PostMeta } from '@/types/post';
 import PostCard from '@/components/post/PostCard';
 import PostListItem from '@/components/post/PostListItem';
@@ -21,28 +21,10 @@ export default function PostGrid({ posts }: Props) {
       : posts.filter((p) => p.category === activeCategory);
 
   const [visibleCount, setVisibleCount] = useState<number>(SITE.POSTS_PER_PAGE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisibleCount(SITE.POSTS_PER_PAGE);
   }, [activeCategory]);
-
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisibleCount((prev) => prev + SITE.POSTS_PER_PAGE);
-        }
-      },
-      { rootMargin: '200px' }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, []);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -63,7 +45,17 @@ export default function PostGrid({ posts }: Props) {
       {rest.map((post) => (
         <PostListItem key={`${post.category}-${post.slug}`} post={post} />
       ))}
-      {hasMore && <div ref={sentinelRef} className="h-1" />}
+      {hasMore && (
+        <div className="pt-4 pb-8 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((prev) => prev + SITE.POSTS_PER_PAGE)}
+            className="w-full py-3 text-sm text-gray-500 hover:text-gray-900 border border-gray-200 hover:border-gray-400 transition-colors"
+          >
+            포스팅 더보기
+          </button>
+        </div>
+      )}
     </div>
   );
 }

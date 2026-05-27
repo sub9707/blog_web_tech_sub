@@ -8,41 +8,48 @@ interface Props {
   post: PostMeta;
 }
 
+const CARD_BG = '#0a0a0a';
+
 export default function PostCard({ post }: Props) {
   const href = ROUTES.POST(post.category, post.slug);
   const formattedDate = post.date ? format(new Date(post.date), 'MMM dd, yyyy') : '';
 
   return (
-    <Link href={href} className="group block mb-2">
-      <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
-        <div className="relative w-full sm:w-1/2 aspect-video overflow-hidden bg-gray-100 shrink-0">
-          {post.thumbnail ? (
-            <Image
-              src={post.thumbnail}
-              alt={post.title}
-              fill
-              sizes="(max-width: 640px) 100vw, 50vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="w-full h-full bg-linear-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-              <span className="font-serif text-4xl font-bold text-gray-400 uppercase">
-                {post.category}
-              </span>
-            </div>
-          )}
-        </div>
-        <div className="sm:w-1/2 flex flex-col justify-center">
-          <span className="text-xs font-medium tracking-widest uppercase text-gray-400">
-            {post.category}
+    <Link href={href} className="group block mb-6">
+      <div className="relative overflow-hidden min-h-60 sm:min-h-70" style={{ background: CARD_BG }}>
+        {/* 배경 이미지 — 카드 전체를 채움 */}
+        {post.thumbnail && (
+          <Image
+            src={post.thumbnail}
+            alt={post.title}
+            fill
+            sizes="(max-width: 1024px) 100vw, 65vw"
+            className="object-cover"
+          />
+        )}
+
+        {/* 그라데이션 오버레이 — 왼쪽(어두움) → 오른쪽(투명) */}
+        <div
+          className="absolute inset-0 z-10"
+          style={{
+            background: post.thumbnail
+              ? `linear-gradient(to right, ${CARD_BG} 0%, ${CARD_BG} 28%, rgba(10,10,10,0.88) 45%, rgba(10,10,10,0.38) 65%, rgba(10,10,10,0.05) 100%)`
+              : CARD_BG,
+          }}
+        />
+
+        {/* 텍스트 콘텐츠 */}
+        <div className="relative z-20 p-8 sm:p-10 flex flex-col justify-center min-h-60 sm:min-h-70 max-w-[65%] sm:max-w-[58%]">
+          <span className="text-xs tracking-widest uppercase text-blue-400 mb-3">
+            Featured
           </span>
-          <h2 className="font-serif mt-2 text-2xl sm:text-3xl font-bold leading-tight text-gray-900 group-hover:text-gray-600 transition-colors">
+          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight group-hover:text-gray-300 transition-colors line-clamp-3">
             {post.title}
           </h2>
-          <p className="mt-3 text-sm text-gray-500 leading-relaxed line-clamp-3">
+          <p className="mt-3 text-sm text-gray-400 leading-relaxed line-clamp-2 hidden sm:block">
             {post.description}
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+          <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
             <span>{formattedDate}</span>
             <span>·</span>
             <span>{post.readTime} min read</span>

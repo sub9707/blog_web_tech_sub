@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
-import CustomCursor from '@/components/ui/CustomCursor';
 import Footer from '@/components/layout/Footer';
 import { SITE } from '@/constants/site';
 
@@ -40,7 +39,6 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-white">
-        <CustomCursor />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
