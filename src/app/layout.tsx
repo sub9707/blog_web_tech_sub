@@ -38,7 +38,6 @@ export default function RootLayout({
     <html
       lang="ko"
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable}`}
-      style={{ cursor: 'none' }}
     >
       <body className="min-h-screen flex flex-col bg-white">
         <CustomCursor />

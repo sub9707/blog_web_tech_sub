@@ -10,6 +10,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-playfair);
 }
 
 body {
@@ -23,6 +24,26 @@ body {
   html, body, * {
     cursor: none !important;
   }
+
+  a, a *,
+  button, button *,
+  [role="button"], [role="button"] *,
+  label, label *,
+  select,
+  input[type="submit"],
+  input[type="button"],
+  input[type="reset"],
+  summary {
+    cursor: pointer !important;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Markdown prose styles */
