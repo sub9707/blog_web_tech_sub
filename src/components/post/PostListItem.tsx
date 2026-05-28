@@ -41,14 +41,14 @@ export default function PostListItem({ post }: Props) {
         </div>
       </div>
 
-      <div className="w-28 sm:w-36 shrink-0 self-start overflow-hidden bg-gray-100">
+      <div className="w-36 sm:w-48 shrink-0 self-start overflow-hidden bg-gray-100">
         {post.thumbnail ? (
           <Image
             src={post.thumbnail}
             alt={post.title}
             width={0}
             height={0}
-            sizes="(max-width: 640px) 112px, 144px"
+            sizes="(max-width: 640px) 144px, 192px"
             className="w-full h-auto block transition-transform duration-500 group-hover:scale-105"
           />
         ) : (

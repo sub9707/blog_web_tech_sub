@@ -54,14 +54,14 @@ export default function ImageZoomWrapper({ children }: Props) {
             ESC / 닫기
           </button>
           <div
-            className="relative max-w-[92vw] max-h-[88vh] overflow-auto rounded-lg shadow-2xl"
+            className="relative rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={zoomedSrc}
               alt={zoomedAlt}
-              className="block max-w-full h-auto rounded-lg"
+              className="block max-w-[92vw] max-h-[88vh] w-auto h-auto object-contain rounded-lg"
             />
           </div>
         </div>

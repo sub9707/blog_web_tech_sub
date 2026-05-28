@@ -16,7 +16,7 @@ export default function PostCard({ post }: Props) {
 
   return (
     <Link href={href} className="group block mb-6">
-      <div className="relative overflow-hidden min-h-60 sm:min-h-70" style={{ background: CARD_BG }}>
+      <div className="relative overflow-hidden min-h-64 sm:min-h-80" style={{ background: CARD_BG }}>
         {/* 배경 이미지 — 카드 전체를 채움 */}
         {post.thumbnail && (
           <Image
@@ -39,7 +39,7 @@ export default function PostCard({ post }: Props) {
         />
 
         {/* 텍스트 콘텐츠 */}
-        <div className="relative z-20 p-8 sm:p-10 flex flex-col justify-center min-h-60 sm:min-h-70 max-w-[65%] sm:max-w-[58%]">
+        <div className="relative z-20 p-8 sm:p-10 flex flex-col justify-center min-h-64 sm:min-h-80 max-w-[65%] sm:max-w-[58%]">
           <span className="text-xs tracking-widest uppercase text-blue-400 mb-3">
             Featured
           </span>
