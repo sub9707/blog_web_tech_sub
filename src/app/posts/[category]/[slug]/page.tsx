@@ -85,8 +85,6 @@ export default async function PostPage({ params }: Props) {
             )}
             <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
               <span>{formattedDate}</span>
-              <span>·</span>
-              <span>{post.readTime} min read</span>
             </div>
             {post.tags.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">

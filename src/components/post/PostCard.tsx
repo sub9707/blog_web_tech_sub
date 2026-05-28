@@ -51,8 +51,6 @@ export default function PostCard({ post }: Props) {
           </p>
           <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
             <span>{formattedDate}</span>
-            <span>·</span>
-            <span>{post.readTime} min read</span>
           </div>
         </div>
       </div>
