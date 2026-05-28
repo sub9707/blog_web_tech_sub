@@ -1,9 +1,10 @@
 import { SITE } from '@/constants/site';
+import DraggableCodeBlock from '@/components/layout/DraggableCodeBlock';
 
 export default function HeroSection() {
   return (
     <section className="py-10 border-b border-gray-100">
-      <div className="flex items-start justify-between gap-8">
+      <div className="flex items-start gap-80">
         <div>
           <div className="flex items-center gap-2 mb-5">
             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
@@ -37,25 +38,7 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* 코드 에디터 장식 (xl 이상에서만 표시) */}
-        <div className="hidden xl:flex flex-col gap-0.5 font-mono text-xs select-none pt-1 shrink-0">
-          {Array.from({ length: 11 }, (_, i) => i + 1).map((n) => (
-            <div key={n} className="flex items-center gap-3 h-5 leading-5">
-              <span className="text-gray-300 tabular-nums w-5 text-right">
-                {String(n).padStart(2, '0')}
-              </span>
-              {n === 6 && (
-                <span>
-                  <span className="text-violet-400">const </span>
-                  <span className="text-blue-300">dev</span>
-                  <span className="text-gray-400"> = </span>
-                  <span className="text-emerald-300">&apos;log&apos;</span>
-                  <span className="inline-block w-[7px] h-3.5 bg-gray-400/70 ml-0.5 align-middle" />
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
+        <DraggableCodeBlock />
       </div>
     </section>
   );

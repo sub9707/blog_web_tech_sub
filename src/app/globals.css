@@ -22,6 +22,16 @@ body {
   overflow-wrap: break-word;
 }
 
+::selection {
+  background: #111111;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background: #111111;
+  color: #ffffff;
+}
+
 
 .scrollbar-hide {
   -ms-overflow-style: none;
