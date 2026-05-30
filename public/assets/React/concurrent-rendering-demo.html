@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>React Concurrent Rendering 체험</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0c0c0f;
+  --surface: #131317;
+  --surface2: #1a1a1f;
+  --border: rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.12);
+  --text: #e4e4ec;
+  --text2: #74748a;
+  --text3: #38384a;
+  --red: #e05c5c;
+  --red-dim: rgba(224,92,92,0.07);
+  --red-border: rgba(224,92,92,0.2);
+  --green: #3dd68c;
+  --green-dim: rgba(61,214,140,0.06);
+  --green-border: rgba(61,214,140,0.2);
+  --amber: #d4973a;
+  --mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r: 8px;
+  --r-lg: 12px;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.page { display: none; max-width: 540px; margin: 0 auto; padding: 44px 24px 80px; }
+.page.on { display: block; }
+
+/* ── Main Page ── */
+.main-eyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: var(--text3);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -.03em;
+  line-height: 1.2;
+  text-align: center;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.main-desc {
+  font-size: 13.5px;
+  color: var(--text2);
+  line-height: 1.75;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+
+.card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  padding: 20px 18px 18px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  text-align: left;
+  color: inherit;
+  font-family: inherit;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  opacity: 0;
+  transition: opacity .2s;
+}
+.card-red::before  { background: var(--red); }
+.card-green::before { background: var(--green); }
+.card:hover { background: var(--surface2); }
+.card-red:hover   { border-color: var(--red-border); }
+.card-red:hover::before { opacity: 1; }
+.card-green:hover { border-color: var(--green-border); }
+.card-green:hover::before { opacity: 1; }
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 4px;
+  margin-bottom: 14px;
+}
+.card-badge-red   { background: var(--red-dim);   color: var(--red);   border: 1px solid var(--red-border); }
+.card-badge-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+.badge-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.badge-dot-red   { background: var(--red); }
+.badge-dot-green { background: var(--green); }
+
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+.card-body  { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+.card-cta   { font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+.card-cta svg { transition: transform .15s; }
+.card:hover .card-cta svg { transform: translateX(2px); }
+
+.howto {
+  background: var(--surface);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+}
+.howto-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.howto-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.howto-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.step-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.howto-note {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text3);
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+/* ── Inner Pages ── */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.back {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--border); border-radius: var(--r);
+  cursor: pointer; font-size: 12px; color: var(--text2); font-family: inherit;
+  padding: 6px 12px; transition: border-color .15s, color .15s;
+}
+.back:hover { border-color: var(--border-strong); color: var(--text); }
+.back svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.mode-tag {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.mode-tag-red   { background: var(--red-dim);   color: var(--red);   border: 1px solid var(--red-border); }
+.mode-tag-green { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+
+.page-title { font-size: 20px; font-weight: 600; letter-spacing: -.02em; margin-bottom: 6px; }
+.page-desc  { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 20px; }
+.page-desc strong { color: var(--text); font-weight: 500; }
+
+/* ── Thread Visualizer ── */
+.thread-wrap { margin-bottom: 14px; }
+.thread-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px;
+}
+.thread-label {
+  font-family: var(--mono); font-size: 10px;
+  color: var(--text3); letter-spacing: .1em; text-transform: uppercase;
+}
+.thread-hint { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+canvas {
+  width: 100%; display: block;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+}
+
+/* ── Status Box ── */
+.status-box {
+  border-radius: var(--r);
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+}
+.status-box-red   { background: var(--red-dim);   border: 1px solid var(--red-border); }
+.status-box-green { background: var(--green-dim); border: 1px solid var(--green-border); }
+
+.status-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.status-rows { display: flex; flex-direction: column; gap: 5px; }
+.status-row  { display: flex; align-items: baseline; gap: 8px; color: var(--text2); line-height: 1.4; }
+.status-key  { color: var(--text3); flex-shrink: 0; min-width: 80px; }
+.status-val  { }
+.status-val-red   { color: var(--red);   font-weight: 500; }
+.status-val-green { color: var(--green); font-weight: 500; }
+
+.status-footer {
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.pill {
+  font-size: 10.5px; border-radius: 4px; padding: 2px 8px;
+  font-family: var(--mono); border: 1px solid transparent;
+}
+#block-timer {
+  display: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--red-border);
+}
+
+/* ── Search ── */
+.search-wrap { position: relative; margin-bottom: 8px; }
+.search-icon {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--text3); pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  border-radius: var(--r);
+  padding: 10px 14px 10px 36px;
+  font-size: 13.5px;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.search-input::placeholder { color: var(--text3); }
+.input-red   { border: 1px solid var(--border); }
+.input-red:focus   { border-color: var(--red-border); }
+.input-green { border: 1px solid var(--border); }
+.input-green:focus { border-color: var(--green-border); }
+
+.count-row {
+  font-family: var(--mono); font-size: 10.5px; color: var(--text3);
+  margin-bottom: 8px; display: flex; gap: 10px; align-items: center; min-height: 16px;
+}
+#c-rendering { color: var(--amber); display: none; }
+
+/* ── List ── */
+.list-wrap {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  max-height: 320px; overflow-y: auto;
+  transition: opacity .15s;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  border: 1px solid var(--border);
+}
+.list-wrap::-webkit-scrollbar { width: 4px; }
+.list-wrap::-webkit-scrollbar-track { background: transparent; }
+.list-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+.li {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11.5px;
+  font-family: var(--mono);
+  color: var(--text2);
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.li:last-child { border-bottom: none; }
+.li.dim { opacity: .15; }
+.li-idx { color: var(--text3); min-width: 28px; }
+.hl-red   { background: rgba(224,92,92,.18);  color: #f08080; border-radius: 3px; padding: 0 2px; }
+.hl-green { background: rgba(61,214,140,.15); color: #6ee7a8; border-radius: 3px; padding: 0 2px; }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .card-grid { grid-template-columns: 1fr; }
+  .main-title { font-size: 22px; }
+  .page { padding: 28px 16px 60px; }
+  .page-title { font-size: 17px; }
+}
+</style>
+</head>
+<body>
+
+<!-- MAIN -->
+<div class="page on" id="p-main">
+  <p class="main-eyebrow">Interactive Demo</p>
+  <h1 class="main-title">Concurrent Rendering</h1>
+  <p class="main-desc">React 18이 렌더링을 어떻게 다르게 처리하는지<br>직접 입력하면서 차이를 확인해보세요.</p>
+
+  <div class="card-grid">
+    <button class="card card-red" onclick="nav('legacy')">
+      <div class="card-badge card-badge-red">
+        <span class="badge-dot badge-dot-red"></span>
+        Legacy · React 17
+      </div>
+      <div class="card-title">동기 렌더링</div>
+      <div class="card-body">렌더링이 시작되면 완료될 때까지 브라우저가 멈춥니다.</div>
+      <div class="card-cta" style="color:var(--red)">
+        체험하기
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </button>
+    <button class="card card-green" onclick="nav('concurrent')">
+      <div class="card-badge card-badge-green">
+        <span class="badge-dot badge-dot-green"></span>
+        Concurrent · React 18
+      </div>
+      <div class="card-title">동시성 렌더링</div>
+      <div class="card-body">입력과 렌더링을 분리해 UI가 항상 반응합니다.</div>
+      <div class="card-cta" style="color:var(--green)">
+        체험하기
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </button>
+  </div>
+
+  <div class="howto">
+    <div class="howto-title">실험 방법</div>
+    <div class="howto-steps">
+      <div class="howto-step">
+        <span class="step-num">1</span>
+        각 모드에서 검색창에 글자를 입력하세요
+      </div>
+      <div class="howto-step">
+        <span class="step-num">2</span>
+        초록 공이 멈추는지 확인하세요 — 멈추면 UI가 차단된 것입니다
+      </div>
+      <div class="howto-step">
+        <span class="step-num">3</span>
+        두 모드의 입력창 반응 속도를 비교해보세요
+      </div>
+    </div>
+    <p class="howto-note">200 items × 4ms artificial delay ≈ ~800ms blocking (과장된 환경)</p>
+  </div>
+</div>
+
+<!-- LEGACY -->
+<div class="page" id="p-legacy">
+  <div class="nav-bar">
+    <button class="back" onclick="nav('main')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      돌아가기
+    </button>
+    <span class="mode-tag mode-tag-red">Legacy Mode</span>
+  </div>
+
+  <h2 class="page-title" style="color:var(--red)">동기 렌더링</h2>
+  <p class="page-desc">입력 즉시 200개를 <strong>한 번에 동기적으로</strong> 렌더링합니다.<br>그동안 브라우저는 다른 작업을 전혀 할 수 없습니다.</p>
+
+  <div class="thread-wrap">
+    <div class="thread-header">
+      <span class="thread-label">Main Thread</span>
+      <span class="thread-hint">공이 멈추면 = 차단됨</span>
+    </div>
+    <canvas id="ball-legacy" height="28"></canvas>
+  </div>
+
+  <div class="status-box status-box-red">
+    <div class="status-title" style="color:var(--red)">지금 일어나는 일</div>
+    <div class="status-rows">
+      <div class="status-row">
+        <span class="status-key">onChange</span>
+        <span class="status-val">200개 동기 렌더링 즉시 시작</span>
+      </div>
+      <div class="status-row">
+        <span class="status-key">처리 방식</span>
+        <span class="status-val">4ms × 200개 = <span class="status-val-red">~800ms 차단</span></span>
+      </div>
+      <div class="status-row">
+        <span class="status-key">브라우저</span>
+        <span class="status-val status-val-red">입력·스크롤·애니메이션 모두 정지</span>
+      </div>
+    </div>
+    <div id="block-timer"></div>
+  </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input input-red" id="legacy-input" type="text" placeholder="검색어 입력 (예: React, Fiber, Hook…)">
+  </div>
+  <div class="count-row"><span id="legacy-count">200 / 200 items</span></div>
+  <div class="list-wrap" id="legacy-list"></div>
+</div>
+
+<!-- CONCURRENT -->
+<div class="page" id="p-concurrent">
+  <div class="nav-bar">
+    <button class="back" onclick="nav('main')">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      돌아가기
+    </button>
+    <span class="mode-tag mode-tag-green">Concurrent Mode</span>
+  </div>
+
+  <h2 class="page-title" style="color:var(--green)">동시성 렌더링</h2>
+  <p class="page-desc">입력(긴급)과 목록 렌더링(비긴급)을 분리합니다.<br>청크 단위로 <strong>브라우저에 제어권을 양보</strong>해 입력이 항상 즉각 반응합니다.</p>
+
+  <div class="thread-wrap">
+    <div class="thread-header">
+      <span class="thread-label">Main Thread</span>
+      <span class="thread-hint">공이 멈추면 = 차단됨</span>
+    </div>
+    <canvas id="ball-concurrent" height="28"></canvas>
+  </div>
+
+  <div class="status-box status-box-green">
+    <div class="status-title" style="color:var(--green)">지금 일어나는 일</div>
+    <div class="status-rows">
+      <div class="status-row">
+        <span class="status-key">onChange</span>
+        <span class="status-val">input <span class="status-val-green">즉시 업데이트</span> (긴급)</span>
+      </div>
+      <div class="status-row">
+        <span class="status-key">목록 렌더</span>
+        <span class="status-val">5개씩 청크 처리 후 <span class="status-val-green">브라우저에 yield</span></span>
+      </div>
+      <div class="status-row">
+        <span class="status-key">새 입력</span>
+        <span class="status-val">진행 중인 렌더링 취소 후 재시작</span>
+      </div>
+    </div>
+    <div class="status-footer">
+      <span class="pill" id="c-pill" style="background:rgba(255,255,255,0.04);color:var(--text3);border-color:var(--border)">대기 중</span>
+      <span id="c-diff" style="font-size:10.5px;color:var(--text3);font-family:var(--mono)"></span>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input input-green" id="concurrent-input" type="text" placeholder="검색어 입력 (예: React, Fiber, Hook…)">
+  </div>
+  <div class="count-row">
+    <span id="concurrent-count">200 / 200 items</span>
+    <span id="c-rendering">렌더링 중...</span>
+  </div>
+  <div class="list-wrap" id="concurrent-list"></div>
+</div>
+
+<script>
+const VOCAB = ["React","Virtual","DOM","Component","State","Props","Hook","Effect","Fiber","Scheduler","Reconciler","Render","Commit","Hydration","Suspense","Transition","Concurrent","Lane","Priority","Update","Batch","Flush","Sync","Async","Tree","Node","Context","Memo","Ref","Portal","Error","Boundary","Stream","Root","Work"];
+const ITEMS = Array.from({length:200}, (_,i) => ({
+  id: i,
+  label: `${VOCAB[i % VOCAB.length]} ${VOCAB[(i * 7 + 3) % VOCAB.length]}`,
+  code: `item_${String(i+1).padStart(3,"0")}`
+}));
+
+function burn(ms) { const e = performance.now() + ms; while (performance.now() < e) {} }
+function esc(s) { return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function makeItem(item, hl, accent) {
+  const d = document.createElement("div");
+  d.className = "li";
+  const idx_el = document.createElement("span");
+  idx_el.className = "li-idx";
+  idx_el.textContent = String(item.id + 1).padStart(3, "0");
+  d.appendChild(idx_el);
+
+  const txt = `${item.label} · ${item.code}`;
+  const content = document.createElement("span");
+  if (!hl) {
+    content.textContent = txt;
+  } else {
+    const idx = txt.toLowerCase().indexOf(hl.toLowerCase());
+    if (idx < 0) {
+      d.classList.add("dim");
+      content.textContent = txt;
+    } else {
+      const cls = accent === "red" ? "hl-red" : "hl-green";
+      content.innerHTML = esc(txt.slice(0,idx)) + `<span class="${cls}">${esc(txt.slice(idx,idx+hl.length))}</span>` + esc(txt.slice(idx+hl.length));
+    }
+  }
+  d.appendChild(content);
+  return d;
+}
+
+function nav(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("on"));
+  document.getElementById("p-" + page).classList.add("on");
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+
+function initBall(id) {
+  const c = document.getElementById(id); if (!c) return;
+  const resize = () => { c.width = c.parentElement.offsetWidth || 500; };
+  resize(); window.addEventListener("resize", resize);
+  const ctx = c.getContext("2d");
+  let x, vx = 3.2, last = null;
+  (function draw(t) {
+    const W = c.width, H = c.height;
+    if (x === undefined) x = W / 2;
+    const dt = last != null ? Math.min(t - last, 80) : 16; last = t;
+    x += vx * (dt / 16);
+    if (x >= W - 11) { x = W - 11; vx = -Math.abs(vx); }
+    if (x <= 11)     { x = 11;     vx =  Math.abs(vx); }
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = "rgba(255,255,255,0.03)";
+    ctx.beginPath(); ctx.roundRect(0, 0, W, H, H / 2); ctx.fill();
+    ctx.fillStyle = "#3dd68c";
+    ctx.beginPath(); ctx.arc(x, H/2, 9, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,0.22)";
+    ctx.beginPath(); ctx.arc(x - 2, H/2 - 2.5, 3.5, 0, Math.PI*2); ctx.fill();
+    requestAnimationFrame(draw);
+  })(0);
+}
+
+function renderLegacy(q) {
+  const t0 = performance.now();
+  const list = document.getElementById("legacy-list"); list.innerHTML = "";
+  const filt = ITEMS.filter(({label,code}) => `${label} ${code}`.toLowerCase().includes(q.toLowerCase()));
+  filt.forEach(item => { burn(4); list.appendChild(makeItem(item, q, "red")); });
+  document.getElementById("legacy-count").textContent = `${filt.length} / ${ITEMS.length} items`;
+  const ms = Math.round(performance.now() - t0);
+  if (ms > 30) {
+    const el = document.getElementById("block-timer");
+    el.textContent = `마지막 블로킹: ${ms}ms`;
+    el.style.display = "block";
+  }
+}
+
+let cTimer = null, cLatest = "";
+function renderConcurrent(q) {
+  cLatest = q; if (cTimer) clearTimeout(cTimer);
+  const list     = document.getElementById("concurrent-list");
+  const pill     = document.getElementById("c-pill");
+  const diff     = document.getElementById("c-diff");
+  const loading  = document.getElementById("c-rendering");
+  const filt = ITEMS.filter(({label,code}) => `${label} ${code}`.toLowerCase().includes(q.toLowerCase()));
+  list.style.opacity = "0.4"; loading.style.display = "inline";
+  pill.style.cssText = "background:rgba(212,151,58,.1);color:var(--amber);font-size:10.5px;border-radius:4px;padding:2px 8px;border:1px solid rgba(212,151,58,.25)";
+  pill.textContent = "처리 중...";
+  diff.textContent = q ? `input: "${q}"` : "";
+  list.innerHTML = "";
+  let i = 0;
+  (function doChunk() {
+    if (cLatest !== q) return;
+    const end = Math.min(i + 5, filt.length);
+    for (; i < end; i++) { burn(4); list.appendChild(makeItem(filt[i], q, "green")); }
+    if (i < filt.length) {
+      cTimer = setTimeout(doChunk, 0);
+    } else {
+      list.style.opacity = "1"; loading.style.display = "none";
+      if (q) {
+        pill.style.cssText = "background:rgba(61,214,140,.08);color:var(--green);font-size:10.5px;border-radius:4px;padding:2px 8px;border:1px solid rgba(61,214,140,.2)";
+        pill.textContent = "완료";
+        diff.textContent = `"${q}" · ${filt.length}개`;
+      } else {
+        pill.style.cssText = "background:rgba(255,255,255,0.04);color:var(--text3);font-size:10.5px;border-radius:4px;padding:2px 8px;border:1px solid var(--border)";
+        pill.textContent = "대기 중";
+        diff.textContent = "";
+      }
+      document.getElementById("concurrent-count").textContent = `${filt.length} / ${ITEMS.length} items`;
+    }
+  })();
+}
+
+document.getElementById("legacy-input").addEventListener("input", e => renderLegacy(e.target.value));
+document.getElementById("concurrent-input").addEventListener("input", e => renderConcurrent(e.target.value));
+renderLegacy(""); renderConcurrent("");
+initBall("ball-legacy"); initBall("ball-concurrent");
+</script>
+</body>
+</html>

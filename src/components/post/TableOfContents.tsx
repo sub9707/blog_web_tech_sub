@@ -52,7 +52,7 @@ export default function TableOfContents({ headings }: Props) {
         {headings.map(({ id, text, level }) => {
           const isActive = activeId === id;
           return (
-            <li key={id} className={level === 3 ? 'pl-3' : ''}>
+            <li key={id} className={level === 3 ? 'pl-3' : level === 2 ? 'pl-0' : ''}>
               <a
                 href={`#${id}`}
                 onClick={(e) => handleClick(e, id)}
