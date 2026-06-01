@@ -10,7 +10,7 @@ import type { Options } from 'rehype-pretty-code';
 import { visit } from 'unist-util-visit';
 import type { Root, Element, Parent } from 'hast';
 
-const BLOCK_CUSTOM_ELEMENTS = ['interactive-demo'];
+const BLOCK_CUSTOM_ELEMENTS = ['interactive-demo', 'bookmark'];
 
 function rehypeUnwrapCustomBlocks() {
   return (tree: Root) => {

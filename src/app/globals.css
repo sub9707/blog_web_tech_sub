@@ -185,3 +185,16 @@ body {
 .prose img:hover {
   opacity: 0.9;
 }
+
+.prose .not-prose,
+.prose .not-prose * {
+  text-decoration: none;
+  color: inherit;
+}
+
+.prose .not-prose img {
+  margin: 0;
+  border-radius: 0;
+  cursor: auto;
+  transition: none;
+}
