@@ -32,6 +32,18 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.velog.io",
       },
+      {
+        protocol: "https",
+        hostname: "blog.alexdevero.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i.morioh.com",
+      },
+      {
+        protocol: "https",
+        hostname: "i0.wp.com",
+      },
     ],
   },
 };
