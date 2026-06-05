@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "build:index": "node scripts/build-search-index.js",
+    "dev": "concurrently \"next dev\" \"node scripts/build-search-index.js --watch\"",
+    "prebuild": "npm run build:index",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -11,6 +13,7 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "date-fns": "^4.2.1",
+    "fuse.js": "^7.4.1",
     "gray-matter": "^4.0.3",
     "html-react-parser": "^6.1.2",
     "next": "16.2.6",
@@ -33,6 +36,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^10.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",

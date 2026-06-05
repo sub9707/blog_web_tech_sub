@@ -9,7 +9,7 @@ export default function HeroSection() {
           <div className="flex items-center gap-2 mb-4 sm:mb-5">
             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
             <span className="text-xs tracking-widest uppercase text-gray-400">
-              Web Technology Blog
+              Web Technology Notes
             </span>
           </div>
           <h1 className="font-serif text-5xl sm:text-7xl xl:text-8xl font-bold text-gray-900 leading-none tracking-tight">

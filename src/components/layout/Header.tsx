@@ -47,6 +47,7 @@ export default function Header() {
           <button
             type="button"
             aria-label="다크 모드 전환"
+            onClick={() => alert('준비 중인 기능입니다')}
             className="text-gray-500 hover:text-gray-900 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
