@@ -9,7 +9,7 @@ export default function PostLoading() {
         <div className="h-4 w-full bg-gray-100 rounded animate-pulse" />
         <div className="h-3 w-32 bg-gray-100 rounded animate-pulse" />
       </div>
-      <div className="w-full aspect-[16/9] bg-gray-100 rounded-lg animate-pulse mb-10" />
+      <div className="w-full aspect-video bg-gray-100 rounded-lg animate-pulse mb-10" />
       <div className="space-y-3">
         {Array.from({ length: 8 }).map((_, i) => (
           <div key={i} className="h-4 bg-gray-100 rounded animate-pulse" style={{ width: `${80 + Math.random() * 20}%` }} />
