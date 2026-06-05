@@ -35,7 +35,7 @@ function Cursor() {
 
 function LineNum({ n }: { n: number }) {
   return (
-    <span className="text-gray-500 tabular-nums w-5 text-right shrink-0">
+    <span className="text-gray-300 tabular-nums w-5 text-right shrink-0">
       {String(n).padStart(2, '0')}
     </span>
   );
@@ -45,20 +45,20 @@ function CommittedLine({ phrase, isFirst }: { phrase: string; isFirst: boolean }
   if (isFirst) {
     return (
       <>
-        <span className="text-violet-400">const </span>
-        <span className="text-blue-300">developer</span>
-        <span className="text-gray-400"> = </span>
-        <span className="text-yellow-300">{'['}</span>
-        <span className="text-emerald-300">&apos;{phrase}&apos;</span>
-        <span className="text-gray-400">,</span>
+        <span className="text-purple-500">const </span>
+        <span className="text-blue-500">developer</span>
+        <span className="text-black"> = </span>
+        <span className="text-black">{'['}</span>
+        <span className="text-green-500">&apos;{phrase}&apos;</span>
+        <span className="text-black">,</span>
       </>
     );
   }
   return (
     <>
       <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
-      <span className="text-emerald-300">&apos;{phrase}&apos;</span>
-      <span className="text-gray-400">,</span>
+      <span className="text-green-500">&apos;{phrase}&apos;</span>
+      <span className="text-black">,</span>
     </>
   );
 }
@@ -132,10 +132,12 @@ export default function HeroTyping({ startLine = 3 }: Props) {
       lineNum: startLine,
       content: (
         <>
-          <span className="text-violet-400">const </span>
-          <span className="text-blue-300">developer</span>
-          <span className="text-gray-400"> = </span>
-          <span className="text-emerald-300">{typing}</span>
+          <span className="text-purple-500">const </span>
+          <span className="text-blue-500">developer</span>
+          <span className="text-black"> = </span>
+          <span className="text-black">{typing.length > 0 ? '[' : ''}</span>
+          <span className="text-green-500">{typing.endsWith(']') ? typing.slice(1, -1) : typing.slice(1)}</span>
+          <span className="text-black">{typing.endsWith(']') ? ']' : ''}</span>
           <Cursor />
         </>
       ),
@@ -157,7 +159,7 @@ export default function HeroTyping({ startLine = 3 }: Props) {
         content: (
           <>
             <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
-            <span className="text-yellow-300">{']'}</span>
+            <span className="text-black">{']'}</span>
             <Cursor />
           </>
         ),
@@ -169,8 +171,8 @@ export default function HeroTyping({ startLine = 3 }: Props) {
         content: (
           <>
             <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
-            <span className="text-emerald-300">{typing}</span>
-            <span className="text-yellow-300">{']'}</span>
+            <span className="text-green-500">{typing}</span>
+            <span className="text-black">{']'}</span>
             <Cursor />
           </>
         ),
