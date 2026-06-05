@@ -84,7 +84,7 @@ CPU 코어를 여러 개 사용하는 것도 아니다.
 
 <br/>
 
-![Concurrent vs Multi Thread](`/assets/React/concurrent-vs-multithread.png`)
+![Concurrent vs Multi Thread](/assets/React/concurrent-vs-multithread.png)
 
 <br/>
 
@@ -114,7 +114,7 @@ React는 현재 작업을 잠시 멈춘 뒤 입력 처리를 먼저 수행한다
 
 <br/>
 
-![Interruptible Rendering](`/assets/React/interruptible-rendering.png`)
+![Interruptible Rendering](/assets/React/interruptible-rendering.png)
 
 <br/>
 
