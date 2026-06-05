@@ -1,6 +1,6 @@
----
+﻿---
 title: "React와 찰떡인 스타일링 방식은 무엇일까"
-date: "2026-05-28"
+date: "2026-05-07"
 description: "최근 React 스타일링 생태계의 흐름과 Tailwind CSS, Zero-runtime, React Compiler 시대의 변화 기록"
 tags: ["react", "tailwindcss", "css"]
 thumbnail: "/assets/thumbnails/814a06f2-0401-4045-8fd6-920b8453efc2.png"

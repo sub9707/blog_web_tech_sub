@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import type { Heading } from '@/utils/extractHeadings';
+import { SCROLL_OFFSET } from '@/constants/ui';
+
+const DRAWER_CLOSE_DELAY = 300;
 
 interface Props {
   headings: Heading[];
@@ -24,8 +27,8 @@ export default function MobileTocDrawer({ headings }: Props) {
     setTimeout(() => {
       const el = document.getElementById(id);
       if (!el) return;
-      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
-    }, 300);
+      window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET, behavior: 'smooth' });
+    }, DRAWER_CLOSE_DELAY);
   };
 
   return (

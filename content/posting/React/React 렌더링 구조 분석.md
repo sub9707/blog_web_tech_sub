@@ -1,6 +1,6 @@
----
+﻿---
 title: "React 렌더링 구조 분석"
-date: "2026-05-28"
+date: "2026-06-01"
 description: "함수 컴포넌트의 실행 모델부터 Fiber 아키텍처, Render/Commit Phase, 리렌더링 조건, React 19 Compiler까지 React 렌더링의 내부 동작을 정리"
 tags: ["react", "rendering", "fiber", "hooks", "react19", "performance"]
 thumbnail: "/assets/thumbnails/react_rendering_thumbnail.png"

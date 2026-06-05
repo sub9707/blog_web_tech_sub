@@ -1,6 +1,6 @@
----
+﻿---
 title: "[React] Suspense는 로딩 컴포넌트가 아니다"
-date: "2026-06-01"
+date: "2026-06-04"
 description: "Promise를 throw 한다는 것의 의미, Fiber 내부 동작, Concurrent React·Streaming SSR까지 Suspense의 진짜 정체를 파헤쳐보자"
 tags: ["react", "suspense", "fiber", "concurrent", "streaming-ssr", "react18"]
 thumbnail: "/assets/thumbnails/suspense.png"

@@ -1,6 +1,6 @@
 ---
 title: "[CS] HTTPS, Stateful & Stateless, URI vs URL"
-date: "2026-06-04"
+date: "2025-11-18"
 description: "HTTPS의 보안 구조와 SSL/TLS 핸드셰이크, Stateful·Stateless 설계 차이, URI와 URL의 개념 정리"
 tags: ["cs", "http", "https", "ssl", "tls", "stateless", "uri", "url"]
 thumbnail: "https://www.globalsign.com/application/files/3916/0397/8810/iStock-833750208.png"

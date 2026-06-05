@@ -25,10 +25,10 @@ export default async function HomePage() {
   const archive = [...archiveMap.entries()].map(([label, count]) => ({ label, count }));
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
       <HeroSection />
 
-      <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 mt-8">
+      <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 mt-6 sm:mt-8">
         <div className="flex-1 min-w-0">
           <Suspense>
             <CategoryFilter categories={categories} />

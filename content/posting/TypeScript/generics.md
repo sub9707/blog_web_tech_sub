@@ -1,6 +1,6 @@
----
+﻿---
 title: "TypeScript 제네릭 실전 가이드"
-date: "2025-05-15"
+date: "2025-08-07"
 description: "제네릭의 기본부터 제약 조건, 유틸리티 타입 활용까지 실무 관점에서 정리합니다."
 tags: ["typescript", "generics", "type-system"]
 ---

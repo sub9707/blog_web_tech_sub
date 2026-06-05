@@ -1,6 +1,6 @@
----
+﻿---
 title: "Hydration 파헤치기"
-date: "2026-05-30"
+date: "2026-04-22"
 description: "NextJS의 hydration에 대해 알아보자"
 tags: ["nextjs", "react", "hydration", "ssr", "csr", "rsc"]
 thumbnail: "/assets/thumbnails/ccd8ceb2-382a-4b47-bd5b-21b1134ba839.png"

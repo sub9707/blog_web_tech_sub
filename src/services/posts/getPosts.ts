@@ -3,8 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { PostMeta } from '@/types/post';
 import { calculateReadTime, slugify } from '@/lib/markdown';
-
-const CONTENT_DIR = path.join(process.cwd(), 'content', 'posting');
+import { CONTENT_DIR } from '@/constants/paths';
 
 export async function getPosts(): Promise<PostMeta[]> {
   if (!fs.existsSync(CONTENT_DIR)) return [];

@@ -16,8 +16,34 @@ export default function PostCard({ post }: Props) {
 
   return (
     <Link href={href} className="group block mb-6">
-      <div className="relative overflow-hidden min-h-64 sm:min-h-80" style={{ background: CARD_BG }}>
-        {/* 배경 이미지 — 카드 전체를 채움 */}
+      {/* 모바일: 하단 그라디언트 세로 레이아웃 */}
+      <div className="sm:hidden relative overflow-hidden aspect-4/3" style={{ background: CARD_BG }}>
+        {post.thumbnail && (
+          <Image
+            src={post.thumbnail}
+            alt={post.title}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        )}
+        <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+          <span className="text-xs tracking-widest uppercase text-blue-400 mb-2 block">
+            Featured
+          </span>
+          <h2 className="font-serif text-xl font-bold text-white leading-tight group-hover:text-gray-300 transition-colors line-clamp-2">
+            {post.title}
+          </h2>
+          <p className="mt-1.5 text-xs text-gray-400 leading-relaxed line-clamp-2">
+            {post.description}
+          </p>
+          <div className="mt-2 text-xs text-gray-500">{formattedDate}</div>
+        </div>
+      </div>
+
+      {/* sm 이상: 가로 그라디언트 레이아웃 */}
+      <div className="hidden sm:block relative overflow-hidden min-h-80" style={{ background: CARD_BG }}>
         {post.thumbnail && (
           <Image
             src={post.thumbnail}
@@ -27,8 +53,6 @@ export default function PostCard({ post }: Props) {
             className="object-cover"
           />
         )}
-
-        {/* 그라데이션 오버레이 — 왼쪽(어두움) → 오른쪽(투명) */}
         <div
           className="absolute inset-0 z-10"
           style={{
@@ -37,19 +61,17 @@ export default function PostCard({ post }: Props) {
               : CARD_BG,
           }}
         />
-
-        {/* 텍스트 콘텐츠 */}
-        <div className="relative z-20 p-8 sm:p-10 flex flex-col justify-center min-h-64 sm:min-h-80 max-w-[65%] sm:max-w-[58%]">
+        <div className="relative z-20 p-8 sm:p-10 flex flex-col justify-center min-h-80 max-w-[58%]">
           <span className="text-xs tracking-widest uppercase text-blue-400 mb-3">
             Featured
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white leading-tight group-hover:text-gray-300 transition-colors line-clamp-3">
             {post.title}
           </h2>
-          <p className="mt-3 text-sm text-gray-400 leading-relaxed line-clamp-2 hidden sm:block">
+          <p className="mt-3 text-sm text-gray-400 leading-relaxed line-clamp-2">
             {post.description}
           </p>
-          <div className="mt-4 flex items-center gap-2 text-xs text-gray-500">
+          <div className="mt-4 text-xs text-gray-500">
             <span>{formattedDate}</span>
           </div>
         </div>

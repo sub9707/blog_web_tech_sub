@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { Heading } from '@/utils/extractHeadings';
+import { SCROLL_OFFSET } from '@/constants/ui';
 
 interface Props {
   headings: Heading[];
@@ -38,7 +39,7 @@ export default function TableOfContents({ headings }: Props) {
     e.preventDefault();
     const el = document.getElementById(id);
     if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 80;
+    const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
     window.scrollTo({ top, behavior: 'smooth' });
     setActiveId(id);
   };
@@ -65,7 +66,7 @@ export default function TableOfContents({ headings }: Props) {
                 `}
               >
                 {isActive && (
-                  <span className="absolute -left-[17px] top-1/2 -translate-y-1/2 w-px h-full bg-gray-900" />
+                  <span className="absolute -left-4.25 top-1/2 -translate-y-1/2 w-px h-full bg-gray-900" />
                 )}
                 {text}
               </a>

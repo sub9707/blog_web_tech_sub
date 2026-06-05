@@ -1,6 +1,6 @@
----
+﻿---
 title: "자바스크립트의 메모리 관리"
-date: "2026-06-04"
+date: "2026-01-14"
 description: "자바스크립트 메모리 생명주기, 가비지 컬렉션 알고리즘, V8 엔진의 Minor/Major GC와 stop-the-world 최적화 전략까지 정리한 글"
 tags: ["javascript", "memory", "garbage-collection", "v8", "performance"]
 thumbnail: "/assets/thumbnails/js-memory-management.png"

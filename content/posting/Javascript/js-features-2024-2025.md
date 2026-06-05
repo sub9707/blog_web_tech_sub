@@ -1,6 +1,6 @@
----
+﻿---
 title: "2024, 2025년에 추가된 자바스크립트 신기능"
-date: "2026-06-04"
+date: "2026-05-20"
 description: "ES2024와 ES2025에서 추가된 자바스크립트 핵심 신기능들 — 불변 배열 메서드, Iterator Helpers, Explicit Resource Management, Promise.try() 등을 예제와 함께 정리"
 tags: ["javascript", "es2024", "es2025", "ecmascript", "new-features"]
 thumbnail: "/assets/thumbnails/js-features-2024-2025.png"

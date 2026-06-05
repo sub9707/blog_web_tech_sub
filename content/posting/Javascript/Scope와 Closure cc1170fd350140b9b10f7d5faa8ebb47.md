@@ -1,6 +1,6 @@
----
+﻿---
 title: "자바스크립트 Scope와 Closure"
-date: "2026-06-04"
+date: "2025-12-09"
 description: "자바스크립트의 스코프 체인, 렉시컬 스코프, 클로저 개념과 실제 활용 방식을 정리한 글"
 tags: ["javascript", "scope", "closure", "lexical-scope", "execution-context"]
 thumbnail: "https://media.calibraint.com/calibraint-wordpress/wp-content/uploads/2021/07/11105314/Closures-In-JavaScript-Calibraint.webp"

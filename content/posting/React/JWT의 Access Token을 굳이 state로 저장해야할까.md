@@ -1,6 +1,6 @@
----
+﻿---
 title: "[Redux] JWT의 Access Token을 굳이 redux로 저장해야할까"
-date: "2026-06-02"
+date: "2026-05-29"
 description: "React 상태 관리 라이브러리 redux의 persist 사용 이유에 대해 생각해보고 기록함"
 tags: ["redux", "jwt", "auth", "localstorage", "redux-persist"]
 thumbnail: "https://velog.velcdn.com/images/sihoon_cho/post/4d9a7001-b20a-4238-92ae-aa3098f752b6/image.png"

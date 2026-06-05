@@ -1,6 +1,6 @@
 ---
 title: "[Reddit] 회사에서 사용할 React 프레임워크를 추천해주세요!"
-date: "2026-06-04"
+date: "2025-10-25"
 description: "대규모 트래픽을 처리하는 엔터프라이즈 앱에서 사용할 React 프레임워크를 추천해달라는 Reddit Discussion을 정리하고 고찰한 글"
 tags: ["reddit", "react", "nextjs", "vite", "framework"]
 thumbnail: "/assets/thumbnails/reddit-1.png"

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-
-const CONTENT_DIR = path.join(process.cwd(), 'content', 'posting');
+import { CONTENT_DIR } from '@/constants/paths';
 
 export async function getCategories(): Promise<string[]> {
   if (!fs.existsSync(CONTENT_DIR)) return [];

@@ -22,7 +22,6 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
 
   return (
     <figure className="my-8 not-prose">
-      {/* Mobile: 새 탭으로 열기 */}
       <div className="block md:hidden rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
         <div className="px-5 py-6 bg-neutral-50 dark:bg-neutral-900 flex flex-col gap-3">
           <div className="flex items-center gap-2">
@@ -47,9 +46,7 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
         </div>
       </div>
 
-      {/* Desktop: 툴바 + iframe */}
       <div className="hidden md:block rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
-        {/* 툴바 */}
         <div className="flex items-center justify-between px-4 py-2.5 bg-neutral-100 dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700">
           <div className="flex items-center gap-2">
             <div className="flex gap-1.5">
@@ -70,7 +67,6 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
           </a>
         </div>
 
-        {/* iframe */}
         <div className="relative bg-neutral-50 dark:bg-neutral-900">
           {!loaded && (
             <div
@@ -86,8 +82,7 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
             title={title}
             width="100%"
             height={height}
-            className="block"
-            style={{ border: 'none' }}
+            className="block border-0"
             onLoad={() => setLoaded(true)}
           />
         </div>

@@ -17,9 +17,6 @@ const PAUSE_AFTER_TYPE = 1000;
 const PAUSE_AFTER_ENTER = 1000;
 const BLINK_PAUSE = 1600; // ~3 cursor blinks before deleting
 
-// `const developer = [` = 19 chars
-const INDENT_WIDTH = '19ch';
-
 // Max rows: 5 committed + 1 active line (no entering for last phrase)
 const TOTAL_ROWS = PHRASES.length;
 
@@ -56,7 +53,7 @@ function CommittedLine({ phrase, isFirst }: { phrase: string; isFirst: boolean }
   }
   return (
     <>
-      <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
+      <span className="inline-block shrink-0 w-[19ch]" />
       <span className="text-green-500">&apos;{phrase}&apos;</span>
       <span className="text-black">,</span>
     </>
@@ -158,7 +155,7 @@ export default function HeroTyping({ startLine = 3 }: Props) {
         lineNum: lastLine,
         content: (
           <>
-            <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
+            <span className="inline-block shrink-0 w-[19ch]" />
             <span className="text-black">{']'}</span>
             <Cursor />
           </>
@@ -170,7 +167,7 @@ export default function HeroTyping({ startLine = 3 }: Props) {
         lineNum: lastLine,
         content: (
           <>
-            <span className="inline-block shrink-0" style={{ width: INDENT_WIDTH }} />
+            <span className="inline-block shrink-0 w-[19ch]" />
             <span className="text-green-500">{typing}</span>
             <span className="text-black">{']'}</span>
             <Cursor />

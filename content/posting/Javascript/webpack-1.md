@@ -1,6 +1,6 @@
----
+﻿---
 title: "Webpack5 파헤치기 1편 — 번들링 기초와 에셋 처리"
-date: "2026-06-04"
+date: "2026-02-19"
 description: "Webpack5 초기 설정부터 CSS·SCSS 번들링, 이미지·정적 파일 처리까지 직접 실습하며 정리한 글"
 tags: ["javascript", "webpack", "bundler", "scss", "babel"]
 thumbnail: "/assets/thumbnails/webpack-1.png"

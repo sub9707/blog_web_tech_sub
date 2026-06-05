@@ -1,6 +1,6 @@
----
+﻿---
 title: "Next.js 한글 슬러그 404 트러블슈팅"
-date: "2026-05-26"
+date: "2026-02-03"
 description: "Next.js App Router에서 한글 타이틀 기반 슬러그로 라우팅 시 404가 발생한 원인과 해결 과정 정리"
 tags: ["troubleshoot", "nextjs", "routing", "nginx", "docker"]
 ---

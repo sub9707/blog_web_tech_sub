@@ -1,6 +1,6 @@
----
+﻿---
 title: "[React] 10,000개를 렌더링하는데 어떻게 입력은 안 끊길까?"
-date: "2026-05-31"
+date: "2026-06-03"
 description: "React 18의 Concurrent 렌더링 방식과 왜 등장했는지 알아보자"
 tags: ["react", "concurrent", "rendering", "react18", "scheduler", "fiber"]
 thumbnail: "/assets/thumbnails/6121df5b-8385-4bb8-9262-5b8a045965c3.png"
