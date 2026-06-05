@@ -1,7 +1,7 @@
 ---
-title: "[TypeScript] Narrowing 완전 정복 — typeof, instanceof, in, 사용자 정의 가드"
+title: "Narrowing 파헤치기 — typeof, instanceof, in, 사용자 정의 가드"
 date: "2026-06-05"
-description: "TypeScript가 타입을 좁혀나가는 방식, 제어 흐름 분석, 그리고 사용자 정의 타입 가드까지 Narrowing의 모든 것을 파헤친다"
+description: "TypeScript가 타입을 좁혀나가는 방식, 제어 흐름 분석, 그리고 사용자 정의 타입 가드까지 Narrowing의 관한 것들을 기록"
 tags: ["typescript", "narrowing", "type-guard", "type-safety", "control-flow"]
 thumbnail: "/assets/thumbnails/narrowing.png"
 ---

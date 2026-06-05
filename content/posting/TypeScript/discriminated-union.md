@@ -1,7 +1,7 @@
 ---
-title: "[TypeScript] Discriminated Union으로 상태 모델링하기"
+title: "Discriminated Union으로 상태 모델링하기"
 date: "2026-06-05"
-description: "불가능한 상태를 타입으로 원천 차단하는 Discriminated Union 패턴, 실전 상태 모델링, React와의 조합까지 완전히 정리한다"
+description: "불가능한 상태를 타입으로 원천 차단하는 Discriminated Union 패턴, 실전 상태 모델링, React와의 조합까지"
 tags: ["typescript", "discriminated-union", "state-modeling", "type-safety", "react"]
 thumbnail: "/assets/thumbnails/discriminated-union.png"
 ---

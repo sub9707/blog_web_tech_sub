@@ -1,7 +1,7 @@
 ---
-title: "[TypeScript] type vs interface — 실제로 언제 뭘 써야 하나"
+title: "type vs interface — 언제 뭘 써야 할까"
 date: "2026-06-05"
-description: "문법 차이를 넘어 선언 병합, 확장 방식, 성능, 실무 선택 기준까지 type과 interface의 진짜 차이를 정리한다"
+description: "문법 차이를 넘어 선언 병합, 확장 방식, 성능, 실무 선택 기준까지 type과 interface의 차이가 뭘까"
 tags: ["typescript", "type", "interface", "declaration-merging", "generics"]
 thumbnail: "/assets/thumbnails/type-vs-interface.png"
 ---
