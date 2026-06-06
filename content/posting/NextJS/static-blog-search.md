@@ -1,8 +1,9 @@
 ---
 title: "정적 블로그에 검색 기능 구현하기 — 빌드 타임 인덱스 + Fuse.js"
 date: "2026-06-06"
-description: "서버 없이 Next.js 정적 블로그에 전문 검색을 붙이는 방법. API Route, Algolia, 빌드 타임 인덱스를 비교하고 최적화 과정에서 발생한 문제들을 기록한다."
+description: "서버 없이 Next.js 정적 블로그에 전문 검색을 붙이는 방법. API Route, Algolia, 빌드 타임 인덱스를 비교하고 최적화 과정에서 발생한 문제들을 기록"
 tags: ["nextjs", "search", "fuse.js", "performance", "static-site"]
+thumbnail: "/assets/thumbnails/87a5fd11-58a0-4893-b26b-bec01be34fc4.png"
 ---
 
 이 블로그에 검색 기능을 붙이려고 했을 때, 처음 든 생각은 "뭘로 검색하지?"였다.

@@ -24,12 +24,12 @@ export default function PostCard({ post }: Props) {
             alt={post.title}
             fill
             sizes="100vw"
-            className="object-cover"
+            className="object-contain object-top blur-xs"
           />
         )}
         <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/20 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-          <span className="text-xs tracking-widest uppercase text-blue-400 mb-2 block">
+          <span className="text-xs font-black tracking-widest uppercase text-blue-400 mb-2 block">
             Featured
           </span>
           <h2 className="font-serif text-xl font-bold text-white leading-tight group-hover:text-gray-300 transition-colors line-clamp-2">
@@ -50,14 +50,14 @@ export default function PostCard({ post }: Props) {
             alt={post.title}
             fill
             sizes="(max-width: 1024px) 100vw, 65vw"
-            className="object-cover"
+            className="object-contain object-top-right"
           />
         )}
         <div
           className="absolute inset-0 z-10"
           style={{
             background: post.thumbnail
-              ? `linear-gradient(to right, ${CARD_BG} 0%, ${CARD_BG} 28%, rgba(10,10,10,0.88) 45%, rgba(10,10,10,0.38) 65%, rgba(10,10,10,0.05) 100%)`
+              ? `linear-gradient(to right, ${CARD_BG} 0%, ${CARD_BG} 58%, rgba(10,10,10,0.88) 68%, rgba(10,10,10,0.38) 78%, rgba(10,10,10,0.05) 88%, transparent 100%)`
               : CARD_BG,
           }}
         />

@@ -145,6 +145,20 @@ body {
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  .prose [data-rehype-pretty-code-figure]::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2.5rem;
+    height: 100%;
+    background: linear-gradient(to right, transparent, #f9f9f9);
+    pointer-events: none;
+  }
 }
 
 .prose [data-rehype-pretty-code-title] {
@@ -197,4 +211,20 @@ body {
   border-radius: 0;
   cursor: auto;
   transition: none;
+}
+
+@media (max-width: 640px) {
+  .prose {
+    font-size: 0.9375rem;
+  }
+
+  .prose h1 { font-size: 1.5rem; }
+  .prose h2 { font-size: 1.25rem; }
+  .prose h3 { font-size: 1.1rem; }
+  .prose h4 { font-size: 1rem; }
+
+  .prose pre {
+    font-size: 0.75rem;
+    padding: 1em 1.25em;
+  }
 }
