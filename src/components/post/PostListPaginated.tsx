@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function PostListPaginated({ posts }: Props) {
-  const [visibleCount, setVisibleCount] = useState(SITE.POSTS_PER_PAGE);
+  const [visibleCount, setVisibleCount] = useState<number>(SITE.POSTS_PER_PAGE);
   const visible = posts.slice(0, visibleCount);
   const hasMore = visibleCount < posts.length;
 
