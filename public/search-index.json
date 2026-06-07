@@ -4,13 +4,71 @@
         "category": "NextJS",
         "title": "정적 블로그에 검색 기능 구현하기 — 빌드 타임 인덱스 + Fuse.js",
         "date": "2026-06-06",
-        "description": "서버 없이 Next.js 정적 블로그에 전문 검색을 붙이는 방법. API Route, Algolia, 빌드 타임 인덱스를 비교하고 최적화 과정에서 발생한 문제들을 기록한다.",
+        "description": "서버 없이 Next.js 정적 블로그에 전문 검색을 붙이는 방법. API Route, Algolia, 빌드 타임 인덱스를 비교하고 최적화 과정에서 발생한 문제들을 기록",
         "tags": [
             "nextjs",
             "search",
             "fuse.js",
             "performance",
             "static-site"
+        ]
+    },
+    {
+        "slug": "내장-유틸리티만으론-부족할-때-—-커스텀-유틸리티",
+        "category": "TypeScript",
+        "title": "내장 유틸리티만으론 부족할 때 — 커스텀 유틸리티",
+        "date": "2026-06-06",
+        "description": "타입을 다루다 보면 Partial이나 Readonly만으로 해결되지 않는 경우가 있다. DeepPartial, DeepReadonly 같은 커스텀 유틸리티 타입을 직접 구현하면서 알게 된 내용을 정리했다.",
+        "tags": [
+            "typescript",
+            "utility-types",
+            "mapped-types",
+            "conditional-types",
+            "deep-partial"
+        ]
+    },
+    {
+        "slug": "ReturnType이-어떻게-동작하는지-궁금했다면-—-infer-키워드-완전-분석",
+        "category": "TypeScript",
+        "title": "ReturnType이 어떻게 동작하는지 궁금했다면 — infer 키워드 완전 분석",
+        "date": "2026-06-06",
+        "description": "ReturnType, Parameters 같은 유틸리티 타입을 보다 보면 infer가 자주 등장한다. 조건부 타입 안에서 infer가 어떤 역할을 하는지 살펴보자",
+        "tags": [
+            "typescript",
+            "infer",
+            "conditional-types",
+            "utility-types",
+            "type-system"
+        ]
+    },
+    {
+        "slug": "함수-타입,-다시-쓰지-않아도-된다!-—-ReturnType,-Parameters,-Awaited",
+        "category": "TypeScript",
+        "title": "함수 타입, 다시 쓰지 않아도 된다! — ReturnType, Parameters, Awaited",
+        "date": "2026-06-06",
+        "description": "함수의 반환 타입이나 매개변수 타입을 다시 작성하고 있다면, 이미 있는 타입을 활용할 수 있다. ReturnType, Parameters, Awaited를 이용해 함수에서 타입을 추출하는 방법을 알아보자",
+        "tags": [
+            "typescript",
+            "ReturnType",
+            "Parameters",
+            "Awaited",
+            "utility-types",
+            "type-inference"
+        ]
+    },
+    {
+        "slug": "타입을-또-새로-정의할-필욘없다-—-Partial,-Pick,-Omit에-대해",
+        "category": "TypeScript",
+        "title": "타입을 또 새로 정의할 필욘없다 — Partial, Pick, Omit에 대해",
+        "date": "2026-06-06",
+        "description": "비슷한 타입을 반복해서 만들고 있다면 유틸리티 타입을 살펴보자. Partial, Required, Pick, Omit이 실제로 어느 상황에서 필요한지 정리하였음",
+        "tags": [
+            "typescript",
+            "utility-types",
+            "partial",
+            "pick",
+            "omit",
+            "required"
         ]
     },
     {

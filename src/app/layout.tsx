@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Playfair_Display } from 'next/font/google';
+import { Geist, Geist_Mono, Playfair_Display, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -20,6 +20,13 @@ const playfairDisplay = Playfair_Display({
   subsets: ['latin'],
 });
 
+const cormorantGaramond = Cormorant_Garamond({
+  variable: '--font-cormorant',
+  subsets: ['latin'],
+  weight: ['600', '700'],
+});
+
+
 export const metadata: Metadata = {
   title: {
     default: SITE.NAME,
@@ -36,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable}`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable}`}
     >
       <body className="min-h-screen flex flex-col bg-white">
         <Header />
