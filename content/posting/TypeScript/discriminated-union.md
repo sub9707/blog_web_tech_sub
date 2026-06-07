@@ -1,6 +1,6 @@
 ---
 title: "Discriminated Union으로 상태 모델링하기"
-date: "2026-06-05"
+date: "2025-11-08"
 description: "불가능한 상태를 타입으로 원천 차단하는 Discriminated Union 패턴, 실전 상태 모델링, React와의 조합까지"
 tags: ["typescript", "discriminated-union", "state-modeling", "type-safety", "react"]
 thumbnail: "/assets/thumbnails/discriminated-union.png"

@@ -1,6 +1,6 @@
 ---
 title: "함수 타입, 다시 쓰지 않아도 된다! — ReturnType, Parameters, Awaited"
-date: "2026-06-06"
+date: "2025-11-24"
 description: "함수의 반환 타입이나 매개변수 타입을 다시 작성하고 있다면, 이미 있는 타입을 활용할 수 있다. ReturnType, Parameters, Awaited를 이용해 함수에서 타입을 추출하는 방법을 알아보자"
 tags: ["typescript", "ReturnType", "Parameters", "Awaited", "utility-types", "type-inference"]
 thumbnail: "/assets/thumbnails/returntype-parameters-awaited.png"

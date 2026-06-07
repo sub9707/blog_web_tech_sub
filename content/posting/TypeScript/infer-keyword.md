@@ -1,6 +1,6 @@
 ---
 title: "ReturnType이 어떻게 동작하는지 궁금했다면 — infer 키워드 완전 분석"
-date: "2026-06-06"
+date: "2025-11-21"
 description: "ReturnType, Parameters 같은 유틸리티 타입을 보다 보면 infer가 자주 등장한다. 조건부 타입 안에서 infer가 어떤 역할을 하는지 살펴보자"
 tags: ["typescript", "infer", "conditional-types", "utility-types", "type-system"]
 thumbnail: "/assets/thumbnails/infer-keyword.png"

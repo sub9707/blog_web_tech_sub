@@ -1,6 +1,6 @@
 ---
 title: "타입을 또 새로 정의할 필욘없다 — Partial, Pick, Omit에 대해"
-date: "2026-06-06"
+date: "2025-11-27"
 description: "비슷한 타입을 반복해서 만들고 있다면 유틸리티 타입을 살펴보자. Partial, Required, Pick, Omit이 실제로 어느 상황에서 필요한지 정리하였음"
 tags: ["typescript", "utility-types", "partial", "pick", "omit", "required"]
 thumbnail: "/assets/thumbnails/utility-types-partial-pick-omit.png"

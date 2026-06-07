@@ -1,6 +1,6 @@
 ---
 title: "unknown vs any vs never — 그동안 막 썼다면"
-date: "2026-06-05"
+date: "2025-11-17"
 description: "TypeScript 타입 시스템의 극단에 위치한 세 가지 타입, any·unknown·never가 각각 어떤 의미를 갖고 언제 써야 하는지 정리함"
 tags: ["typescript", "unknown", "any", "never", "type-safety", "type-system"]
 thumbnail: "/assets/thumbnails/unknown-any-never.png"
