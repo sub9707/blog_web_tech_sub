@@ -14,9 +14,11 @@ type Partial<T> = {
 };
 ```
 
-처음 보면 "이게 뭔 문법이지?" 싶다. `in`이 왜 여기 있고, `keyof`가 뭘 하는 건지.
+처음 보면 "이게 뭔 문법이지?" 싶다. 
 
-근데 이걸 이해하면 `Partial`, `Required`, `Readonly`, `Record`가 전부 같은 패턴으로 만들어졌다는 게 보인다. 
+Javascript의 반복문 문법인 `in`이 왜 여기 있고, `keyof`가 뭘 하는 건지 어리둥절 하기만 하다.
+
+근데 이해하게되면 `Partial`, `Required`, `Readonly`, `Record`가 전부 같은 패턴으로 만들어졌다는 게 보인다. 
 
 TypeScript 내장 유틸리티 타입의 절반이 이 구조에서 나온다.
 
@@ -68,7 +70,7 @@ type Copy<T> = {
 };
 ```
 
-`K in keyof T`는 `T`의 모든 키를 하나씩 순회한다는 뜻이다. 
+`K in keyof T`는 Javascript의 반복문 문법과 같이 `T`의 모든 키를 하나씩 순회한다는 뜻이다. 
 
 각 키 `K`에 대해 값 타입을 `T[K]`로 그대로 가져온다.
 
@@ -100,10 +102,7 @@ type Mutable<T> = {
 
 `Required`가 `Partial`의 반대인 이유가 여기에 있다.
 
-<!-- 이미지: Mapped Type 수식어 조합 정리표
-     - 행: [K in keyof T]?, [K in keyof T]-?, readonly [K in keyof T], -readonly [K in keyof T]
-     - 열: 수식어, 하는 일, 해당 내장 유틸리티
-     - 각 조합이 어떤 결과를 만드는지 한눈에 비교하는 표 형태 -->
+![Mapped Type 수식어 조합 정리표](/assets/typescript/Mapped-type-combination-table.png)
 
 <br/>
 
@@ -187,12 +186,7 @@ type StringFields = OnlyStrings<Mixed>;
 
 앞에서 만든 `PickByValue`가 바로 이 패턴이다.
 
-<!-- 이미지: as 절로 키 필터링 동작 원리
-     - Mixed 인터페이스의 4개 필드를 나열
-     - T[K] extends string 조건 검사 흐름
-     - string인 필드(name, email): K 유지 → 결과 타입에 포함
-     - string이 아닌 필드(age, active): never → 결과 타입에서 제거
-     - 최종 { name: string; email: string } 결과 표시 -->
+![as 절로 키 필터링 동작 원리](/assets/typescript/mapped-type-filtering.png)
 
 <br/>
 
@@ -316,4 +310,4 @@ type Example<T> = {
 - `?`, `readonly`, `-?`, `-readonly` — 수식어
 - `as` — 키 이름 변환 또는 제거
 
-`Partial`, `Required`, `Readonly`, `Record`, `Pick`, `Omit`이 전부 이 조합으로 만들어졌다. 구현을 직접 읽어보면 생각보다 별거 없다는 걸 알게 된다.
+`Partial`, `Required`, `Readonly`, `Record`, `Pick`, `Omit`이 전부 이 조합으로 만들어졌다. 

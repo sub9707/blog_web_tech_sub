@@ -20,9 +20,7 @@ JSON은 중첩이 몇 단계인지 모른다.
 
 숫자일 수도 있고, 문자열일 수도 있고, 배열이나 객체일 수도 있다. 
 
-그 안에 또 객체가 있을 수 있다. 
-
-이를 타입으로 표현하려면 타입이 자기 자신을 참조해야 한다.
+그 안에 또 객체가 있을 수 있는데, 이를 타입으로 표현하려면 타입이 자기 자신을 참조해야 한다.
 
 <br/>
 
@@ -42,7 +40,7 @@ type Json =
 
 `Json` 타입 안에 `Json`이 또 있다. 배열의 요소도 `Json`이고, 객체의 값도 `Json`이다.
 
-이게 재귀다.
+이게 바로 재귀이다.
 
 ```ts
 const data: Json = {
@@ -60,19 +58,13 @@ const data: Json = {
 
 중첩이 몇 단계든 타입이 맞다. `any` 없이 JSON을 표현할 수 있다.
 
-<!-- 이미지: Json 재귀 타입 구조 시각화
-     - 중앙에 Json 타입 박스
-     - string | number | boolean | null 은 터미널 노드(더 이상 중첩 없음)
-     - Json[] 화살표가 다시 Json 박스를 가리킴 (배열 요소가 Json)
-     - { [key: string]: Json } 화살표가 다시 Json 박스를 가리킴 (값이 Json)
-     - 재귀 참조가 순환 화살표로 표현되는 구조
-     - 실제 data 예시 객체에서 각 값이 어느 브랜치에 해당하는지 색으로 표시 -->
+![Json 재귀 타입 구조 시각화](/assets/typescript/json-recursive.png)
 
 <br/>
 
 ## 트리 구조
 
-파일 시스템, 댓글 스레드, 메뉴 구조 등 계층 구조를 가진 데이터는 전부 트리다.
+파일 시스템, 댓글 스레드, 메뉴 구조 등 계층 구조를 가진 데이터는 거의 모두 트리이다.
 
 ```ts
 interface TreeNode {
@@ -82,7 +74,7 @@ interface TreeNode {
 }
 ```
 
-`children`이 `TreeNode[]`이기 때문에 각 자식도 다시 `children`을 가질 수 있다.
+`children`이 `TreeNode[]`이기 때문에 각 자식들도 다시 `children`을 가질 수 있다.
 
 ```ts
 const menu: TreeNode = {
@@ -125,7 +117,9 @@ function findNode(tree: TreeNode, id: number): TreeNode | null {
 }
 ```
 
-타입과 함수 구조가 같은 재귀 패턴을 따른다. 데이터 구조가 재귀면 그걸 처리하는 함수도 자연스럽게 재귀가 된다.
+타입과 함수 구조가 같은 재귀 패턴을 따른다. 
+
+데이터 구조가 재귀면 그걸 처리하는 함수도 자연스럽게 재귀가 된다.
 
 <br/>
 
@@ -222,14 +216,11 @@ type H = Head<[string, number, boolean]>; // string
 type T = Tail<[string, number, boolean]>; // [number, boolean]
 ```
 
-튜플을 분해하는 재귀 패턴이다. 타입 수준 연결리스트처럼 동작한다.
+튜플을 분해하는 재귀 패턴이다. 
 
-<!-- 이미지: 재귀 조건부 타입 동작 흐름
-     - Flatten<string[][]> 처리 과정을 단계별로 표시
-     - 1단계: string[][] → E = string[] → Flatten<string[]>
-     - 2단계: string[] → E = string → Flatten<string>
-     - 3단계: string는 배열 아님 → string 반환
-     - 각 단계가 아래로 연결된 흐름도 형태 -->
+타입 수준 연결리스트처럼 동작한다.
+
+![재귀 조건부 타입 동작 흐름](/assets/typescript/flatten-diagram.png)
 
 <br/>
 
@@ -242,7 +233,9 @@ TypeScript는 재귀 타입의 깊이가 너무 깊어지면 에러를 낸다.
 type Bad<T> = T extends object ? { [K in keyof T]: Bad<T[K]> } : T;
 ```
 
-실제로는 특정 깊이 이상으로 중첩된 데이터는 없으니까 크게 문제가 되진 않는다. 하지만 재귀 타입을 과도하게 중첩하면 컴파일 성능에 영향을 준다.
+실제로는 특정 깊이 이상으로 중첩된 데이터는 없으니까 크게 문제가 되진 않는다.
+
+하지만 재귀 타입을 과도하게 중첩하면 컴파일 성능에 영향을 준다.
 
 <br/>
 
@@ -261,7 +254,9 @@ type DeepPartial<T, Depth extends number = 5> = Depth extends 0
 type Prev = [never, 0, 1, 2, 3, 4, 5, ...number[]];
 ```
 
-깊이 카운터를 튜플 인덱스로 감소시키는 패턴이다. 실용적으로 쓸 일은 많지 않지만, 라이브러리 타입에서 자주 등장한다.
+깊이 카운터를 튜플 인덱스로 감소시키는 패턴이다. 
+
+자주 쓸 일은 많지 않지만, 라이브러리의 타입에서 자주 등장한다.
 
 <br/>
 
