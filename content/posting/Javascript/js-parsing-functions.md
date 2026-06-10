@@ -1,7 +1,7 @@
 ---
 title: "JavaScript 모든 파싱을 알아보자"
 date: "2026-01-31"
-description: "parseInt부터 JSON.parse, URL, DOMParser, TextDecoder까지. JS에서 '읽고 변환'하는 함수들을 전부 알아보았다."
+description: "parseInt부터 JSON.parse, URL, DOMParser, TextDecoder까지. JS에서 '읽고 변환'하는 함수들을 전부 파헤쳐보자"
 tags: ["javascript", "parsing", "JSON", "URL", "fetch", "DOMParser"]
 thumbnail: "/assets/thumbnails/js-parsing-functions.png"
 ---
