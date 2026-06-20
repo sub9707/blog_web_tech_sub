@@ -60,6 +60,27 @@ ExecutionContext {
 
 <br/>
 
+### VariableEnvironment vs LexicalEnvironment
+
+초기에는 `VariableEnvironment`와 `LexicalEnvironment`가 동일한 내용을 가진다. 실행이 진행되면서 `LexicalEnvironment`는 현재 스코프의 상태를 반영해 업데이트되지만, `VariableEnvironment`는 생성 시점의 초기 상태를 그대로 유지한다.
+
+실질적인 차이는 `var`에서 드러난다. `var` 선언은 `VariableEnvironment`에 등록된다. 블록 내부에서 `var`를 선언해도 함수 스코프 전체에서 유효한 이유가 여기 있다.
+
+```js
+function test() {
+  if (true) {
+    var x = 1; // VariableEnvironment에 등록 → 함수 스코프
+    let y = 2; // LexicalEnvironment에 등록 → 블록 스코프
+  }
+  console.log(x); // 1 (var는 블록을 벗어나도 살아있음)
+  console.log(y); // ReferenceError (let은 블록 스코프)
+}
+```
+
+`let`/`const`는 `LexicalEnvironment`에만 등록되고, 블록이 끝나면 해당 블록의 `LexicalEnvironment`가 스코프에서 벗어난다.
+
+<br/>
+
 ---
 
 ## 렉시컬 환경 (Lexical Environment)
@@ -301,26 +322,221 @@ for (var i = 0; i < 3; i++) {
 
 `this`가 무엇을 가리키는지는 함수가 **어떻게 호출됐는지**에 따라 달라진다.
 
+<br/>
+
+### 규칙 1 — 기본 바인딩 (Default Binding)
+
+아무 컨텍스트 없이 단독으로 함수를 호출하면 `this`는 전역 객체다.
+
 ```js
-const obj = {
-  name: "Alice",
-
-  // 일반 함수 — 호출 방식에 따라 this 결정
-  greet() {
-    console.log(this.name); // obj.greet()로 호출 → this = obj → "Alice"
-  },
-
-  // 화살표 함수 — 선언 시점의 외부 this를 캡처 (ThisBinding 없음)
-  greetArrow: () => {
-    console.log(this.name); // 전역 this → undefined (strict mode)
-  },
-};
-
-obj.greet();      // "Alice"
-obj.greetArrow(); // undefined
+function show() {
+  console.log(this);
+}
+show(); // 브라우저: window / Node.js: global
 ```
 
-화살표 함수는 자체적인 `ThisBinding`을 갖지 않는다. 선언 위치의 외부 실행 컨텍스트에서 `this`를 찾는다. 이는 `[[Environment]]`로 외부 렉시컬 환경을 참조하는 것과 같은 원리다.
+단, strict mode에서는 `undefined`다.
+
+```js
+"use strict";
+function show() {
+  console.log(this); // undefined
+}
+show();
+```
+
+<br/>
+
+### 규칙 2 — 암묵적 바인딩 (Implicit Binding)
+
+객체의 메서드로 호출되면 `this`는 그 객체다.
+
+```js
+const obj = {
+  name: "Sub",
+  greet() {
+    console.log(this.name);
+  },
+};
+obj.greet(); // "Sub" — this = obj
+```
+
+주의할 점은 메서드를 변수에 꺼내서 호출하면 암묵적 바인딩이 깨진다.
+
+```js
+const fn = obj.greet;
+fn(); // undefined — 기본 바인딩으로 떨어짐 (this = window)
+```
+
+콜백으로 넘길 때도 마찬가지다. `setTimeout(obj.greet, 100)`처럼 넘기면 `obj.greet`는 단순 함수 참조로 전달되어 `this`를 잃는다.
+
+<br/>
+
+### 규칙 3 — 명시적 바인딩 (Explicit Binding)
+
+`call`, `apply`, `bind`로 `this`를 직접 지정한다.
+
+```js
+function greet(greeting) {
+  console.log(`${greeting}, ${this.name}`);
+}
+const user = { name: "Sub" };
+
+greet.call(user, "Hello");     // "Hello, Sub" — 인수를 쉼표로 나열
+greet.apply(user, ["Hello"]);  // "Hello, Sub" — 인수를 배열로 전달
+```
+
+`call`과 `apply`는 즉시 실행한다는 점은 같다. 차이는 인수를 넘기는 방식뿐이다.
+
+`bind`는 즉시 실행하지 않고 `this`가 고정된 새 함수를 반환한다.
+
+```js
+const bound = greet.bind(user);
+bound("Hello"); // "Hello, Sub" — 나중에 호출해도 this가 user로 고정
+```
+
+<br/>
+
+### 규칙 4 — new 바인딩 (new Binding)
+
+`new`로 함수를 호출하면 엔진이 빈 객체를 만들고, 그 객체가 `this`가 된다.
+
+```js
+function Person(name) {
+  this.name = name;
+}
+const p = new Person("Sub");
+console.log(p.name); // "Sub"
+```
+
+내부적으로 일어나는 일:
+
+1. 빈 객체 `{}` 생성
+2. `Person.prototype`을 새 객체의 프로토타입으로 연결
+3. `this`를 새 객체로 바인딩한 채로 `Person` 실행
+4. 함수가 객체를 명시적으로 return하지 않으면 새 객체를 자동 반환
+
+<br/>
+
+### 화살표 함수 — ThisBinding 없음
+
+화살표 함수는 자체적인 `ThisBinding`을 갖지 않는다. 선언 위치의 외부 실행 컨텍스트에서 `this`를 찾는다. 이를 **렉시컬 this**라고 한다.
+
+```js
+const obj = {
+  name: "Sub",
+  greet() {
+    setTimeout(function () {
+      console.log(this.name); // undefined — 기본 바인딩 (this = window)
+    }, 100);
+
+    setTimeout(() => {
+      console.log(this.name); // "Sub" — greet()의 this를 그대로 캡처
+    }, 100);
+  },
+};
+obj.greet();
+```
+
+화살표 함수는 `call`/`apply`/`bind`로도 `this`를 바꿀 수 없다. `ThisBinding` 자체가 없기 때문이다.
+
+```js
+const arrow = () => console.log(this);
+arrow.call({ name: "Sub" }); // 여전히 바깥 스코프의 this (변경 불가)
+```
+
+이게 React 클래스 컴포넌트 시절에 생성자에서 `this.handleClick = this.handleClick.bind(this)`를 해야 했던 이유고, 이후 화살표 함수로 자연스럽게 해결된 이유다.
+
+<br/>
+
+---
+
+## ES3에서 ES5로 — 실행 컨텍스트 명세의 변화
+
+지금까지 다룬 `LexicalEnvironment`, `EnvironmentRecord`, `OuterReference` 개념은 ES5(2009) 이후의 명세다. ES3 시절에는 실행 컨텍스트를 전혀 다른 용어로 정의했다.
+
+<br/>
+
+### ES3 (1999) — Variable Object와 Scope Chain
+
+ES3의 실행 컨텍스트는 세 요소로 구성됐다.
+
+```
+ExecutionContext (ES3) {
+  Variable Object (VO),  // 현재 스코프의 변수/함수/arguments 보관
+  Scope Chain,           // VO들의 배열 — 현재 VO부터 전역 VO까지
+  thisValue              // this
+}
+```
+
+**Variable Object (VO)** 는 현재 컨텍스트의 변수, 함수 선언, `arguments`를 저장하는 객체다.
+
+- 전역 컨텍스트: Global Object(`window`) 자체가 VO 역할
+- 함수 컨텍스트: **Activation Object (AO)** 가 VO 역할 — 함수 호출 시 생성
+
+**Scope Chain** 은 VO들을 담은 배열이었다. 변수를 탐색할 때 배열 앞에서부터 순서대로 찾았다.
+
+```
+// foo()가 실행 중일 때 Scope Chain
+[
+  foo의 AO,   // { x: 1, arguments: {...} }
+  전역 VO     // { globalVar: "전역", ... }
+]
+```
+
+<br/>
+
+### ES5 (2009) — LexicalEnvironment와 명세 정비
+
+ES5에서 실행 컨텍스트 명세가 전면 재정의됐다.
+
+| ES3 | ES5 |
+|-----|-----|
+| Variable Object / Activation Object | Environment Record |
+| Scope Chain (배열) | OuterReference (체인) |
+| thisValue | ThisBinding |
+
+ES3의 Scope Chain은 VO들을 담은 평탄한 배열이었지만, ES5의 OuterReference는 환경 객체들이 서로를 참조하는 연결 구조다. 용어뿐 아니라 모델 자체가 더 정교해졌다.
+
+**strict mode 도입** 이 ES5의 핵심 변화다.
+
+```js
+"use strict";
+```
+
+strict mode가 바꾼 것들:
+
+- `this` 기본 바인딩: 전역 객체 → `undefined`로 변경
+  ```js
+  function show() {
+    console.log(this); // ES3: window / ES5 strict: undefined
+  }
+  show();
+  ```
+- `with` 문 금지 (`with`는 Scope Chain에 임의 객체를 삽입해 예측 불가한 동작을 유발했음)
+- `arguments.callee` 접근 금지
+- 선언 없이 변수 사용 금지 (ES3에서는 암묵적 전역 변수 생성이 가능했음)
+  ```js
+  undeclaredVar = 1; // ES3: 전역 변수로 암묵적 생성 / ES5 strict: ReferenceError
+  ```
+
+<br/>
+
+### ES6 (2015) — 블록 스코프와 TDZ
+
+ES6이 실행 컨텍스트 동작에 가장 큰 실질적 변화를 가져왔다.
+
+**`let`/`const` 추가**로 블록 스코프가 생겼다. `{}` 블록마다 새로운 `LexicalEnvironment`가 생성된다. ES3/ES5에서는 `var`만 있었기 때문에 블록 내부 선언도 항상 함수 스코프에 귀속됐다.
+
+TDZ는 이때 등장한 개념이다. ES3/ES5에서는 선언 전 접근이 항상 `undefined`였다(var 호이스팅). ES6부터 `let`/`const`는 생성 단계에서 등록은 되지만 초기화되지 않은 상태로 유지되어 TDZ가 발생한다.
+
+**화살표 함수** 추가로 `ThisBinding`이 없는 함수가 생겼다. 클래스 컴포넌트에서 `bind(this)`가 필요했던 문제가 화살표 함수로 해결된 것도 ES6의 결과다.
+
+```
+ES3 (1999) — var만, this 기본 = 전역 객체, Scope Chain 배열, with 허용
+ES5 (2009) — 명세 정비, strict mode, this 기본 strict = undefined, with 금지
+ES6 (2015) — let/const, 블록 스코프, TDZ, 화살표 함수(렉시컬 this)
+```
 
 <br/>
 
