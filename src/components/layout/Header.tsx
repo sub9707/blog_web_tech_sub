@@ -93,9 +93,9 @@ export default function Header() {
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </Link>
-            <div className="py-3.5 flex items-center gap-2">
+            <div className="py-3.5 flex items-center justify-between">
               <span className="text-sm text-gray-700 dark:text-slate-300">Theme</span>
-              <ThemeToggle />
+              <ThemeToggle inline />
             </div>
           </nav>
         </div>

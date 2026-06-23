@@ -37,7 +37,11 @@ const OPTIONS: { value: ThemeOption; label: string; icon: React.ReactNode }[] = 
   },
 ];
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  inline?: boolean;
+}
+
+export default function ThemeToggle({ inline = false }: ThemeToggleProps) {
   const { theme, setTheme, resolvedTheme } = useTheme();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -62,8 +66,31 @@ export default function ThemeToggle() {
   }, [open]);
 
   if (!mounted) {
+    return <span className="w-4 h-4" />;
+  }
+
+  if (inline) {
     return (
-      <button type="button" aria-label="테마 선택" className="w-4 h-4 text-gray-500 dark:text-slate-400" />
+      <div className="flex items-center gap-1">
+        {OPTIONS.map(({ value, label, icon }) => {
+          const isActive = theme === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              aria-label={label}
+              onClick={() => setTheme(value)}
+              className={`flex items-center justify-center w-8 h-8 rounded-md transition-colors ${
+                isActive
+                  ? 'bg-gray-100 dark:bg-navy-700 text-gray-900 dark:text-slate-100'
+                  : 'text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-navy-700 hover:text-gray-700 dark:hover:text-slate-300'
+              }`}
+            >
+              {icon}
+            </button>
+          );
+        })}
+      </div>
     );
   }
 
