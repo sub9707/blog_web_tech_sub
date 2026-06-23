@@ -85,13 +85,20 @@ export default function ParticleText() {
     const posAttr = new THREE.BufferAttribute(positions, 3);
     geo.setAttribute('position', posAttr);
 
+    const isDark = () => document.documentElement.classList.contains('dark');
+
     const mat = new THREE.PointsMaterial({
-      color: 0x1a1a1a,
+      color: isDark() ? 0xf1f5f9 : 0x1a1a1a,
       size: 0.03,
       transparent: true,
       opacity: 0.85,
       sizeAttenuation: true,
     });
+
+    const themeObserver = new MutationObserver(() => {
+      mat.color.setHex(isDark() ? 0xf1f5f9 : 0x1a1a1a);
+    });
+    themeObserver.observe(document.documentElement, { attributeFilter: ['class'] });
 
     const points = new THREE.Points(geo, mat);
     scene.add(points);
@@ -236,6 +243,7 @@ export default function ParticleText() {
       window.removeEventListener('mouseup', onMouseUp);
       el.removeEventListener('mouseleave', onMouseLeave);
       window.removeEventListener('resize', onResize);
+      themeObserver.disconnect();
       geo.dispose();
       mat.dispose();
       renderer.dispose();
