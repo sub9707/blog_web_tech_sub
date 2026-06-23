@@ -26,7 +26,10 @@ function rehypeUnwrapCustomBlocks() {
 }
 
 const prettyCodeOptions: Options = {
-  theme: 'github-light',
+  theme: {
+    light: 'github-light',
+    dark: 'github-dark-dimmed',
+  },
   keepBackground: false,
 };
 

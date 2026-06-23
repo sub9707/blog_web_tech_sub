@@ -1,4 +1,4 @@
-﻿import { SITE } from '@/constants/site';
+import { SITE } from '@/constants/site';
 import ParticleColumn from '@/components/about/ParticleColumn';
 
 export const metadata = {
@@ -16,13 +16,13 @@ export default function AboutPage() {
     <div className="max-w-6xl mx-auto px-6 py-16">
 
       {/* Masthead - full width */}
-      <div className="border-t-4 border-gray-500 border-b-2 py-6 mb-10 space-y-3">
-        <br /> 
-        <span className="text-xs tracking-widest uppercase text-gray-400">About this blog</span>
-        <h1 className="text-8xl sm:text-9xl font-bold text-gray-900 leading-none tracking-tight" style={{ fontFamily: 'var(--font-cormorant)' }}>
+      <div className="border-t-4 border-gray-500 dark:border-navy-400 border-b-2 border-b-gray-200 dark:border-b-navy-600 py-6 mb-10 space-y-3">
+        <br />
+        <span className="text-xs tracking-widest uppercase text-gray-400 dark:text-slate-500">About this blog</span>
+        <h1 className="text-8xl sm:text-9xl font-bold text-gray-900 dark:text-slate-100 leading-none tracking-tight" style={{ fontFamily: 'var(--font-cormorant)' }}>
           About
         </h1>
-        <br /> 
+        <br />
       </div>
 
       {/* Body - 2 column */}
@@ -30,18 +30,18 @@ export default function AboutPage() {
 
         {/* Left: content */}
         <div className="flex-1 min-w-0 space-y-8">
-<br /> 
+<br />
         {/* Lede */}
-        <div className="relative pl-8 pr-2 py-2 border-l-4 border-gray-500 italic">
-          <span className="absolute top-0 left-2 font-serif text-6xl text-gray-300 leading-none select-none">&ldquo;</span>
-          <p className="text-xl sm:text-2xl text-gray-800 leading-loose" style={{ fontFamily: "'BookkMyungjo', serif" }}>
+        <div className="relative pl-8 pr-2 py-2 border-l-4 border-gray-500 dark:border-navy-400 italic">
+          <span className="absolute top-0 left-2 font-serif text-6xl text-gray-300 dark:text-navy-600 leading-none select-none">&ldquo;</span>
+          <p className="text-xl sm:text-2xl text-gray-800 dark:text-slate-300 leading-loose" style={{ fontFamily: "'BookkMyungjo', serif" }}>
             <span className="block mb-1"> &nbsp; 여러 블로그를 전전하다, 유료 기능에 부닥쳐</span>
             <span className="block"><b>그냥 내가 만드는 게 낫겠다</b></span>
-            <span className="block">라는 마음으로 시작한 개인 웹 테크 블로그입니다.<span className="font-serif text-5xl text-gray-300 leading-none select-none align-bottom">&rdquo;</span></span>
+            <span className="block">라는 마음으로 시작한 개인 웹 테크 블로그입니다.<span className="font-serif text-5xl text-gray-300 dark:text-navy-600 leading-none select-none align-bottom">&rdquo;</span></span>
           </p>
         </div>
-<br /> 
-        <div className="space-y-5 text-lg text-gray-600 leading-loose">
+<br />
+        <div className="space-y-5 text-lg text-gray-600 dark:text-slate-400 leading-loose">
           <p>
             확실히 원하는 대로 커스텀 구현을 할 수 있는 게 너무 좋습니다. <br />
             블로그에 넣고 싶은 것을 다 넣을 수 있으니, 스스로 무궁무진한 시도가 기대됩니다.
@@ -57,13 +57,13 @@ export default function AboutPage() {
             트러블슈팅 기록을 통해 마주쳤던 에러와 해결 방법을 오답노트처럼 남겨두고 있습니다.
           </p>
         </div>
-        <br />         
+        <br />
 
-        <div className="border-t border-gray-200" />
-        <br />          
+        <div className="border-t border-gray-200 dark:border-navy-700" />
+        <br />
 
-        <div className="space-y-4 text-lg text-gray-600 leading-loose">
-          <h2 className="font-serif text-2xl font-bold text-gray-900">Technical Notes</h2>
+        <div className="space-y-4 text-lg text-gray-600 dark:text-slate-400 leading-loose">
+          <h2 className="font-serif text-2xl font-bold text-gray-900 dark:text-slate-200">Technical Notes</h2>
           <p>
             본 블로그는 개인 홈서버 배포용·학습용으로 SEO는 별도로 기획하지 않았습니다.
             데이터베이스 없이 빌드 타임에 콘텐츠를 처리하여 가장 빠른 방식으로 포스팅을
@@ -76,7 +76,7 @@ export default function AboutPage() {
             href="https://subdevpi.mywire.org/posts/DevOps/%EB%9D%BC%EC%A6%88%EB%B2%A0%EB%A6%AC%ED%8C%8C%EC%9D%B4-%ED%99%88%EC%84%9C%EB%B2%84%EC%97%90-Next.js-%EB%B8%94%EB%A1%9C%EA%B7%B8-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-gray-500 underline underline-offset-4 decoration-gray-300 hover:text-gray-900 hover:decoration-gray-600 transition-colors"
+            className="inline-flex items-center gap-1.5 text-gray-500 dark:text-slate-400 underline underline-offset-4 decoration-gray-300 dark:decoration-navy-500 hover:text-gray-900 dark:hover:text-slate-200 hover:decoration-gray-600 dark:hover:decoration-navy-400 transition-colors"
           >
             CI/CD와 배포 구현 플로우 포스팅
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -85,16 +85,16 @@ export default function AboutPage() {
           </a>
         </div>
 
-        <br />            <br />            <br/>
+        <br /><br /><br />
         <div>
-          <h2 className="text-xs tracking-widest uppercase text-gray-400 pb-3 mb-4 border-b border-gray-200">
+          <h2 className="text-xs tracking-widest uppercase text-gray-400 dark:text-slate-500 pb-3 mb-4 border-b border-gray-200 dark:border-navy-700">
             Topics
           </h2>
           <div className="flex flex-wrap gap-2">
             {TOPICS.map((topic) => (
               <span
                 key={topic}
-                className="px-2.5 py-1 text-xs border border-gray-300 text-gray-600 tracking-wide"
+                className="px-2.5 py-1 text-xs border border-gray-300 dark:border-navy-600 text-gray-600 dark:text-slate-400 tracking-wide"
               >
                 {topic}
               </span>
@@ -102,21 +102,21 @@ export default function AboutPage() {
           </div>
         </div>
 
-        <br />            <br />            <br/>
+        <br /><br /><br />
         <div>
-          <h2 className="text-xs tracking-widest uppercase text-gray-400 pb-3 mb-4 border-b border-gray-200">
+          <h2 className="text-xs tracking-widest uppercase text-gray-400 dark:text-slate-500 pb-3 mb-4 border-b border-gray-200 dark:border-navy-700">
             Built with
           </h2>
-          <ul className="flex flex-wrap gap-2 text-sm text-gray-600">
+          <ul className="flex flex-wrap gap-2 text-sm text-gray-600 dark:text-slate-400">
             <li>Next.js App Router</li>
-            <li className="text-gray-300">·</li>
+            <li className="text-gray-300 dark:text-navy-600">·</li>
             <li>TypeScript</li>
-            <li className="text-gray-300">·</li>
+            <li className="text-gray-300 dark:text-navy-600">·</li>
             <li>TailwindCSS</li>
-            <li className="text-gray-300">·</li>
+            <li className="text-gray-300 dark:text-navy-600">·</li>
             <li>Markdown</li>
-            <li className="text-gray-300">·</li>
-            <li>Cladue Code</li>
+            <li className="text-gray-300 dark:text-navy-600">·</li>
+            <li>Claude Code</li>
           </ul>
         </div>
 

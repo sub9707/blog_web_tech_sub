@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Dark mode: .dark 클래스 기반 */
+@variant dark (&:is(.dark *));
+
 @font-face {
   font-family: 'BookkMyungjo';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2302@1.0/BookkMyungjo-Lt.woff2') format('woff2');
@@ -7,17 +10,39 @@
   font-display: swap;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #111111;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+/* Navy dark theme 팔레트 */
+@theme {
+  --color-navy-950: #0a0f1a;
+  --color-navy-900: #0d1117;
+  --color-navy-800: #161b27;
+  --color-navy-750: #1a2035;
+  --color-navy-700: #1e2438;
+  --color-navy-600: #2d3450;
+  --color-navy-500: #3d4565;
+  --color-navy-400: #4d5678;
+  --color-navy-300: #6371a0;
+  --color-navy-200: #8390c0;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-playfair);
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --bg-surface: #f9fafb;
+  --bg-muted: #f3f4f6;
+  --border-base: #e5e7eb;
+  --border-subtle: #f3f4f6;
+}
+
+.dark {
+  --background: #0d1117;
+  --foreground: #e2e8f0;
+  --bg-surface: #161b27;
+  --bg-muted: #1e2438;
+  --border-base: #2d3450;
+  --border-subtle: #1e2438;
 }
 
 body {
@@ -33,10 +58,18 @@ body {
   background: #111111;
   color: #ffffff;
 }
+.dark ::selection {
+  background: #e2e8f0;
+  color: #0d1117;
+}
 
 ::-moz-selection {
   background: #111111;
   color: #ffffff;
+}
+.dark ::-moz-selection {
+  background: #e2e8f0;
+  color: #0d1117;
 }
 
 
@@ -48,12 +81,18 @@ body {
   display: none;
 }
 
-/* Markdown prose styles */
+/* ─────────────────────────────────────────
+   Markdown prose styles
+───────────────────────────────────────── */
 .prose {
   max-width: 72ch;
   color: #111111;
   line-height: 1.75;
   font-size: 1rem;
+}
+
+.dark .prose {
+  color: #cbd5e1;
 }
 
 .prose h1,
@@ -67,10 +106,19 @@ body {
   color: #111111;
 }
 
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  color: #e2e8f0;
+}
+
 .prose h1 { font-size: 1.875rem; }
 .prose h2 { font-size: 1.5rem; border-bottom: 1px solid #f0f0f0; padding-bottom: 0.4em; }
 .prose h3 { font-size: 1.25rem; }
 .prose h4 { font-size: 1.125rem; }
+
+.dark .prose h2 { border-bottom-color: #2d3450; }
 
 .prose p {
   margin-bottom: 1.25em;
@@ -81,14 +129,23 @@ body {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+.dark .prose a {
+  color: #93c5fd;
+}
 
 .prose a:hover {
   color: #555555;
+}
+.dark .prose a:hover {
+  color: #bfdbfe;
 }
 
 .prose strong {
   font-weight: 600;
   color: #111111;
+}
+.dark .prose strong {
+  color: #e2e8f0;
 }
 
 .prose ul,
@@ -110,11 +167,18 @@ body {
   color: #666666;
   font-style: italic;
 }
+.dark .prose blockquote {
+  border-left-color: #2d3450;
+  color: #94a3b8;
+}
 
 .prose hr {
   border: none;
   border-top: 1px solid #f0f0f0;
   margin: 2em 0;
+}
+.dark .prose hr {
+  border-top-color: #2d3450;
 }
 
 .prose table {
@@ -130,10 +194,18 @@ body {
   padding: 0.5em 0.75em;
   text-align: left;
 }
+.dark .prose th,
+.dark .prose td {
+  border-color: #2d3450;
+}
 
 .prose th {
   background: #f9f9f9;
   font-weight: 600;
+}
+.dark .prose th {
+  background: #1e2438;
+  color: #e2e8f0;
 }
 
 /* Code inline */
@@ -145,14 +217,35 @@ body {
   font-family: var(--font-mono), monospace;
   color: #e11d48;
 }
+.dark .prose code:not([data-language]) {
+  background: #1e2438;
+  color: #fb7185;
+}
 
-/* Code blocks (rehype-pretty-code) */
+/* ─────────────────────────────────────────
+   Code blocks (rehype-pretty-code dual theme)
+───────────────────────────────────────── */
 .prose [data-rehype-pretty-code-figure] {
   margin: 1.5em 0;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
   position: relative;
+}
+.dark .prose [data-rehype-pretty-code-figure] {
+  border-color: #2d3450;
+}
+
+/* dual theme 토글: dark 테마 블록은 기본 숨김 */
+[data-rehype-pretty-code-figure] [data-theme='dark'] {
+  display: none;
+}
+/* dark 모드에서 light 숨기고 dark 보이기 */
+.dark [data-rehype-pretty-code-figure] [data-theme='light'] {
+  display: none;
+}
+.dark [data-rehype-pretty-code-figure] [data-theme='dark'] {
+  display: block;
 }
 
 @media (max-width: 640px) {
@@ -166,6 +259,9 @@ body {
     background: linear-gradient(to right, transparent, #f9f9f9);
     pointer-events: none;
   }
+  .dark .prose [data-rehype-pretty-code-figure]::after {
+    background: linear-gradient(to right, transparent, #1e2438);
+  }
 }
 
 .prose [data-rehype-pretty-code-title] {
@@ -176,6 +272,11 @@ body {
   font-family: var(--font-mono), monospace;
   color: #666666;
 }
+.dark .prose [data-rehype-pretty-code-title] {
+  background: #1e2438;
+  border-bottom-color: #2d3450;
+  color: #94a3b8;
+}
 
 .prose pre {
   margin: 0;
@@ -184,6 +285,9 @@ body {
   background: #f9f9f9 !important;
   font-size: 0.875rem;
   line-height: 1.7;
+}
+.dark .prose pre {
+  background: #161b27 !important;
 }
 
 .prose pre code {

@@ -24,10 +24,10 @@ export default function MobileTableOfContents({ headings }: Props) {
   };
 
   return (
-    <div className="xl:hidden mb-10 border border-gray-200 rounded-lg overflow-hidden">
+    <div className="xl:hidden mb-10 border border-gray-200 dark:border-navy-600 rounded-lg overflow-hidden">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-navy-800 text-sm font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-navy-700 transition-colors"
         aria-expanded={open}
       >
         <span className="flex items-center gap-2">
@@ -54,13 +54,13 @@ export default function MobileTableOfContents({ headings }: Props) {
       </button>
 
       {open && (
-        <ul className="px-4 py-3 space-y-2 bg-white border-t border-gray-100">
+        <ul className="px-4 py-3 space-y-2 bg-white dark:bg-navy-900 border-t border-gray-100 dark:border-navy-700">
           {headings.map(({ id, text, level }) => (
             <li key={id} className={level === 3 ? 'pl-3' : ''}>
               <a
                 href={`#${id}`}
                 onClick={(e) => handleClick(e, id)}
-                className="block text-sm text-gray-600 hover:text-gray-900 py-0.5 transition-colors"
+                className="block text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 py-0.5 transition-colors"
               >
                 {text}
               </a>

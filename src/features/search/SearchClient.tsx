@@ -84,12 +84,12 @@ export default function SearchClient() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="검색어를 입력하세요..."
-          className="w-full border-b-2 border-gray-200 py-3 pr-10 text-gray-900 placeholder-gray-400 outline-none focus:border-gray-900 transition-colors text-base bg-transparent"
+          className="w-full border-b-2 border-gray-200 dark:border-navy-600 py-3 pr-10 text-gray-900 dark:text-slate-200 placeholder-gray-400 dark:placeholder-slate-500 outline-none focus:border-gray-900 dark:focus:border-slate-300 transition-colors text-base bg-transparent"
           autoFocus
           aria-label="검색"
         />
         <svg
-          className="absolute right-0 top-3.5 text-gray-400"
+          className="absolute right-0 top-3.5 text-gray-400 dark:text-slate-500"
           width="20"
           height="20"
           viewBox="0 0 24 24"
@@ -108,14 +108,14 @@ export default function SearchClient() {
       {hasQuery && (
         <div className="mt-8">
           {!ready ? (
-            <p className="text-sm text-gray-400">로딩 중...</p>
+            <p className="text-sm text-gray-400 dark:text-slate-500">로딩 중...</p>
           ) : results.length === 0 ? (
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-400 dark:text-slate-500">
               &apos;{query}&apos;에 대한 검색 결과가 없습니다.
             </p>
           ) : (
             <>
-              <p className="text-xs text-gray-400 mb-4">{results.length}개의 결과</p>
+              <p className="text-xs text-gray-400 dark:text-slate-500 mb-4">{results.length}개의 결과</p>
               <ul>
                 {results.map((result) => (
                   <SearchResultItem

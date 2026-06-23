@@ -15,9 +15,8 @@ const TYPE_SPEED = 70;
 const DELETE_INTERVAL = 90;
 const PAUSE_AFTER_TYPE = 1000;
 const PAUSE_AFTER_ENTER = 1000;
-const BLINK_PAUSE = 1600; // ~3 cursor blinks before deleting
+const BLINK_PAUSE = 1600;
 
-// Max rows: 5 committed + 1 active line (no entering for last phrase)
 const TOTAL_ROWS = PHRASES.length;
 
 type Phase = 'typing' | 'entering' | 'deleting';
@@ -27,12 +26,12 @@ interface Props {
 }
 
 function Cursor() {
-  return <span className="inline-block w-1.5 h-3.5 bg-gray-400/70 ml-0.5 align-middle animate-pulse" />;
+  return <span className="inline-block w-1.5 h-3.5 bg-gray-400/70 dark:bg-slate-500/70 ml-0.5 align-middle animate-pulse" />;
 }
 
 function LineNum({ n }: { n: number }) {
   return (
-    <span className="text-gray-300 tabular-nums w-5 text-right shrink-0">
+    <span className="text-gray-300 dark:text-navy-500 tabular-nums w-5 text-right shrink-0">
       {String(n).padStart(2, '0')}
     </span>
   );
@@ -44,10 +43,10 @@ function CommittedLine({ phrase, isFirst }: { phrase: string; isFirst: boolean }
       <>
         <span className="text-purple-500">const </span>
         <span className="text-blue-500">developer</span>
-        <span className="text-black"> = </span>
-        <span className="text-black">{'['}</span>
+        <span className="text-gray-900 dark:text-slate-200"> = </span>
+        <span className="text-gray-900 dark:text-slate-200">{'['}</span>
         <span className="text-green-500">&apos;{phrase}&apos;</span>
-        <span className="text-black">,</span>
+        <span className="text-gray-900 dark:text-slate-200">,</span>
       </>
     );
   }
@@ -55,7 +54,7 @@ function CommittedLine({ phrase, isFirst }: { phrase: string; isFirst: boolean }
     <>
       <span className="inline-block shrink-0 w-[19ch]" />
       <span className="text-green-500">&apos;{phrase}&apos;</span>
-      <span className="text-black">,</span>
+      <span className="text-gray-900 dark:text-slate-200">,</span>
     </>
   );
 }
@@ -76,7 +75,6 @@ export default function HeroTyping({ startLine = 3 }: Props) {
     if (phase === 'typing') {
       if (typing === target) {
         if (isLast) {
-          // Last phrase: blink cursor then delete (no Enter)
           const t = setTimeout(() => setPhase('deleting'), BLINK_PAUSE);
           return () => clearTimeout(t);
         }
@@ -102,7 +100,6 @@ export default function HeroTyping({ startLine = 3 }: Props) {
     }
 
     if (phase === 'deleting') {
-      // Delete typing chars first, then pop committed one by one
       if (typing.length > 0) {
         const t = setTimeout(() => {
           setTyping((prev) => prev.slice(0, -1));
@@ -121,7 +118,6 @@ export default function HeroTyping({ startLine = 3 }: Props) {
     }
   }, [phase, typing, target, phraseIndex, isLast, committed.length]);
 
-  // Build rows
   const rows: { lineNum: number; content: React.ReactNode }[] = [];
 
   if (committed.length === 0) {
@@ -131,10 +127,10 @@ export default function HeroTyping({ startLine = 3 }: Props) {
         <>
           <span className="text-purple-500">const </span>
           <span className="text-blue-500">developer</span>
-          <span className="text-black"> = </span>
-          <span className="text-black">{typing.length > 0 ? '[' : ''}</span>
+          <span className="text-gray-900 dark:text-slate-200"> = </span>
+          <span className="text-gray-900 dark:text-slate-200">{typing.length > 0 ? '[' : ''}</span>
           <span className="text-green-500">{typing.endsWith(']') ? typing.slice(1, -1) : typing.slice(1)}</span>
-          <span className="text-black">{typing.endsWith(']') ? ']' : ''}</span>
+          <span className="text-gray-900 dark:text-slate-200">{typing.endsWith(']') ? ']' : ''}</span>
           <Cursor />
         </>
       ),
@@ -150,26 +146,24 @@ export default function HeroTyping({ startLine = 3 }: Props) {
     const lastLine = startLine + committed.length;
 
     if (phase === 'entering') {
-      // ] on its own line waiting for next phrase
       rows.push({
         lineNum: lastLine,
         content: (
           <>
             <span className="inline-block shrink-0 w-[19ch]" />
-            <span className="text-black">{']'}</span>
+            <span className="text-gray-900 dark:text-slate-200">{']'}</span>
             <Cursor />
           </>
         ),
       });
     } else {
-      // typing / deleting: show typing before ]
       rows.push({
         lineNum: lastLine,
         content: (
           <>
             <span className="inline-block shrink-0 w-[19ch]" />
             <span className="text-green-500">{typing}</span>
-            <span className="text-black">{']'}</span>
+            <span className="text-gray-900 dark:text-slate-200">{']'}</span>
             <Cursor />
           </>
         ),
@@ -177,7 +171,6 @@ export default function HeroTyping({ startLine = 3 }: Props) {
     }
   }
 
-  // Pad to fixed height
   while (rows.length < TOTAL_ROWS) {
     rows.push({ lineNum: startLine + rows.length, content: null });
   }

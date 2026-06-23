@@ -20,11 +20,11 @@ export default function PostListPaginated({ posts }: Props) {
         <PostListItem key={`${post.category}-${post.slug}`} post={post} />
       ))}
       {hasMore && (
-        <div className="pt-4 pb-8 border-t border-gray-100">
+        <div className="pt-4 pb-8 border-t border-gray-100 dark:border-navy-700">
           <button
             type="button"
             onClick={() => setVisibleCount((prev) => prev + SITE.POSTS_PER_PAGE)}
-            className="w-full py-3 text-sm text-gray-500 hover:text-gray-900 border border-gray-200 hover:border-gray-400 transition-colors"
+            className="w-full py-3 text-sm text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200 border border-gray-200 dark:border-navy-600 hover:border-gray-400 dark:hover:border-navy-400 transition-colors"
           >
             포스팅 더보기
           </button>

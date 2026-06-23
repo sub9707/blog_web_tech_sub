@@ -17,14 +17,14 @@ export default function BookmarkCard({ url, ogData }: Props) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="not-prose flex items-stretch min-h-24 overflow-hidden border border-gray-200 hover:border-gray-400 bg-white transition-colors my-4 [text-decoration:none]"
+      className="not-prose flex items-stretch min-h-24 overflow-hidden border border-gray-200 dark:border-navy-600 hover:border-gray-400 dark:hover:border-navy-400 bg-white dark:bg-navy-800 transition-colors my-4 [text-decoration:none]"
     >
       <div className="flex flex-col flex-1 min-w-0 px-4 py-3 gap-1">
-        <p className="text-sm font-medium text-gray-900 truncate [text-decoration:none]">
+        <p className="text-sm font-medium text-gray-900 dark:text-slate-200 truncate [text-decoration:none]">
           {title}
         </p>
         {description && (
-          <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+          <p className="text-xs text-gray-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
             {description}
           </p>
         )}
@@ -32,7 +32,7 @@ export default function BookmarkCard({ url, ogData }: Props) {
           {favicon && (
             <Image src={favicon} alt="" width={12} height={12} className="shrink-0" unoptimized />
           )}
-          <span className="text-xs text-gray-400 truncate">{siteName ?? displayHost}</span>
+          <span className="text-xs text-gray-400 dark:text-slate-500 truncate">{siteName ?? displayHost}</span>
         </div>
       </div>
 

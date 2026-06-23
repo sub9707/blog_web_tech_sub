@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Playfair_Display, Cormorant_Garamond } from 'next/fo
 import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import ThemeProvider from '@/components/common/ThemeProvider';
 import { SITE } from '@/constants/site';
 
 const geistSans = Geist({
@@ -43,12 +44,15 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-white">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+      <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+        <ThemeProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

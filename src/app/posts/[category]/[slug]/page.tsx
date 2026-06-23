@@ -56,7 +56,7 @@ export default async function PostPage({ params }: Props) {
         <div className="min-w-0 flex-1">
           <Link
             href={ROUTES.HOME}
-            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors mb-10"
+            className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-colors mb-10"
           >
             <svg
               width="14"
@@ -75,15 +75,15 @@ export default async function PostPage({ params }: Props) {
 
           <header className="mb-10">
             <Badge>{post.category}</Badge>
-            <h1 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 leading-tight">
+            <h1 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 dark:text-slate-100 leading-tight">
               {post.title}
             </h1>
             {post.description && (
-              <p className="mt-3 text-base text-gray-500 leading-relaxed">
+              <p className="mt-3 text-base text-gray-500 dark:text-slate-400 leading-relaxed">
                 {post.description}
               </p>
             )}
-            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400">
+            <div className="mt-4 flex items-center gap-2 text-xs text-gray-400 dark:text-slate-500">
               <span>{formattedDate}</span>
             </div>
             {post.tags.length > 0 && (
@@ -91,7 +91,7 @@ export default async function PostPage({ params }: Props) {
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="text-xs px-2.5 py-1 bg-gray-100 text-gray-500 rounded-full"
+                    className="text-xs px-2.5 py-1 bg-gray-100 dark:bg-navy-700 text-gray-500 dark:text-slate-400 rounded-full"
                   >
                     {tag}
                   </span>

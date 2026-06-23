@@ -46,10 +46,10 @@ export default function TableOfContents({ headings }: Props) {
 
   return (
     <nav aria-label="목차">
-      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 mb-4">
+      <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-4">
         On this page
       </p>
-      <ul className="relative border-l border-gray-100 space-y-1 pl-4">
+      <ul className="relative border-l border-gray-100 dark:border-navy-700 space-y-1 pl-4">
         {headings.map(({ id, text, level }) => {
           const isActive = activeId === id;
           return (
@@ -60,13 +60,13 @@ export default function TableOfContents({ headings }: Props) {
                 className={`
                   relative block py-0.5 text-[13px] leading-snug transition-all duration-200
                   ${isActive
-                    ? 'text-gray-900 font-medium'
-                    : 'text-gray-400 hover:text-gray-700'
+                    ? 'text-gray-900 dark:text-slate-200 font-medium'
+                    : 'text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300'
                   }
                 `}
               >
                 {isActive && (
-                  <span className="absolute -left-4.25 top-1/2 -translate-y-1/2 w-px h-full bg-gray-900" />
+                  <span className="absolute -left-4.25 top-1/2 -translate-y-1/2 w-px h-full bg-gray-900 dark:bg-slate-200" />
                 )}
                 {text}
               </a>
