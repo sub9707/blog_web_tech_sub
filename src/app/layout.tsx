@@ -5,6 +5,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ThemeProvider from '@/components/common/ThemeProvider';
 import PageTransition from '@/components/common/PageTransition';
+import SmoothScrollProvider from '@/components/common/SmoothScrollProvider';
 import { SITE } from '@/constants/site';
 
 const geistSans = Geist({
@@ -48,11 +49,13 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${cormorantGaramond.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--foreground)]">
+      <body className="min-h-screen flex flex-col bg-(--background) text-(--foreground)">
         <ThemeProvider>
-          <Header />
-          <PageTransition>{children}</PageTransition>
-          <Footer />
+          <SmoothScrollProvider>
+            <Header />
+            <PageTransition>{children}</PageTransition>
+            <Footer />
+          </SmoothScrollProvider>
         </ThemeProvider>
       </body>
     </html>
