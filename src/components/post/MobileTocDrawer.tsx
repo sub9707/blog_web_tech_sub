@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import type { Heading } from '@/utils/extractHeadings';
 import { SCROLL_OFFSET } from '@/constants/ui';
 
@@ -12,6 +13,11 @@ interface Props {
 
 export default function MobileTocDrawer({ headings }: Props) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -19,7 +25,7 @@ export default function MobileTocDrawer({ headings }: Props) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  if (headings.length === 0) return null;
+  if (headings.length === 0 || !mounted) return null;
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
@@ -31,7 +37,7 @@ export default function MobileTocDrawer({ headings }: Props) {
     }, DRAWER_CLOSE_DELAY);
   };
 
-  return (
+  return createPortal(
     <div className="xl:hidden">
       <button
         onClick={() => setOpen(true)}
@@ -80,6 +86,7 @@ export default function MobileTocDrawer({ headings }: Props) {
           </div>
         </>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }
