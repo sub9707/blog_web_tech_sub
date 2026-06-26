@@ -36,7 +36,7 @@ export default function MobileTocDrawer({ headings }: Props) {
       <button
         onClick={() => setOpen(true)}
         aria-label="목차 열기"
-        className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-gray-900 dark:bg-slate-200 text-white dark:text-navy-900 shadow-lg flex items-center justify-center hover:bg-gray-700 dark:hover:bg-slate-300 transition-colors"
+        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gray-900 dark:bg-slate-200 text-white dark:text-navy-900 shadow-lg flex items-center justify-center hover:bg-gray-700 dark:hover:bg-slate-300 transition-colors"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="3" y1="6" x2="21" y2="6" />
@@ -48,7 +48,7 @@ export default function MobileTocDrawer({ headings }: Props) {
       {open && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-black/40 dark:bg-black/60"
+            className="fixed inset-0 z-50 bg-black/40 dark:bg-black/60"
             onClick={() => setOpen(false)}
           />
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-navy-800 rounded-t-2xl shadow-2xl max-h-[60vh] flex flex-col">

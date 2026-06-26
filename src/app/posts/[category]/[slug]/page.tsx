@@ -7,6 +7,7 @@ import MarkdownRenderer from '@/components/post/MarkdownRenderer';
 import ImageZoomWrapper from '@/components/post/ImageZoomWrapper';
 import TableOfContents from '@/components/post/TableOfContents';
 import MobileTocDrawer from '@/components/post/MobileTocDrawer';
+import HeadingBreadcrumb from '@/components/post/HeadingBreadcrumb';
 import Badge from '@/components/ui/Badge';
 import { ROUTES } from '@/constants/routes';
 import { extractHeadings } from '@/utils/extractHeadings';
@@ -51,6 +52,8 @@ export default async function PostPage({ params }: Props) {
     : '';
 
   return (
+    <>
+    <HeadingBreadcrumb headings={headings} />
     <div className="max-w-5xl mx-auto px-6 py-16">
       <div className="flex gap-24 items-start">
         <div className="min-w-0 flex-1">
@@ -119,15 +122,16 @@ export default async function PostPage({ params }: Props) {
         </div>
 
         {headings.length > 0 && (
-          <aside className="hidden xl:block w-52 shrink-0 sticky top-1/2 -translate-y-1/2 self-start">
+          <aside className="hidden xl:block w-52 shrink-0 sticky top-24 self-start">
             <TableOfContents headings={headings} />
           </aside>
         )}
       </div>
-
-      {headings.length > 0 && (
-        <MobileTocDrawer headings={headings} />
-      )}
     </div>
+
+    {headings.length > 0 && (
+      <MobileTocDrawer headings={headings} />
+    )}
+    </>
   );
 }
