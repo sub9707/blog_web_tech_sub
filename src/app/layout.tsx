@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import ThemeProvider from '@/components/common/ThemeProvider';
 import PageTransition from '@/components/common/PageTransition';
 import SmoothScrollProvider from '@/components/common/SmoothScrollProvider';
+import ScrollToTop from '@/components/ui/ScrollToTop';
 import { SITE } from '@/constants/site';
 
 const geistSans = Geist({
@@ -55,6 +56,7 @@ export default function RootLayout({
             <Header />
             <PageTransition>{children}</PageTransition>
             <Footer />
+            <ScrollToTop />
           </SmoothScrollProvider>
         </ThemeProvider>
       </body>
