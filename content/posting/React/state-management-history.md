@@ -3,7 +3,7 @@ title: "상태 처리의 계보"
 date: "2026-06-26"
 description: "웹 프론트엔드의 상태 관리가 어떻게 진화해왔는지 알아보자"
 tags: ["state-management", "react", "redux", "zustand", "jotai", "react-query", "history"]
-thumbnail: "/assets/thumbnails/state_management_thumbnail.png"
+thumbnail: "/assets/thumbnails/3fbfff57-890e-45bc-bf9d-8828a6536226.png"
 ---
 
 React나 여타 프론트엔드 쪽에서 변수나 전역변수로 특정 값을 기억하려고 할 때, props drilling이나 관리의 어려움으로 인해 우리는 상태 관리 툴을 사용한다.

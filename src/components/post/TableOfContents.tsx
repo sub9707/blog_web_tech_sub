@@ -47,7 +47,8 @@ export default function TableOfContents({ headings }: Props) {
   return (
     <nav
       aria-label="목차"
-      className="overflow-y-auto max-h-[calc(100vh-8rem)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+      data-lenis-prevent
+      className="overflow-y-auto max-h-[calc(100vh-14rem)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none"
     >
       <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-4">
         On this page
