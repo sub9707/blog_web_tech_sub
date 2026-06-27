@@ -256,6 +256,16 @@ body {
   display: block;
 }
 
+/* Shiki dual theme: CSS 변수 → color 바인딩 */
+[data-rehype-pretty-code-figure] [data-theme='light'] span,
+[data-rehype-pretty-code-figure] [data-theme='light'] code {
+  color: var(--shiki-light);
+}
+[data-rehype-pretty-code-figure] [data-theme='dark'] span,
+[data-rehype-pretty-code-figure] [data-theme='dark'] code {
+  color: var(--shiki-dark);
+}
+
 @media (max-width: 640px) {
   .prose [data-rehype-pretty-code-figure]::after {
     content: '';
