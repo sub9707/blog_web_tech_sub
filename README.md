@@ -1,6 +1,6 @@
 ﻿# subdev.log
 
-개발하며 학습한 내용을 기록하는 개인 기술 블로그입니다.  
+개발하며 학습한 내용을 기록하는 홈서버 배포 개인 기술 블로그입니다.  
 Next.js App Router 기반으로 정적 Markdown 파일을 콘텐츠 소스로 사용합니다.
 
 <!-- screenshot: 메인 페이지 전체 (Hero + CategoryFilter + PostGrid + Sidebar) -->
