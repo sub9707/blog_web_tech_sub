@@ -10,7 +10,7 @@ export function extractHeadings(markdown: string): Heading[] {
   const slugger = new GithubSlugger();
   const headings: Heading[] = [];
 
-  const lines = markdown.split('\n');
+  const lines = markdown.split(/\r?\n/);
   let inCodeBlock = false;
 
   for (const line of lines) {

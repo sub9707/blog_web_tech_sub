@@ -38,7 +38,7 @@ export default function MobileTocDrawer({ headings }: Props) {
   };
 
   return createPortal(
-    <div className="xl:hidden">
+    <div className="lg:hidden">
       <button
         onClick={() => setOpen(true)}
         aria-label="목차 열기"

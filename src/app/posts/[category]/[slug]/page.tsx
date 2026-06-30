@@ -122,7 +122,7 @@ export default async function PostPage({ params }: Props) {
         </div>
 
         {headings.length > 0 && (
-          <aside className="hidden xl:block w-52 shrink-0 sticky top-24 self-start">
+          <aside className="hidden lg:block w-60 shrink-0 sticky top-24 self-start">
             <TableOfContents headings={headings} />
           </aside>
         )}

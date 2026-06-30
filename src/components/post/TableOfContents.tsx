@@ -48,8 +48,10 @@ export default function TableOfContents({ headings }: Props) {
     <nav
       aria-label="목차"
       data-lenis-prevent
-      className="overflow-y-auto max-h-[calc(100vh-14rem)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none"
+      onWheel={(e) => e.stopPropagation()}
+      className="overflow-y-auto max-h-[calc(100vh-16rem)] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-200 dark:[&::-webkit-scrollbar-thumb]:bg-navy-600 [&::-webkit-scrollbar-thumb]:rounded-full"
     >
+      <div className="py-4">
       <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-slate-500 mb-4">
         On this page
       </p>
@@ -78,6 +80,7 @@ export default function TableOfContents({ headings }: Props) {
           );
         })}
       </ul>
+      </div>
     </nav>
   );
 }

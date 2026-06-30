@@ -23,7 +23,7 @@ export default function ScrollToTop() {
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       aria-label="맨 위로 이동"
-      className="fixed bottom-20 right-6 xl:bottom-6 z-50 w-10 h-10 rounded-full bg-white dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-gray-500 dark:text-slate-400 shadow-md flex items-center justify-center hover:bg-gray-50 dark:hover:bg-navy-700 hover:text-gray-900 dark:hover:text-slate-200 transition-all duration-200"
+      className="fixed bottom-20 right-6 lg:bottom-6 z-50 w-10 h-10 rounded-full bg-white dark:bg-navy-800 border border-gray-200 dark:border-navy-600 text-gray-500 dark:text-slate-400 shadow-md flex items-center justify-center hover:bg-gray-50 dark:hover:bg-navy-700 hover:text-gray-900 dark:hover:text-slate-200 transition-all duration-200"
     >
       <svg
         width="16"
