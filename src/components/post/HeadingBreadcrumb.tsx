@@ -67,7 +67,7 @@ export default function HeadingBreadcrumb({ headings }: Props) {
   };
 
   return (
-    <div className="sticky top-14 z-40 border-b border-gray-100 dark:border-navy-700 bg-white/95 dark:bg-navy-900/95 backdrop-blur-sm">
+    <div className="sticky top-15 z-40 border-b border-gray-100 dark:border-navy-700 bg-white/95 dark:bg-navy-900/95 backdrop-blur-sm">
       <div className="max-w-5xl mx-auto px-6 py-2">
         <nav
           aria-label="현재 위치"

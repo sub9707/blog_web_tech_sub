@@ -8,6 +8,7 @@ import ImageZoomWrapper from '@/components/post/ImageZoomWrapper';
 import TableOfContents from '@/components/post/TableOfContents';
 import MobileTocDrawer from '@/components/post/MobileTocDrawer';
 import HeadingBreadcrumb from '@/components/post/HeadingBreadcrumb';
+import ReadingProgressBar from '@/components/common/ReadingProgressBar';
 import Badge from '@/components/ui/Badge';
 import { ROUTES } from '@/constants/routes';
 import { extractHeadings } from '@/utils/extractHeadings';
@@ -53,6 +54,7 @@ export default async function PostPage({ params }: Props) {
 
   return (
     <>
+    <ReadingProgressBar className="sticky top-14.25 z-40 h-0.75 bg-gray-200 dark:bg-navy-700" />
     <HeadingBreadcrumb headings={headings} />
     <div className="max-w-5xl mx-auto px-6 py-16">
       <div className="flex gap-24 items-start">
