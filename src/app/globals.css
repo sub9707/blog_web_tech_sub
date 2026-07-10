@@ -248,25 +248,15 @@ body {
   border-color: #2d3450;
 }
 
-/* dual theme 토글: dark 테마 블록은 기본 숨김 */
-[data-rehype-pretty-code-figure] [data-theme='dark'] {
-  display: none;
-}
-/* dark 모드에서 light 숨기고 dark 보이기 */
-.dark [data-rehype-pretty-code-figure] [data-theme='light'] {
-  display: none;
-}
-.dark [data-rehype-pretty-code-figure] [data-theme='dark'] {
-  display: block;
-}
-
-/* Shiki dual theme: CSS 변수 → color 바인딩 */
-[data-rehype-pretty-code-figure] [data-theme='light'] span,
-[data-rehype-pretty-code-figure] [data-theme='light'] code {
+/* Shiki dual theme: CSS 변수 → color 바인딩
+   rehype-pretty-code는 theme을 {light, dark} 객체로 주면 각 span에
+   --shiki-light / --shiki-dark 변수만 심고 별도의 light/dark 블록을
+   나누지 않는다. data-theme 속성값도 "github-light github-dark-dimmed"
+   처럼 공백으로 합쳐진 문자열이라 정확 일치(=) 셀렉터로는 매칭되지 않는다. */
+.prose [data-rehype-pretty-code-figure] span {
   color: var(--shiki-light);
 }
-[data-rehype-pretty-code-figure] [data-theme='dark'] span,
-[data-rehype-pretty-code-figure] [data-theme='dark'] code {
+.dark .prose [data-rehype-pretty-code-figure] span {
   color: var(--shiki-dark);
 }
 
@@ -316,7 +306,6 @@ body {
   background: transparent;
   padding: 0;
   font-size: inherit;
-  color: inherit;
   border-radius: 0;
   font-family: var(--font-mono), monospace;
 }
