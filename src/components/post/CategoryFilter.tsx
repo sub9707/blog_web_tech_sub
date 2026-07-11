@@ -28,7 +28,7 @@ export default function CategoryFilter({ categories }: Props) {
   const all = ['All', ...categories];
 
   return (
-    <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide border-b border-gray-200 dark:border-navy-600 mb-8">
+    <div className="flex items-center gap-6 overflow-x-auto overflow-y-hidden scrollbar-hide scroll-x-inertia border-b border-gray-200 dark:border-navy-600 mb-8">
       {all.map((cat) => {
         const isActive = cat === active;
         return (
