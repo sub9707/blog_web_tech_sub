@@ -1,10 +1,13 @@
 'use client';
 
 import ParallaxLayer from '@/components/common/ParallaxLayer';
+import MouseParallaxTracker from '@/components/common/MouseParallaxTracker';
 
 export default function AboutHero() {
   return (
-    <section className="relative overflow-hidden min-h-[78vh] flex items-center">
+    <section className="relative overflow-hidden min-h-[52vh] flex items-center">
+      <MouseParallaxTracker />
+
       {/* Dot grid backdrop */}
       <ParallaxLayer speed={0.04} className="absolute inset-0 -z-20 opacity-40 dark:opacity-25">
         <div
@@ -29,7 +32,12 @@ export default function AboutHero() {
       </ParallaxLayer>
 
       {/* Giant background wordmark */}
-      <ParallaxLayer speed={0.1} className="absolute inset-0 -z-10 flex items-center justify-center">
+      <ParallaxLayer
+        speed={0.1}
+        mouseFactorX={22}
+        mouseFactorY={8}
+        className="absolute inset-0 -z-10 flex items-center justify-center"
+      >
         <span
           className="text-[13rem] sm:text-[20rem] font-bold text-gray-100 dark:text-navy-800/70 select-none leading-none tracking-tight"
           style={{ fontFamily: 'var(--font-cormorant)' }}
@@ -40,7 +48,12 @@ export default function AboutHero() {
       </ParallaxLayer>
 
       {/* Foreground content */}
-      <ParallaxLayer speed={-0.06} className="relative w-full max-w-6xl mx-auto px-6">
+      <ParallaxLayer
+        speed={-0.06}
+        mouseFactorX={10}
+        mouseFactorY={4}
+        className="relative w-full max-w-6xl mx-auto px-6"
+      >
         <span className="text-xs tracking-widest uppercase text-gray-400 dark:text-slate-500">
           About this blog
         </span>
@@ -54,12 +67,6 @@ export default function AboutHero() {
           기록하고, 공유하고, 다시 배우는 개인 기술 블로그.
         </p>
       </ParallaxLayer>
-
-      {/* Scroll cue */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400 dark:text-slate-500">
-        <span className="text-[10px] tracking-widest uppercase">Scroll</span>
-        <span className="w-px h-8 bg-gray-300 dark:bg-navy-600 animate-pulse" />
-      </div>
     </section>
   );
 }
