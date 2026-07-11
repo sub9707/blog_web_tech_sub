@@ -406,17 +406,22 @@ create<State>()((set) => ({ ... }))
 
 ## Step 4. middleware/devtools.ts
 
-여기까지 vanilla store와 React 바인딩을 보고 나니, `create(fn)`의 `fn` 자리에 들어가는 게 어떤 모양인지, 그리고 그걸 감싸는 미들웨어가 왜 `(set, get, api) => {...}` 형태를 그대로 반환해야 하는지 감이 잡혔다.
+`zui()`가 참고할 구조는 `middleware/devtools.ts`다.
 
-`zui()`가 참고할 구조는 결국 `middleware/devtools.ts`다.
+굳이 devtools.ts까지 이렇게 깊게 살펴보는 이유는, zui가 하려는 작업도 결국 devtools랑 구조가 같기 때문이다. 
 
-`src/middleware.ts` 안에 공식 미들웨어(`devtools`, `persist`, `immer`, `redux` 등)가 다 모여있는데, 이번엔 그중에서 devtools 부분만 처음부터 끝까지 따라가봤다.
+zui는 상태를 GUI에서 실시간으로 **조회**하고, GUI에서 값을 바꾸면 앱에 그대로 **주입**해야 한다. 
 
-일부만 보고 넘어가면 나중에 `zui()` 만들 때 분명 막힐 것 같아서다.
+devtools도 앱 → 패널로 상태를 실시간 보고하고(조회), 패널 → 앱으로 시간여행/상태 주입 메시지를 보낸다(편집). 방향만 다를 뿐 똑같은 양방향 통신 문제고, 그 과정에서 겪었을 무한루프, 여러 스토어 공유 같은 문제들도 이미 여기 다 풀려있다. 
+
+그래서 devtools.ts를 zui의 설계도 삼아 읽어보기로 했다.
 
 <br/>
 
-### 진입점 — devtoolsImpl
+`src/middleware.ts` 안에 공식 미들웨어(`devtools`, `persist`, `immer`, `redux` 등)가 다 모여있는데, 이번엔 그중에서 devtools 부분만 처음부터 끝까지 따라가봤다.
+<br/><br/>
+
+### devtoolsImpl - 진입점
 
 ```ts
 const devtoolsImpl: DevtoolsImpl =
@@ -425,22 +430,27 @@ const devtoolsImpl: DevtoolsImpl =
     // ...
   }
 ```
+188-424 라인까지 차지하는 방대한 분량이다.
 
-`fn`은 Step 2에서 본 그 `createState`, 그러니까 `create((set, get) => ({ ... }))` 할 때 우리가 직접 넘기는 그 함수다.
+인자부터 보도록하자.
 
-`devtoolsOptions`는 `{ name, enabled, anonymousActionType, store }` 같은 설정 객체다.
+`fn`은 Step 2에서 본 그 `createState`, 즉 `create((set, get) => ({ ... }))` 할 때 우리가 직접 넘기는 그 함수가 된다.
 
-이 `devtoolsImpl`이 반환하는 `(set, get, api) => { ... }`가 핵심이다.
+`devtoolsOptions`는 `{ name, enabled, anonymousActionType, store }` 같은 설정 객체이다.
 
-얘가 바로 `StateCreator` 모양 그대로다. 그러니까 `devtools(fn)`을 호출하면, `fn`을 감싼 "또 다른 `fn`"이 나온다는 뜻이다.
+결국에는 이 `devtoolsImpl`이 반환하는 `(set, get, api) => { ... }`가 핵심이다.
+
+이 반환체가 바로 `StateCreator` 모양 그대로가 되는데, `devtools(fn)`을 호출하면, `fn`을 감싼 "또 다른 `fn`"이 나오는 것이다.
 
 전에 궁금해했던 "미들웨어 체이닝"이 코드로는 이렇게 생겼구나 싶었다.
 
 <br/>
 
-### DevTools Extension이 없어도 되는 이유
+### extensionConnector - 확장 프로그램 유무 체크
 
 ```ts
+const { enabled, anonymousActionType, store, ...options } = devtoolsOptions
+
 let extensionConnector
 try {
   extensionConnector =
@@ -455,21 +465,25 @@ if (!extensionConnector) {
 }
 ```
 
-`window.__REDUX_DEVTOOLS_EXTENSION__`은 크롬 확장 프로그램이 설치되어 있으면 브라우저가 전역에 심어주는 객체다.
+내부를 보면 먼저 devtoolsOptions를 구조분해할당해 사용하기 쉽도록 꺼낸다.
+
+extensionConnector를 선언하고, 있는지 없는지부터 체크한다.
+
+`window.__REDUX_DEVTOOLS_EXTENSION__`은 redux devtools 크롬 확장 프로그램이 설치되어 있으면 브라우저가 전역에 심어주는 객체다.
 
 `enabled` 옵션을 명시 안 하면 `production` 모드가 아닐 때만 켜지도록 기본값이 잡혀 있다.
 
-배포 환경에서 굳이 유저 브라우저에 디버깅 창을 열어줄 필요는 없으니까 당연한 처리다.
+배포 환경에서 굳이 유저 브라우저에 디버깅 창을 열어줄 필요는 없으니 이렇게 처리한 것이다.
 
-여기서 제일 마음에 든 부분은 `if (!extensionConnector) return fn(set, get, api)`다.
+ `if (!extensionConnector) return fn(set, get, api)`를 보자.
 
-확장 프로그램이 없거나 프로덕션이면, devtools 관련 로직은 전부 건너뛰고 그냥 원래 `fn`을 그대로 실행해서 돌려준다.
+확장 프로그램이 없거나 프로덕션 환경이면, devtools 관련 로직은 전부 건너뛰고 그냥 원래 `fn`을 그대로 실행해서 돌려준다.
 
-미들웨어를 씌웠다고 해서 앱이 devtools 없이는 안 돌아가면 안 되니까, "없으면 그냥 원본처럼 동작"하는 이 fallback이 필수였던 것 같다.
+미들웨어를 씌웠다고 해서 앱이 devtools 없이는 안 돌아가면 안 되니, "없으면 그냥 원본처럼 동작"하는 이 fallback이 필수였던 것 같다.
 
 <br/>
 
-### 여러 스토어가 창 하나를 공유하는 방법 — tracked connection
+### tracked connection - 스토어 창 공유
 
 ```ts
 const trackedConnections = new Map()
@@ -488,21 +502,55 @@ const extractConnectionInformation = (store, extensionConnector, options) => {
 }
 ```
 
-`devtools(fn)`에 `store` 옵션을 안 주면 `untracked`. 그냥 매번 새 connection을 만든다.
+인자 세 개부터 짚고 가면, 
 
-`store` 옵션을 주면 `tracked`. 이땐 `options.name`을 키로 하는 `trackedConnections`(모듈 레벨 `Map`)를 먼저 뒤져본다.
+`store`는 `devtools(fn, { store: 'user' })`처럼 이 스토어를 구분할 이름표다.
 
-같은 `name`으로 이미 등록된 connection이 있으면 그걸 재사용하고, 없으면 새로 만들어서 `Map`에 등록해둔다.
+ `extensionConnector`는 앞서 확인한 그 `window.__REDUX_DEVTOOLS_EXTENSION__` 객체이다.(실제로 connection을 생성). 
+ 
+ `options`는 `devtoolsOptions`에서 `enabled`, `anonymousActionType`, `store`를 뺀 나머지, 즉 `{ name, ... }` 같은 설정값이다.
 
-왜 `Map`이 모듈 레벨(파일 최상단)에 선언돼있는지 처음엔 의아했는데, 스토어를 여러 개 만들어도(`useUserStore`, `useCartStore` 등) 이 `Map`은 모듈이 로드될 때 딱 한 번만 만들어지고 계속 살아있어야 하기 때문이었다.
+여기서 "창"이라고 부르는 것의 개념을 짚고 가면, 크롬 확장 프로그램 Redux DevTools를 설치하면 브라우저 개발자도구 안에 State/Diff/Action 같은 탭이 있는 패널이 하나 생기는데, 그 패널 하나(인스턴스 하나)를 의미한다. 
 
-그래야 서로 다른 스토어 파일에서 `create(devtools(fn, { name: 'app', store: 'user' }))`, `create(devtools(fn, { name: 'app', store: 'cart' }))` 이렇게만 적어도 같은 `name`이면 자동으로 같은 DevTools 창 하나에 묶인다.
+상태 트리랑 액션 로그가 실시간으로 찍히는 화면이다.
 
-`Map`을 함수 안에 선언했으면 호출할 때마다 새로 만들어져서 이 공유가 아예 안 됐을 거다.
+![Redux DevTools 확장 프로그램 패널](/assets/etc/redux-devtools-panel.png)
 
 <br/>
 
-### api.setState 재할당 — set 가로채기
+여기서 `name`의 역할도 헷갈렸는데, `name`은 **패널과 짝지어지는 `connection`을 구분하는 키**다. 패널이 눈에 보이는 UI라면, `connection`은 그 패널과 통신하기 위해 코드가 들고 있는 객체(손잡이)다.
+
+같은 `name`을 쓰는 스토어들끼리만 `trackedConnections`에서 같은 connection을 나눠 쓴다. 
+
+반면 `store`는 그렇게 합쳐진 창 안에서 "어떤 스토어인지" 표시하는 이름표 역할을 한다. 
+
+`name`이 창을 정하고, `store`가 그 창 안의 자리를 정하는 셈이다.
+
+그러면 여기서 계속 나오는 `connection`은 정확히 뭘까. 
+
+`extensionConnector.connect(options)`가 반환하는 값인데, Redux DevTools 확장 프로그램이 만들어주는 **채널 객체**이다. 
+
+`connect()`를 부르는 순간 브라우저 확장 프로그램 쪽에 이 앱 전용 탭(혹은 인스턴스)이 하나 열리고, 그 탭과 통신할 수 있는 손잡이가 `connection`으로 돌아온다.
+
+이 `connection`이 들고 있는 메서드들이 지금까지 본 코드 전체를 관통한다. `connection.send(action, state)`로 앱 → DevTools 방향으로 상태를 보고하고, `connection.init(state)`로 DevTools 트리의 최초 상태를 세팅하고, `connection.subscribe(listener)`로 반대로 DevTools → 앱 방향 메시지를 받는다. 
+
+즉 `connection` 하나가 devtools 미들웨어와 브라우저 확장 프로그램 사이를 잇는 유일한 통로였다.
+
+<br/>
+
+`devtools(fn)`에 `store` 옵션을 안 주면 `untracked`. 그냥 매번 새 connection을 만든다.
+
+`store` 옵션을 주면 `tracked`, 이땐 `options.name`을 키로 하는 `trackedConnections`를 먼저 뒤져본다.
+
+같은 `name`으로 이미 등록된 connection이 있으면 그걸 재사용하고, 없으면 새로 만들어서 `Map`에 등록해둔다.
+
+왜 `Map`이 최상단 범위에 선언돼있는지 의아했는데, 스토어를 여러 개 만들어도(`useUserStore`, `useCartStore` 등) 이 `Map`은 모듈이 로드될 때 딱 한 번만 만들어지고 계속 살아있어야 하기 때문이었다.
+
+그래야 서로 다른 스토어 파일에서 `create(devtools(fn, { name: 'app', store: 'user' }))`, `create(devtools(fn, { name: 'app', store: 'cart' }))` 이렇게만 적어도 같은 `name`이면 자동으로 같은 DevTools 창 하나에 묶인다.
+
+<br/>
+
+### api.setState - set 가로채기
 
 ```ts
 let isRecording = true
@@ -528,15 +576,34 @@ api.setState = (state, replace, nameOrAction) => {
   )
   return r
 }
+
+api.devtools = {
+  cleanup: () => {
+    if (connection && typeof connection.unsubscribe === 'function') {
+      connection.unsubscribe()
+    }
+    removeStoreFromTrackedConnections(options.name, store)
+  },
+}
 ```
 
-여기서 눈여겨봐야 할 건 순서다. `set(state, replace)`를 제일 먼저 호출해서 **실제 상태 변경을 먼저 끝내놓고**, 그 다음에 devtools로 보낼 액션을 조립한다.
+여기서 순서를 눈여겨보자. 
 
-상태 갱신이 devtools 전송보다 우선이라는 뜻이다.
+`set(state, replace)`를 제일 먼저 호출해서 **실제 상태 변경을 먼저 끝내놓고**, 그 다음에 devtools로 보낼 액션을 준비한다.
 
+상태 갱신이 devtools 전송보다 우선이라는 뜻이라고한다.
+
+
+```ts
+nameOrAction === undefined
+      ? { type: anonymousActionType || findCallerName(new Error().stack) || 'anonymous' }
+```
 `nameOrAction`은 `set({ count: 1 }, false, 'increment')`처럼 우리가 세 번째 인자로 액션 이름을 직접 넘길 수도 있는 자리다.
 
-근데 안 넘기면? `findCallerName(new Error().stack)`으로 이름을 추측한다.
+안 넘기면 `findCallerName(new Error().stack)`으로 이름을 추측한다.
+
+`new Error().stack`은 지금 이 코드가 어떤 함수들을 거쳐서 호출됐는지 알려주는 문자열이다.
+<br/>
 
 ```ts
 function findCallerName(stack) {
@@ -548,52 +615,35 @@ function findCallerName(stack) {
   return v8StackLineRe.exec(callerLine)?.[1] || geckoStackLineRe.exec(callerLine)?.[1]
 }
 ```
+findCallerName을 살펴보자.
 
-`new Error().stack`은 지금 이 코드가 어떤 함수들을 거쳐서 호출됐는지 알려주는 문자열이다.
+이름에서부터 호출자 이름 찾기인데, 깃허브 소스 기준 174라인에 선언돼있다.
 
-한 줄씩 쪼개서(`split('\n')`), `api.setState`가 적힌 줄을 찾고, 그 **바로 다음 줄**(= `api.setState`를 호출한 쪽, 즉 우리가 짠 `increment` 같은 함수)의 이름을 정규식으로 뽑아낸다.
+한 줄씩 쪼개서(`split('\n')`), `api.setState`가 적힌 줄을 찾고, 그 **바로 다음 줄**(= `api.setState`를 호출한 쪽, 가장 내부인 현 인덱스는 현재 실행중인 곳임 그래서 index+1)의 이름을 정규식으로 뽑아낸다.
 
-그래서 `set(newState)`처럼 이름을 안 적어도 devtools 창에 그 값을 바꾼 함수 이름이 액션 이름으로 자동으로 뜨는 거였다.
+그래서 `set(newState)`처럼 이름을 안 적어도 devtools 창에 그 값을 바꾼 함수 이름이 액션 이름으로 자동으로 뜨는 것이다.
 
-스택 트레이스를 이렇게 실제 기능에 활용하는 코드는 처음 봤다.
-
-<br/>
-
-### DevTools → 앱 방향 (역방향)
 
 ```ts
-connection.subscribe((message) => {
-  switch (message.type) {
-    case 'ACTION':
-      // devtools UI에서 액션을 직접 dispatch했을 때
-      // ...
-      return
-
-    case 'DISPATCH':
-      switch (message.payload.type) {
-        case 'RESET': // 초기 상태로 되돌리기
-        case 'COMMIT': // 지금 상태를 새 기준점으로 확정
-        case 'ROLLBACK': // 마지막 커밋 시점으로 되돌리기
-        case 'JUMP_TO_STATE':
-        case 'JUMP_TO_ACTION': // 타임라인의 특정 시점 상태로 이동
-        case 'IMPORT_STATE': // 내보내둔 상태 기록을 통째로 불러오기
-        case 'PAUSE_RECORDING': // isRecording 토글
-      }
-  }
-})
+api.devtools = {
+  cleanup: () => {
+    if (connection && typeof connection.unsubscribe === 'function') {
+      connection.unsubscribe()
+    }
+    removeStoreFromTrackedConnections(options.name, store)
+  },
+}
 ```
 
-이 부분을 보고 좀 놀랐다. 지금까지는 "우리 앱이 devtools한테 상태를 보고한다"는 방향만 생각했는데, `connection.subscribe`는 반대로 **DevTools 확장 프로그램이 우리 앱한테 메시지를 보내는** 통로였다.
+바로 이어서 붙는 `api.devtools = { cleanup: ... }`도 보자. 
 
-`ACTION`은 devtools 창에서 개발자가 직접 액션을 만들어서 dispatch 버튼을 눌렀을 때 오는 메시지고, `DISPATCH`는 시간여행 디버깅용 명령들이다.
+`cleanup`은 connection 구독을 끊고, `removeStoreFromTrackedConnections`로 이 스토어를 `trackedConnections`에서 빼주는 역할이다. 
 
-`JUMP_TO_STATE`로 과거 특정 시점 상태로 이동하거나, `RESET`으로 초기 상태로 되돌리거나 하는 게 전부 이 switch문 안에서 처리되고 있었다.
-
-"시간여행 디버깅"이라는 말이 그냥 마케팅 용어인 줄 알았는데, 까보니 그냥 switch-case로 상태를 갈아끼우는 코드였다.
+스토어 하나를 다 쓰고 정리할 때, 등록해뒀던 흔적도 같이 지워주는 짝이다.
 
 <br/>
 
-### 무한 루프는 왜 안 생기나 — isRecording
+### isRecording - 무한 루프 방지
 
 ```ts
 const setStateFromDevtools = (...a) => {
@@ -604,36 +654,169 @@ const setStateFromDevtools = (...a) => {
 }
 ```
 
-devtools에서 `JUMP_TO_STATE` 메시지가 오면 이 `setStateFromDevtools`가 호출된다.
+이 함수가 `api.setState` 바로 다음, `initialState`를 계산하기도 전에 미리 선언되어 있었다. 뒤에 나올 두 곳(초기 상태 계산, devtools 메시지 처리)에서 공통으로 쓰이기 때문이었다.
 
-여기서 `isRecording`을 잠깐 꺼놓고 `set`을 호출한 다음 다시 켜놓는다.
+devtools에서 `JUMP_TO_STATE`(타임머신) 같은 메시지가 오면 이 `setStateFromDevtools`가 호출된다. 여기서 `isRecording`을 잠깐 꺼놓고 `set`을 호출한 다음 다시 켜놓는다.
 
-만약 이 플래그가 없으면 어떻게 될지 따라가봤다.
+만약 이 플래그가 없으면 어떻게 될지 에이전트에 물어봤다.
 
-devtools가 보낸 상태로 `set`을 호출 → `set`이 상태를 바꿈 → 그런데 이 `set` 호출도 결국 `api.setState`를 거치게 되면 → `connection.send`가 또 실행돼서 devtools한테 "상태 바뀌었어요"라고 다시 보고 → devtools 창은 이미 자기가 보낸 값인데 그걸 또 받아서 새 액션으로 기록... 이게 반복되면 무한루프다.
+devtools가 보낸 상태로 `set`을 호출 → `set`이 상태를 바꿈 → 그런데 이 `set` 호출도 결국 `api.setState`를 거치게 되면 → `connection.send`가 또 실행돼서 devtools에 "상태 바뀜"을 다시 보고 → devtools 창은 이미 자기가 보낸 값인데 그걸 또 받아서 새 액션으로 기록... 이게 반복되면 무한루프에 빠진다...
 
-그래서 `isRecording`을 꺼둔 상태에서 `set`을 호출하면, `api.setState` 내부의 `if (!isRecording) return r` 라인에서 바로 걸러져서 `connection.send`까지 안 간다.
+devtool로 상태변경하고, 앱의 상태변경을 하고, 앱을 보고 또 devtool은 상태변경하고... 난장판이 되는 것이다..
 
-**devtools가 만든 변경은 다시 devtools한테 보고하지 않는다**는 거다.
+그래서 `isRecording`을 꺼둔 상태에서 `set`을 호출하면, `api.setState` 내부의 `if (!isRecording) return r` 라인에서 바로 걸러져서 `connection.send`까지 가지 않게 된다.
 
-솔직히 여기서 `setStateFromDevtools`가 `api.setState`가 아니라 원본 `set`을 직접 부르는 거라 애초에 `connection.send`를 안 탈 것 같은데도 굳이 `isRecording`을 껐다 켜는 걸 보면, 스토어 내부에서 유저 코드가 상태 변경 중에 또 다른 액션을 연쇄로 트리거하는 경우까지 방어하려는 게 아닐까 싶다.
-
-이 부분은 완전히 다 이해했다고는 못 하겠고, 나중에 `zui()`에서 똑같은 무한루프 문제를 직접 만들어보면서 다시 확인해야 할 것 같다.
+**devtools가 만든 변경은 다시 devtools한테 보고하지 않는**것이 루프를 막는 원칙이다.
 
 <br/>
 
-### redux 미들웨어와의 관계
+### connection.init - 초기 상태 계산
+
+```ts
+const initialState = fn(api.setState, get, api)
+
+if (connectionInformation.type === 'untracked') {
+  connection?.init(initialState)
+} else {
+  connectionInformation.stores[connectionInformation.store] = api
+  connection?.init(
+    Object.fromEntries(
+      Object.entries(connectionInformation.stores).map(([key, store]) => [
+        key,
+        key === connectionInformation.store ? initialState : store.getState(),
+      ]),
+    ),
+  )
+}
+```
+
+`fn(api.setState, get, api)`를 호출하는 부분을 보자.
+
+Step 2에서 본 `createState(setState, getState, api)`와 같은 모양인데, 여기선 원본 `set`이 아니라 방금 만든 **devtools 로직이 붙은 `api.setState`**를 넘긴다. 
+
+그래야 유저가 스토어 정의 안에서 `set(...)`을 호출할 때도 devtools 로그가 남는다고 한다.
+
+`untracked`(store 전달이 안된 상태)면 간단하다. 
+
+`connection.init(initialState)`로 자기 상태만 넘기고 끝이다.
+
+`tracked`면 다른데, `connectionInformation.stores`(tracked connection의 공유 `Map` 안의 `stores` 객체)에 자기 자신(`api`- set, get, subscribe 등이 있는 객체)을 먼저 등록해두고, 등록된 스토어 전부를 순회하면서 "자기 자신이면 방금 계산한 `initialState`, 자신이 아니면 그 store의 `getState()`"로 합쳐서 하나의 객체로 `connection.init`에 넘긴다.
+
+여러 스토어가 DevTools 창 하나에서 `{ user: {...}, cart: {...} }` 이런 식으로 함께 뜰 수 있는 이유가 이것이다!
+
+<br/>
+
+### redux - 미들웨어 연동
 
 ```ts
 const shouldDispatchFromDevtools = (api) =>
   !!api.dispatchFromDevtools && typeof api.dispatch === 'function'
+
+if (shouldDispatchFromDevtools(api)) {
+  let didWarnAboutReservedActionType = false
+  const originalDispatch = api.dispatch
+  api.dispatch = (...args) => {
+    if (args[0].type === '__setState' && !didWarnAboutReservedActionType) {
+      console.warn('"__setState" action type is reserved. Avoid using it.')
+      didWarnAboutReservedActionType = true
+    }
+    originalDispatch(...args)
+  }
+}
 ```
 
 `redux` 미들웨어를 같이 쓰면 `api.dispatchFromDevtools = true`가 세팅되고, `api.dispatch`도 생긴다.
 
-devtools 쪽에서 메시지를 받았을 때 이 조건이 참이면, 단순히 상태를 바꾸는 대신 `api.dispatch(action)`으로 리덕스 스타일 액션을 실제로 디스패치해준다.
+`__setState`는 devtools가 상태를 직접 주입할 때 예약해둔 액션 이름이다. 
 
-devtools와 redux 미들웨어가 서로 존재를 모르는 채로도, `api`라는 공유 객체에 심어둔 플래그 하나로 연동되는 구조였다.
+유저가 redux 미들웨어를 쓰면서 실수로 이 이름으로 액션을 dispatch하면 충돌이 날 수 있어서, `api.dispatch`를 한 번 감싸서 그 이름이 쓰이면 콘솔에 경고를 띄워준다. 
+
+`didWarnAboutReservedActionType`으로 경고는 플래그로써 한 번만 뜨게 했다.
+
+devtools와 redux 미들웨어가 서로 존재를 모르는 채로도, `api`라는 공유된 객체에 심어둔 플래그 하나로 연동되는 구조였다.
+
+<br/>
+
+### connection.subscribe
+
+지금까지 "앱이 devtools한테 상태를 보고한다"는 방향만 봤는데, `connection.subscribe`는 반대로 **DevTools 확장 프로그램이 우리 앱한테 메시지를 보내는** 방향이었다.
+
+```ts
+connection.subscribe((message) => {
+  switch (message.type) {
+    case 'ACTION':
+      if (typeof message.payload !== 'string') return
+      return parseJsonThen(message.payload, (action) => {
+        if (action.type === '__setState') {
+          setStateFromDevtools(action.state)
+          return
+        }
+        if (shouldDispatchFromDevtools(api)) {
+          api.dispatch(action)
+        }
+      })
+
+    case 'DISPATCH':
+      switch (message.payload.type) {
+        case 'RESET':
+          setStateFromDevtools(initialState)
+          return connection?.init(api.getState())
+
+        case 'COMMIT':
+          return connection?.init(api.getState())
+
+        case 'ROLLBACK':
+          return parseJsonThen(message.state, (state) => {
+            setStateFromDevtools(state)
+            connection?.init(api.getState())
+          })
+
+        case 'JUMP_TO_STATE':
+        case 'JUMP_TO_ACTION':
+          return parseJsonThen(message.state, (state) => {
+            setStateFromDevtools(state)
+          })
+
+        case 'IMPORT_STATE': {
+          const { nextLiftedState } = message.payload
+          const lastComputedState = nextLiftedState.computedStates.slice(-1)[0]?.state
+          if (!lastComputedState) return
+          setStateFromDevtools(lastComputedState)
+          connection?.send(null, nextLiftedState)
+          return
+        }
+
+        case 'PAUSE_RECORDING':
+          return (isRecording = !isRecording)
+      }
+  }
+})
+```
+
+
+하나씩 짚어봤다.
+
+**`ACTION`** — DevTools 창의 "Dispatch" 탭에서 개발자가 직접 JSON 액션을 만들어서 보냈을 때 온다. `__setState`라는 예약된 타입이면 상태를 통째로 갈아끼우고, 아니면(진짜 redux 액션이면) `shouldDispatchFromDevtools(api)`가 참일 때만 `api.dispatch(action)`으로 실제 리덕스 액션을 흘려보낸다.
+
+**`RESET`** — 스토어가 처음 만들어질 때 계산해둔 `initialState`로 되돌리고, DevTools 쪽 기록도 그 값으로 다시 `init`해서 새 기준점을 잡는다.
+
+**`COMMIT`** — 지금 상태를 그대로 다시 `connection.init`에 넘겨서 "여기가 새 기준점"이라고 알려주기만 한다. 상태 자체는 바뀌지 않는다.
+
+**`ROLLBACK`** — `message.state`(JSON 문자열)를 파싱해서 그 값으로 되돌리고, 역시 새 기준점으로 `init`한다.
+
+**`JUMP_TO_STATE` / `JUMP_TO_ACTION`** — DevTools 타임라인에서 과거 특정 지점을 클릭했을 때 온다. `message.state`를 그 시점 값으로 파싱해서 `setStateFromDevtools`로 바꾸기만 한다. `RESET`/`ROLLBACK`과 다르게 `connection.init`을 다시 안 부르는데, 지금 시점을 "새 기준점"으로 확정 짓는 게 아니라 그냥 잠깐 과거를 보여주는 것뿐이라 그런 것 같다.
+
+**`IMPORT_STATE`** — 미리 내보내둔 전체 기록(`nextLiftedState`)을 통째로 불러올 때다. `computedStates` 배열의 마지막 항목이 가장 최신 상태라서 그걸 꺼내 적용하고, 불러온 기록 전체를 다시 `connection.send`로 DevTools에 돌려준다.
+
+**`PAUSE_RECORDING`** — `isRecording`을 그냥 토글한다. DevTools 창의 일시정지 버튼을 누르면 이게 호출된다.
+
+이 하나하나를 다 외울 필요는 없겠지만, "시간여행 디버깅"이라는 게 결국 `message.state`에 저장된 과거 값을 스위칭 케이스에 따라 바꿔끼우며 `setStateFromDevtools`로 되돌리는 것뿐이었다는 것을 알자.
+
+<br/>
+
+> **JSON으로 직렬화해서 주고받는 이유가 뭘까?**
+>
+> `connection`은 확장 프로그램과 웹페이지, 즉 메모리를 공유하지 않는 서로 다른 실행 컨텍스트를 잇는 채널이다. 참조를 그대로 넘길 수 없으니, 값을 문자열로 직렬화해서 보내고 받는 쪽이 다시 파싱해서 복원해야 한다. `message.payload`나 `message.state`가 JSON 문자열로 오고 `parseJsonThen`으로 파싱하는 이유가 여기 있다.
 
 <br/>
 
@@ -643,28 +826,26 @@ devtools와 redux 미들웨어가 서로 존재를 모르는 채로도, `api`라
 
 `set`을 감싸서 새 함수를 만들면, 그 새 함수를 실제로 손에 쥔 코드만 감싸진 로직(devtools 전송)을 타게 된다.
 
-근데 `api`는 스토어 전체에서 공유하는 단 하나의 객체라서, `api.setState` 자체를 바꿔치기해두면 그 이후로 누가 `api.setState`를 부르든(다른 미들웨어, 유저 코드, 심지어 나중에 체이닝되는 또 다른 미들웨어) 전부 자동으로 devtools 로직을 거치게 된다.
+그러나 `api`는 스토어 전체에서 공유하는 단 하나의 객체이기에, `api.setState` 자체를 바꿔치기해두면 그 이후로 누가 `api.setState`를 부르든(다른 미들웨어, 유저 코드, 심지어 나중에 체이닝되는 또 다른 미들웨어) 전부 자동으로 devtools 로직을 거치게 된다.
 
-참조가 여기저기 퍼질 수 있는 상황에서는 감싸는 것보다 재할당이 훨씬 확실하게 가로챈다.
+참조가 여기저기 퍼질 수 있는 상황에서는 감싸는 것보다 재할당이 훨씬 확실하게 가로챈다고 한다.
 
 **`isRecording` 대신 메시지에 "출처"를 표시하는 방법은 안 될까?**
 
 `set(state, replace, action)`처럼 이미 공개 API로 노출된 시그니처에 "이건 devtools가 보낸 거야" 같은 내부 플래그를 끼워 넣으려면 시그니처를 오염시키거나 별도의 채널이 필요해진다.
 
-반면 `isRecording`은 그냥 클로저 안에 숨어있는 변수 하나로 온오프만 하면 되니 구현이 훨씬 단순하다.
+반면 `isRecording`은 클로저 안에 숨어있는 변수 하나로 온오프만 하면 되니 구현이 훨씬 단순하다.
 
-`zui()`도 아마 GUI ↔ 앱 사이에서 똑같은 문제를 만날 텐데, 이 플래그 방식을 그대로 가져다 쓸 가능성이 높다.
-
-**`trackedConnections` 없이 각 스토어가 독립적으로 connection을 만들면?**
-
-스토어마다 `extensionConnector.connect()`를 따로 부르면 DevTools 창(혹은 탭)이 스토어 개수만큼 따로따로 뜬다.
-
-여러 스토어의 상태 변화를 하나의 타임라인에서 같이 보면서 시간여행 디버깅을 하고 싶은 게 애초의 목적인데, connection이 쪼개지면 그게 불가능해진다.
-
-`trackedConnections`가 있어야 같은 `name`을 공유하는 스토어들이 하나의 connection과 상태 트리를 같이 쓸 수 있다.
+`zui()`도 아마 GUI ↔ 앱 사이에서 똑같은 문제를 만날 텐데, 이 플래그 방식을 그대로 가져다 쓰면 될 듯하다.
 
 <br/>
 
 여기까지 devtools.ts를 읽고 나니, `zui()`도 결국 이 구조 — `api.setState` 가로채기, 양방향 메시지 처리, `isRecording` 같은 재진입 방지 플래그 — 를 거의 그대로 참고하게 될 것 같다.
 
-다음 글부터는 이 패턴을 참고해서 실제로 `zui()` 미들웨어 구현에 들어가볼 예정이다.
+<br/>
+
+>다음 포스팅부터는 이 패턴을 참고해서 실제로 `zui()` 미들웨어 구현에 들어가볼 예정이다.
+>
+>아직 라이브러리를 비롯해 상태 관리를 다루는 수준이 부족하기에, 혼자서 무턱대고 만들다간 시간이 매우 오래걸릴 것이라 판단했다.
+>
+>따라서, AI 에이전트를 활용하되, 모든 구현과 기능 개발을 맡기지 않고, 스텝과 가이드를 나누게 하여 마치 과제를 내주듯 지시하여 이를 채우며, 리팩토링하고 코드리뷰 등 페어 프로그래밍 할 예정이다.
