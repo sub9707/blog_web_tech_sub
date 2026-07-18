@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Throttle Example</title>
+<style>
+  :root{
+    --bg:#1b1b1e;
+    --surface:#242428;
+    --surface-2:#2c2c31;
+    --text:#eceaec;
+    --text-dim:#8f8f97;
+    --accent:#ff7a33;
+    --accent-soft:rgba(255,122,51,.16);
+    --radius:8px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Pretendard','Apple SD Gothic Neo',system-ui,-apple-system,sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .wrap{
+    width:100%;
+    max-width:440px;
+    background:var(--surface);
+    border-radius:var(--radius);
+    padding:28px 24px;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:20px;
+  }
+  h1{
+    font-size:17px;
+    font-weight:600;
+    margin:0;
+    letter-spacing:-.2px;
+  }
+  .badge{
+    font-size:11px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    color:var(--accent);
+    background:var(--accent-soft);
+    padding:4px 8px;
+    border-radius:6px;
+  }
+
+  .tap-btn{
+    position:relative;
+    width:100%;
+    height:150px;
+    background:var(--surface-2);
+    border:none;
+    border-radius:var(--radius);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--text-dim);
+    font-size:14px;
+    font-family:inherit;
+    overflow:hidden;
+    touch-action:manipulation;
+    user-select:none;
+    cursor:pointer;
+    transition:background .12s ease;
+  }
+  .tap-btn.locked{ background:#332a24; color:var(--text-dim); }
+  .tap-btn:active{ background:#333338; }
+
+  .ripple{
+    position:absolute;
+    width:14px;
+    height:14px;
+    border-radius:50%;
+    background:var(--accent);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    animation:pop .55s ease forwards;
+  }
+  @keyframes pop{
+    0%{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+    100%{ opacity:0; transform:translate(-50%,-50%) scale(3.2); }
+  }
+
+  .progress{
+    margin-top:14px;
+    height:6px;
+    width:100%;
+    background:var(--surface-2);
+    border-radius:8px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    border-radius:8px;
+  }
+  .progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-top:8px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  .progress-label .state{ color:var(--accent); }
+
+  .stats{
+    display:flex;
+    gap:10px;
+    margin-top:16px;
+  }
+  .stat{
+    flex:1;
+    background:var(--surface-2);
+    border-radius:var(--radius);
+    padding:12px 14px;
+  }
+  .stat-label{
+    display:block;
+    font-size:11px;
+    color:var(--text-dim);
+    margin-bottom:6px;
+  }
+  .stat-value{
+    display:block;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:20px;
+    font-weight:600;
+  }
+  .stat-value.accent{ color:var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Throttle</h1>
+    <span class="badge">INTERVAL <span id="intervalVal">1200</span>ms</span>
+  </header>
+
+  <button class="tap-btn" id="tapBtn" type="button">빠르게 연타해보세요</button>
+
+  <div class="progress">
+    <div class="progress-fill" id="fill"></div>
+  </div>
+  <div class="progress-label">
+    <span>쿨다운</span>
+    <span class="state" id="stateLabel">READY</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-label">시도 횟수</span>
+      <span class="stat-value" id="attemptCount">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">실제 실행</span>
+      <span class="stat-value accent" id="execCount">0</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  const INTERVAL = 1200;
+  const btn = document.getElementById('tapBtn');
+  const fill = document.getElementById('fill');
+  const stateLabel = document.getElementById('stateLabel');
+  const attemptCountEl = document.getElementById('attemptCount');
+  const execCountEl = document.getElementById('execCount');
+
+  let attemptCount = 0;
+  let execCount = 0;
+
+  function startCooldownBar(){
+    fill.style.transition = 'none';
+    fill.style.width = '100%';
+    void fill.offsetWidth; // force reflow
+    fill.style.transition = `width ${INTERVAL}ms linear`;
+    fill.style.width = '0%';
+  }
+
+  function spawnRipple(x, y){
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = x + 'px';
+    r.style.top = y + 'px';
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 550);
+  }
+
+  function exec(x, y){
+    execCount++;
+    execCountEl.textContent = execCount;
+    spawnRipple(x, y);
+  }
+
+  // 실제 쓰로틀 함수
+  function throttle(fn, interval){
+    let locked = false;
+    return function(...args){
+      if(locked) return;
+      locked = true;
+      btn.classList.add('locked');
+      stateLabel.textContent = 'LOCKED';
+      startCooldownBar();
+      fn.apply(this, args);
+      setTimeout(() => {
+        locked = false;
+        btn.classList.remove('locked');
+        stateLabel.textContent = 'READY';
+      }, interval);
+    };
+  }
+
+  const throttledExec = throttle(exec, INTERVAL);
+
+  // click: 마우스 클릭과 모바일 탭을 동일하게 처리 (hover 아님)
+  btn.addEventListener('click', (e) => {
+    attemptCount++;
+    attemptCountEl.textContent = attemptCount;
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    throttledExec(x, y);
+  });
+</script>
+
+</body>
+</html>
