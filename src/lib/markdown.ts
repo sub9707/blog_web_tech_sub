@@ -7,7 +7,7 @@ export function calculateReadTime(content: string): number {
 export function slugify(text: string): string {
   return text
     .trim()
-    .replace(/[?#&=+/\\%<>'"]/g, '')
+    .replace(/[?#&=+/\\%<>'":`*|]/g, '')
     .replace(/\s+/g, '-')
     .replace(/--+/g, '-')
     .replace(/^-+|-+$/g, '');

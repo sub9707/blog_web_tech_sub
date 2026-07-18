@@ -30,7 +30,7 @@ console.log(a, b); // ReferenceError
 
 ## 스코프 체인 (Scope Chain)
 
-![스코프 체인 구조](/assets/Javascript/scope-chain.png)
+![스코프 체인 구조](/assets/Javascript/closure-scope/scope-chain.png)
 
 함수는 중첩될 수 있고, 중첩될수록 각 함수의 지역 스코프도 중첩된다.
 
@@ -141,7 +141,7 @@ test(); // 'I have a Name'
 
 그런데 `test()`를 호출하면 `outer`의 지역 변수 `name`이 여전히 출력된다.
 
-![클로저와 렉시컬 환경](/assets/Javascript/closure-lexical-env.png)
+![클로저와 렉시컬 환경](/assets/Javascript/closure-scope/closure-lexical-env.png)
 
 이게 가능한 이유는, `inner` 함수가 **내부 슬롯(`[[Environment]]`)에 자신이 정의된 시점의 렉시컬 환경(outer의 스코프)을 참조**하고 있기 때문이다.
 

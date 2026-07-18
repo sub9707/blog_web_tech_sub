@@ -3,7 +3,7 @@ title: "Webpack5 파헤치기 1편 — 번들링 기초와 에셋 처리"
 date: "2026-02-19"
 description: "Webpack5 초기 설정부터 CSS·SCSS 번들링, 이미지·정적 파일 처리까지 직접 실습하며 정리한 글"
 tags: ["javascript", "webpack", "bundler", "scss", "babel"]
-thumbnail: "/assets/thumbnails/webpack-1.png"
+thumbnail: "/assets/thumbnails/javascript/webpack-1.png"
 ---
 
 프론트엔드 개발을 하다 보면 수십 개의 JS 파일, CSS, 이미지가 복잡하게 얽힌다. 이걸 브라우저가 그대로 로드하면 네트워크 요청이 폭발적으로 늘어나고 변수 충돌 같은 문제도 생긴다. Webpack은 이 모든 것을 하나의 번들로 묶어주는 도구다.

@@ -3,7 +3,7 @@ title: "라이브러리 개발기 (4) — 스토리보드"
 date: "2026-07-12"
 description: "Z-UI를 설치한 사용자가 마주하는 라이브러리 시나리오 정리"
 tags: ["library", "zustand", "ui", "storyboard", "scenario"]
-thumbnail: "/assets/thumbnails/zui.png"
+thumbnail: "/assets/thumbnails/etc/zui.png"
 ---
 
 devtools.ts까지 뜯어보고 나니, 이제 진짜 뭘 만들지는 머릿속에 대충 그려졌다.

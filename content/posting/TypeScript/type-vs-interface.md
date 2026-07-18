@@ -3,7 +3,7 @@ title: "type vs interface — 언제 뭘 써야 할까"
 date: "2025-11-05"
 description: "문법 차이를 넘어 선언 병합, 확장 방식, 성능, 실무 선택 기준까지 type과 interface의 차이가 뭘까"
 tags: ["typescript", "type", "interface", "declaration-merging", "generics"]
-thumbnail: "/assets/thumbnails/type-vs-interface.png"
+thumbnail: "/assets/thumbnails/typescript/type-vs-interface.png"
 ---
 
 TypeScript를 쓰다 보면 한 번쯤 멈추는 지점이 있다.
@@ -103,7 +103,7 @@ type C = A & B;
 
 에러 없이 `never`가 되기 때문에 조용히 버그로 이어질 수 있다.
 
-![interface extends vs type intersection 비교](/assets/typescript/extends-vs-intersection.png)
+![interface extends vs type intersection 비교](/assets/typescript/type-vs-interface/extends-vs-intersection.png)
 
 <br/>
 
@@ -155,7 +155,7 @@ declare namespace Express {
 
 반대로 라이브러리 내부에서도 의도적으로 `interface`를 쓰는 이유가 여기에 있다. 사용자가 타입을 확장할 수 있게 열어두는 것이다.
 
-![선언 병합 동작 흐름](/assets/typescript/declaration-merging.png)
+![선언 병합 동작 흐름](/assets/typescript/type-vs-interface/declaration-merging.png)
 
 <br/>
 
@@ -348,7 +348,7 @@ TypeScript 공식 팀의 언급이 있다.
 
 대부분의 프로젝트에서 체감할 수 있는 차이는 아니다. 하지만 타입 수백 개가 얽힌 대형 프로젝트에서는 `interface` 기반이 컴파일 속도에 유리하다.
 
-![컴파일 성능 차이 개념도](/assets/typescript/interface-compile-cache.png)
+![컴파일 성능 차이 개념도](/assets/typescript/type-vs-interface/interface-compile-cache.png)
 
 <br/>
 

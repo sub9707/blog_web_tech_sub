@@ -3,7 +3,7 @@ title: "내장 유틸리티만으론 부족할 때 — 커스텀 유틸리티"
 date: "2025-11-30"
 description: "타입을 다루다 보면 Partial이나 Readonly만으로 해결되지 않는 경우가 있다. DeepPartial, DeepReadonly 같은 커스텀 유틸리티 타입을 직접 구현하면서 알게 된 내용을 정리했다."
 tags: ["typescript", "utility-types", "mapped-types", "conditional-types", "deep-partial"]
-thumbnail: "/assets/thumbnails/custom-utility-types.png"
+thumbnail: "/assets/thumbnails/typescript/custom-utility-types.png"
 ---
 
 TypeScript 내장 유틸리티 타입을 쓰다 보면 벽에 부딪히는 순간이 온다.
@@ -105,7 +105,7 @@ type DeepPartialConfig = DeepPartial<Config>;
 
 이제 `server.host`만 있어도 된다.
 
-![DeepPartial vs Partial 비교](/assets/typescript/deep-partial-vs-partial.png)
+![DeepPartial vs Partial 비교](/assets/typescript/custom-utility-types/deep-partial-vs-partial.png)
 
 <br/>
 
@@ -230,7 +230,7 @@ type NumberFields = PickByValue<Form, number>;
 // { age: number; score: number }
 ```
 
-![PickByValue 동작 원리](/assets/typescript/pick-by-value.png)
+![PickByValue 동작 원리](/assets/typescript/custom-utility-types/pick-by-value.png)
 
 <br/>
 
@@ -326,7 +326,7 @@ type PrettifiedC = Prettify<A & B>;
 
 타입 자체가 바뀌는 게 아니라 IDE의 타입 미리보기가 펼쳐서 보이는 것이다. 복잡한 타입을 디버깅할 때 유용하다.
 
-![Prettify IDE 미리보기 비교](/assets/typescript/prettify-ide-preview.png)
+![Prettify IDE 미리보기 비교](/assets/typescript/custom-utility-types/prettify-ide-preview.png)
 
 <br/>
 

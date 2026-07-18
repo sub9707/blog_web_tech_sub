@@ -3,7 +3,7 @@ title: "함수 타입, 다시 쓰지 않아도 된다! — ReturnType, Parameter
 date: "2025-11-24"
 description: "함수의 반환 타입이나 매개변수 타입을 다시 작성하고 있다면, 이미 있는 타입을 활용할 수 있다. ReturnType, Parameters, Awaited를 이용해 함수에서 타입을 추출하는 방법을 알아보자"
 tags: ["typescript", "ReturnType", "Parameters", "Awaited", "utility-types", "type-inference"]
-thumbnail: "/assets/thumbnails/returntype-parameters-awaited.png"
+thumbnail: "/assets/thumbnails/typescript/returntype-parameters-awaited.png"
 ---
 
 언젠가 타입을 이렇게 쓰고 있는 코드를 본 적이 있다.
@@ -115,7 +115,7 @@ function useApi(client: ApiClient) {
 
 `createApiClient`의 반환 구조가 바뀌면 `ApiClient`가 자동으로 따라온다.
 
-![ReturnType 동작 원리](/assets/typescript/returntype-extract.png)
+![ReturnType 동작 원리](/assets/typescript/returntype-parameters-awaited/returntype-extract.png)
 
 <br/>
 
@@ -190,7 +190,7 @@ type LoginOptions = Parameters<typeof login>[1];
 
 `login` 함수 파라미터 타입을 폼 컴포넌트나 다른 함수에서 재사용할 수 있다.
 
-![Parameters 동작 원리](/assets/typescript/parameters-extract.png)
+![Parameters 동작 원리](/assets/typescript/returntype-parameters-awaited/parameters-extract.png)
 
 <br/>
 
@@ -277,7 +277,7 @@ type A = Awaited<CustomThenable>; // string
 
 `await`가 실제로 처리하는 방식과 동일하게 동작한다.
 
-![Awaited 동작 원리](/assets/typescript/awaited-unwrap.png)
+![Awaited 동작 원리](/assets/typescript/returntype-parameters-awaited/awaited-unwrap.png)
 
 <br/>
 

@@ -3,7 +3,7 @@ title: "React 렌더링 구조 분석"
 date: "2026-06-01"
 description: "함수 컴포넌트의 실행 모델부터 Fiber 아키텍처, Render/Commit Phase, 리렌더링 조건, React 19 Compiler까지 React 렌더링의 내부 동작을 정리"
 tags: ["react", "rendering", "fiber", "hooks", "react19", "performance"]
-thumbnail: "/assets/thumbnails/react_rendering_thumbnail.png"
+thumbnail: "/assets/thumbnails/react/react_rendering_thumbnail.png"
 ---
 
 React로 개발하다 보면 이 컴포넌트가 왜 다시 렌더링되는지, 최적화를 어디서 해야 하는지 부딪히는 순간이 온다.
@@ -71,7 +71,7 @@ function Example() {
 `count` 변수 자체는 렌더링마다 새로 선언되지만, 그 안에 담기는 값은 Fiber 노드의 `memoizedState`에서 꺼내온다.
 `useState`를 호출할 때마다 각 컴포넌트의 Fiber 객체에 있는 `memoizedState` 연결 리스트에 순서대로 쌓이는 구조다.
 
-![useState와 Fiber memoizedState 구조](/assets/React/image_20260519193144.png)
+![useState와 Fiber memoizedState 구조](/assets/React/react-rendering-structure/image_20260519193144.png)
 
 `useState(0)`의 초기값 `0`은 첫 렌더링에만 사용되고 이후에는 무시된다.
 컴포넌트 함수가 매번 새로 실행되어도 상태가 초기화되지 않는 이유가 이것이다.

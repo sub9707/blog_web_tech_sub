@@ -3,7 +3,7 @@ title: "리액트 버전별 핵심 변화와 개발 문화의 전환"
 date: "2026-07-06"
 description: "React 0.3부터 19까지, 버전별 정리"
 tags: ["react", "history", "hooks", "concurrent", "server-components", "new-features"]
-thumbnail: "/assets/thumbnails/react-version.png"
+thumbnail: "/assets/thumbnails/react/react-version.png"
 ---
 
 React는 2013년 공개 이후 API를 크게 세 번 갈아엎었다.
@@ -44,7 +44,7 @@ React는 2013년 공개 이후 API를 크게 세 번 갈아엎었다.
 
 HTML을 JS 안에 섞어 쓰는 JSX가 안티 패턴처럼 보였기 때문이다.
 
-![2013년 JSConf US, Jordan Walke의 React 첫 발표 캡쳐 - Youtube](/assets/React/jsconf-2013-react-reveal.png)
+![2013년 JSConf US, Jordan Walke의 React 첫 발표 캡쳐 - Youtube](/assets/React/react-version-history/jsconf-2013-react-reveal.png)
 
 <bookmark url="https://www.youtube.com/watch?v=5fG_lyNuEAw"></bookmark>
 

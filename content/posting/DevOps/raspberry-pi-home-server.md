@@ -3,7 +3,7 @@ title: "라즈베리파이 홈서버에 Next.js 블로그 배포하기"
 date: "2026-04-28"
 description: "라즈베리파이 홈서버에 Next.js 블로그를 자동 배포하는 환경을 구축하고 이 과정을 정리함"
 tags: ["devops", "docker", "nginx", "raspberry-pi", "github-actions", "nextjs"]
-thumbnail: "/assets/thumbnails/devops-raspberry-pi-thumbnail.png"
+thumbnail: "/assets/thumbnails/devops/devops-raspberry-pi-thumbnail.png"
 ---
 
 ## 배경
@@ -24,7 +24,7 @@ Docker + Nginx + Let's Encrypt + GitHub Actions + GHCR + Watchtower
 
 ## 전체 구조
 
-![전체 배포 아키텍처](/assets/raspberry-pi-architecture.png)
+![전체 배포 아키텍처](/assets/DevOps/raspberry-pi-home-server/raspberry-pi-architecture.png)
 
 ```
 PC (개발)

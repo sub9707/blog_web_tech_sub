@@ -3,7 +3,7 @@ title: "자바스크립트 버전별 핵심 기능 정리"
 date: "2026-07-06"
 description: "ES5부터 ES2023까지, 각 버전에서 추가된 굵직한 자바스크립트 기능들을 예제와 함께 정리"
 tags: ["javascript", "ecmascript", "es6", "es2015", "history", "new-features"]
-thumbnail: "/assets/thumbnails/js-version.png"
+thumbnail: "/assets/thumbnails/javascript/js-version.png"
 ---
 
 자바스크립트는 1995년 등장한 이후 ECMAScript라는 이름으로 표준화됐다.

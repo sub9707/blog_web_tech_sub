@@ -3,7 +3,7 @@ title: "Webpack5 파헤치기 2편 — 개발 환경 최적화와 플러그인"
 date: "2026-03-05"
 description: "HTMLWebpackPlugin, 캐싱, Dev Server, Source Map, Babel Loader, Bundle Analyzer까지 Webpack 개발 환경을 완성하는 설정 가이드"
 tags: ["javascript", "webpack", "babel", "dev-server", "source-map", "optimization"]
-thumbnail: "/assets/thumbnails/webpack-2.png"
+thumbnail: "/assets/thumbnails/javascript/webpack-2.png"
 ---
 
 [1편](/posts/javascript/webpack-1)에서 JS·CSS·이미지 번들링의 기초를 다뤘다. 이번 편에서는 실무에서 필수적으로 쓰이는 플러그인과 개발 환경 설정을 다룬다.

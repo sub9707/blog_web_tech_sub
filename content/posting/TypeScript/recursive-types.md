@@ -3,7 +3,7 @@ title: "타입 안에 타입있고 그 타입 안에 타입이 있.."
 date: "2025-12-17"
 description: "중첩이 몇 단계인지 모르는 구조를 타입으로 표현해야 할 때, 재귀 타입 말고 다른 방법이란 찾기 어렵다. JSON, 트리, 중첩 객체 등 타입스크립트와 함께 실제로 쓰는 패턴들을 알아보자"
 tags: ["typescript", "recursive-types", "json", "tree", "conditional-types"]
-thumbnail: "/assets/thumbnails/recursive-types.png"
+thumbnail: "/assets/thumbnails/typescript/recursive-types.png"
 ---
 
 아... 막 `any`를 쓰고 싶어지는 순간이 있다.
@@ -58,7 +58,7 @@ const data: Json = {
 
 중첩이 몇 단계든 타입이 맞다. `any` 없이 JSON을 표현할 수 있다.
 
-![Json 재귀 타입 구조 시각화](/assets/typescript/json-recursive.png)
+![Json 재귀 타입 구조 시각화](/assets/typescript/recursive-types/json-recursive.png)
 
 <br/>
 
@@ -220,7 +220,7 @@ type T = Tail<[string, number, boolean]>; // [number, boolean]
 
 타입 수준 연결리스트처럼 동작한다.
 
-![재귀 조건부 타입 동작 흐름](/assets/typescript/flatten-diagram.png)
+![재귀 조건부 타입 동작 흐름](/assets/typescript/recursive-types/flatten-diagram.png)
 
 <br/>
 

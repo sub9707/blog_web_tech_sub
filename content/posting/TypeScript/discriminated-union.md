@@ -3,7 +3,7 @@ title: "Discriminated Union으로 상태 모델링하기"
 date: "2025-11-08"
 description: "불가능한 상태를 타입으로 원천 차단하는 Discriminated Union 패턴, 실전 상태 모델링, React와의 조합까지"
 tags: ["typescript", "discriminated-union", "state-modeling", "type-safety", "react"]
-thumbnail: "/assets/thumbnails/discriminated-union.png"
+thumbnail: "/assets/thumbnails/typescript/discriminated-union.png"
 ---
 
 버그 중 상당수는 "있어서는 안 되는 상태"가 존재하기 때문에 발생한다.
@@ -41,7 +41,7 @@ type FetchState = LoadingState | SuccessState | ErrorState;
 
 `status` 필드가 판별자다. 값이 `"loading"`, `"success"`, `"error"` 중 하나로 고정되어 있고, 각 값마다 다른 타입이 대응된다.
 
-![Discriminated Union 구조 다이어그램](/assets/typescript/discriminated-union-structure.png)
+![Discriminated Union 구조 다이어그램](/assets/typescript/discriminated-union/discriminated-union-structure.png)
 
 <br/>
 
@@ -107,7 +107,7 @@ function render(state: FetchState) {
 
 TypeScript가 `status` 값에 따라 자동으로 타입을 좁혀준다. `state.data`에 접근할 때 `status === "success"`인 경우에만 해당 프로퍼티가 있다는 걸 컴파일러가 안다.
 
-![boolean 플래그 vs Discriminated Union 비교](/assets/typescript/boolean-flags-vs-du.png)
+![boolean 플래그 vs Discriminated Union 비교](/assets/typescript/discriminated-union/boolean-flags-vs-du.png)
 
 <br/>
 
@@ -227,7 +227,7 @@ function counterReducer(state: number, action: CounterAction): number {
 
 `action.payload`는 `type === "set"`인 경우에만 존재한다. 다른 case에서 `action.payload`에 접근하려 하면 컴파일 에러가 난다.
 
-![useReducer + Discriminated Union 흐름](/assets/typescript/reducer-discriminated-union.png)
+![useReducer + Discriminated Union 흐름](/assets/typescript/discriminated-union/reducer-discriminated-union.png)
 
 <br/>
 
@@ -309,7 +309,7 @@ function getArea(shape: Shape): number {
 
 여기서 `Shape`에 `| { kind: "triangle"; base: number; height: number }`를 추가하면, `default`에서 `shape`가 `{ kind: "triangle"; ... }`이 되고 `never`에 할당할 수 없으므로 컴파일 에러가 발생한다.
 
-![Exhaustive Check 동작 원리](/assets/typescript/exhaustive-check-du.png)
+![Exhaustive Check 동작 원리](/assets/typescript/discriminated-union/exhaustive-check-du.png)
 
 <br/>
 

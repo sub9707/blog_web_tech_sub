@@ -3,7 +3,7 @@ title: "GitHub Actions는 어떻게 알아서 동작할까"
 date: "2026-06-18"
 description: "push 한 번에 테스트가 돌고 배포가 되는 GitHub Actions에 대해 알아보자"
 tags: ["github-actions", "ci-cd", "devops", "runner", "workflow", "automation"]
-thumbnail: "/assets/thumbnails/github-actions-internals.png"
+thumbnail: "/assets/thumbnails/devops/github-actions-internals.png"
 ---
 
 코드를 push하면 테스트가 돌고, PR을 열면 lint가 실행되고, main에 merge되면 배포가 된다.
@@ -32,7 +32,7 @@ thumbnail: "/assets/thumbnails/github-actions-internals.png"
      왼쪽부터: 개발자 코드 push → GitHub.com (이벤트 감지, YAML 파싱, Job 큐) → Runner (GitHub-hosted VM) → Steps 실행 → 결과 보고
      각 컴포넌트 박스와 화살표, Actions Service와 Runner 간 통신 방향 표시
      파일명: github-actions-architecture.png -->
-![GitHub Actions 전체 아키텍처](/assets/DevOps/github-actions-architecture.png)
+![GitHub Actions 전체 아키텍처](/assets/DevOps/github-actions-internals/github-actions-architecture.png)
 
 <br/>
 
@@ -143,7 +143,7 @@ jobs:
      test와 lint가 병렬 실행되고, 둘 다 완료된 후 build가 실행되는 DAG(방향성 비순환 그래프) 구조
      각 Job 박스, needs 화살표, 병렬 실행 구간 강조
      파일명: github-actions-job-graph.png -->
-![Job 의존성 그래프](/assets/DevOps/github-actions-job-graph.png)
+![Job 의존성 그래프](/assets/DevOps/github-actions-internals/github-actions-job-graph.png)
 
 `needs`로 의존성을 선언하면 해당 Job들이 모두 성공한 뒤에 실행된다. Job 간 순서와 병렬성을 이 의존성 그래프로 표현한다.
 
@@ -221,7 +221,7 @@ GitHub이 관리하는 **GitHub-hosted Runner**와, 직접 운영하는 **Self-h
      오른쪽: 회사 서버/온프레미스 (Self-hosted Runner) — Actions Service와 HTTPS long polling으로 연결
      두 경우 모두 GitHub Actions Service를 통해 Job을 받는 구조
      파일명: github-actions-runner-types.png -->
-![Runner 유형 비교](/assets/DevOps/github-actions-runner-types.png)
+![Runner 유형 비교](/assets/DevOps/github-actions-internals/github-actions-runner-types.png)
 
 <br/>
 
@@ -263,7 +263,7 @@ Runner → GitHub Actions Service: "다음 Job 있어?"
      Job이 없으면 서버가 응답을 보류(hang)하다가 Job이 생기면 응답하는 흐름
      WebSocket이 아닌 HTTPS 기반 polling 구조 강조
      파일명: github-actions-long-polling.png -->
-![Runner Long Polling 흐름](/assets/DevOps/github-actions-long-polling.png)
+![Runner Long Polling 흐름](/assets/DevOps/github-actions-internals/github-actions-long-polling.png)
 
 Runner는 GitHub에서 Job을 기다리는 것이 아니라, 계속 "일 있어?"라고 물어보는 구조다. 이를 통해 Runner가 방화벽 안에 있어도 (GitHub이 Runner에 접근할 수 없어도) 동작한다.
 

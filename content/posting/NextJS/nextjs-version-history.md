@@ -3,7 +3,7 @@ title: "Next.js 버전별 핵심 변화와 개발 문화의 전환"
 date: "2026-07-06"
 description: "Next.js 1부터 15까지, Pages Router에서 App Router로 넘어오기까지 무엇이 왜 바뀌었는지 정리"
 tags: ["nextjs", "history", "app-router", "server-components", "turbopack", "new-features"]
-thumbnail: "/assets/thumbnails/next-version.png"
+thumbnail: "/assets/thumbnails/nextjs/next-version.png"
 ---
 
 Next.js의 역사는 크게 두 시대로 나뉜다.

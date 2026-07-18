@@ -3,7 +3,7 @@ title: "Deep Copy와 Shallow Copy로 알아보는 JS의 메모리 사용 방식"
 date: "2026-03-28"
 description: "자바스크립트에서 원시타입과 참조타입이 메모리에 저장되는 방식, 깊은 복사와 얕은 복사의 차이, 그리고 객체를 안전하게 복사하는 방법 정리"
 tags: ["javascript", "deep-copy", "shallow-copy", "memory", "reference-type"]
-thumbnail: "/assets/thumbnails/js-deep-copy-shallow-copy.png"
+thumbnail: "/assets/thumbnails/javascript/js-deep-copy-shallow-copy.png"
 ---
 
 자바스크립트에서 변수나 객체를 복사할 때, 복사본을 수정했는데 원본까지 바뀌어버린 경험이 있을 것이다.

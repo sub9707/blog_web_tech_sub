@@ -3,7 +3,7 @@ title: ".d.ts은 어디에 쓰는 타입 파일일까"
 date: "2025-12-05"
 description: "라이브러리 타입 에러가 왜 나는지 모르겠다면 node_modules의 안쪽 .d.ts 파일을 직접 읽으면 된다. 점 두 개 달린 파일이라고 기죽을 필요는 없다. d.ts파일에 대해 알아보자"
 tags: ["typescript", "declaration-files", "d.ts", "type-definitions", "library-types"]
-thumbnail: "/assets/thumbnails/dts-files.png"
+thumbnail: "/assets/thumbnails/typescript/dts-files.png"
 ---
 
 라이브러리를 쓰다가 타입 에러가 나면 대부분 구글링하거나 AI에 물어보기부터 한다.
@@ -127,7 +127,7 @@ export interface AxiosInstance {
 
 `axios.get<User>("/api/user")`를 쓸 때 `T = User`가 들어가면 `AxiosResponse<User>`가 반환된다. `.data`의 타입이 `User`가 되는 이유가 여기 있다.
 
-![axios 타입 구조 흐름](/assets/typescript/axios-type-flow.png)
+![axios 타입 구조 흐름](/assets/typescript/dts-files/axios-type-flow.png)
 
 <br/>
 
@@ -270,7 +270,7 @@ namespace NodeJS {
 
 `process.env.NEXT_PUBLIC_API_URL`이 `string | undefined`가 아닌 `string`이 된다.
 
-![선언 병합을 통한 전역 타입 확장 구조](/assets/typescript/declaration-merging.png)
+![선언 병합을 통한 전역 타입 확장 구조](/assets/typescript/dts-files/declaration-merging.png)
 
 <br/>
 

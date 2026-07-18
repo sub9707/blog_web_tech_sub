@@ -3,7 +3,7 @@ title: "라이브러리 개발기 (5) — 구현 전, 코어 기능 테스트"
 date: "2026-07-16"
 description: "core와 gui의 기반이 되는 기본 통신, 패턴 등을 정리하였습니다."
 tags: ["library", "zustand", "websocket", "typescript", "devtools"]
-thumbnail: "/assets/thumbnails/zui.png"
+thumbnail: "/assets/thumbnails/etc/zui.png"
 ---
 
 스토리보드 대로 흘러가는 앱 로직을 위해 먼저 기본 통신 방식과 타입, 스토어 CRUD를 간이로 구현해보기로 했다.

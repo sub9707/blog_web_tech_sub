@@ -3,7 +3,7 @@ title: "타입을 어떻게 관리하시나요?"
 date: "2026-01-17"
 description: "React 프로젝트에서 타입들을 관리하는 패턴들에 대해 알아보자"
 tags: ["typescript", "type-management", "project-structure", "barrel-export", "patterns"]
-thumbnail: "/assets/thumbnails/type-management-patterns.png"
+thumbnail: "/assets/thumbnails/typescript/type-management-patterns.png"
 ---
 
 타입을 사용하는 프로젝트가 점점 규모가 커지면서, 타입을 어디에 어떻게 관리해야할 지 고민하는 순간이 온다.
@@ -28,7 +28,7 @@ thumbnail: "/assets/thumbnails/type-management-patterns.png"
 
 이 기준으로 위치를 정하면 대부분 자연스럽게 정리된다.
 
-![타입 배치 결정 흐름도](/assets/typescript/type-placement-flow.png)
+![타입 배치 결정 흐름도](/assets/typescript/type-management-patterns/type-placement-flow.png)
 
 <br/>
 
@@ -196,7 +196,7 @@ export type { Nullable, Optional, ID, Timestamps } from "./common";
 import type { User, Post, ApiResponse } from "@/types";
 ```
 
-![Barrel Export 구조 다이어그램](/assets/typescript/barrel-export-diagram.png)
+![Barrel Export 구조 다이어그램](/assets/typescript/type-management-patterns/barrel-export-diagram.png)
 
 <br/>
 
@@ -235,7 +235,7 @@ export interface Post {
 }
 ```
 
-![순환 참조 vs 해결 구조 다이어그램](/assets/typescript/circular-ref-solution.png)
+![순환 참조 vs 해결 구조 다이어그램](/assets/typescript/type-management-patterns/circular-ref-solution.png)
 
 <br/>
 
@@ -409,7 +409,7 @@ src/
 
 각 기능 폴더에 자체 타입을 두고, 여러 기능에서 쓰이는 것만 `types/`로 올린다.
 
-![세 가지 폴더 구조 비교](/assets/typescript/folder-structure-comparison.png)
+![세 가지 폴더 구조 비교](/assets/typescript/type-management-patterns/folder-structure-comparison.png)
 
 <br/>
 

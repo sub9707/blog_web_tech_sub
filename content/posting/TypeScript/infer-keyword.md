@@ -3,7 +3,7 @@ title: "ReturnType이 어떻게 동작하는지 궁금했다면 — infer 키워
 date: "2025-11-21"
 description: "ReturnType, Parameters 같은 유틸리티 타입을 보다 보면 infer가 자주 등장한다. 조건부 타입 안에서 infer가 어떤 역할을 하는지 살펴보자"
 tags: ["typescript", "infer", "conditional-types", "utility-types", "type-system"]
-thumbnail: "/assets/thumbnails/infer-keyword.png"
+thumbnail: "/assets/thumbnails/typescript/infer-keyword.png"
 ---
 
 `ReturnType<T>`, `Parameters<T>`, `Awaited<T>`.
@@ -55,7 +55,7 @@ type C = GetReturnType<string>;              // never (함수가 아님)
 
 이게 `ReturnType<T>`의 실제 구현이다. TypeScript 표준 라이브러리에 그대로 정의되어 있다.
 
-![infer 패턴 매칭 흐름](/assets/typescript/infer-pattern-matching.png)
+![infer 패턴 매칭 흐름](/assets/typescript/infer-keyword/infer-pattern-matching.png)
 
 <br/>
 
@@ -169,7 +169,7 @@ type A = ToArrayNonDist<string | number>; // (string | number)[]
 
 `infer`와 조합할 때 분산 여부를 의식해야 한다.
 
-![분산 조건부 타입 동작 비교](/assets/typescript/distributive-conditional.png)
+![분산 조건부 타입 동작 비교](/assets/typescript/infer-keyword/distributive-conditional.png)
 
 <br/>
 

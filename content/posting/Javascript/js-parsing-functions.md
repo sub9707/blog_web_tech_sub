@@ -3,7 +3,7 @@ title: "JavaScript 모든 파싱을 알아보자"
 date: "2026-01-31"
 description: "parseInt부터 JSON.parse, URL, DOMParser, TextDecoder까지. JS에서 '읽고 변환'하는 함수들을 전부 파헤쳐보자"
 tags: ["javascript", "parsing", "JSON", "URL", "fetch", "DOMParser"]
-thumbnail: "/assets/thumbnails/js-parsing-functions.png"
+thumbnail: "/assets/thumbnails/javascript/js-parsing-functions.png"
 ---
 
 어딘가에서 데이터가 들어오고, 그걸 쓸 수 있는 형태로 바꾸는 가공의 시간이 항상 찾아온다.
@@ -121,7 +121,7 @@ Number.parseFloat === parseFloat; // true
 
 모듈화된 코드에서 전역 함수 대신 `Number.parseInt`를 쓰는 스타일도 있다.
 
-![parseInt / parseFloat / Number() 비교표](/assets/Javascript/number-parse.png)
+![parseInt / parseFloat / Number() 비교표](/assets/Javascript/js-parsing/number-parse.png)
 
 <br/>
 
@@ -295,7 +295,7 @@ params.toString(); // "page=1&limit=20&tag=js"
 fetch(`/api/posts?${params}`);
 ```
 
-![URL 파싱 구조도](/assets/Javascript/url-parsing.png)
+![URL 파싱 구조도](/assets/Javascript/js-parsing/url-parsing.png)
 
 <br/>
 
@@ -387,7 +387,7 @@ const json = await res.json();
 const text = await clone.text();
 ```
 
-![fetch Response 파싱 메서드 비교](/assets/Javascript/response-parsing.png)
+![fetch Response 파싱 메서드 비교](/assets/Javascript/js-parsing/response-parsing.png)
 
 <br/>
 

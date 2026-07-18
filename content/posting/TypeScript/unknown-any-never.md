@@ -3,7 +3,7 @@ title: "unknown vs any vs never — 그동안 막 썼다면"
 date: "2025-11-17"
 description: "TypeScript 타입 시스템의 극단에 위치한 세 가지 타입, any·unknown·never가 각각 어떤 의미를 갖고 언제 써야 하는지 정리함"
 tags: ["typescript", "unknown", "any", "never", "type-safety", "type-system"]
-thumbnail: "/assets/thumbnails/unknown-any-never.png"
+thumbnail: "/assets/thumbnails/typescript/unknown-any-never.png"
 ---
 
 TypeScript 타입 시스템에는 세 가지 특이한 타입이 있다.
@@ -35,7 +35,7 @@ TypeScript의 타입들은 계층 구조를 이룬다.
 - **`never`** 는 최하위(Bottom Type)다. `never`는 어떤 타입에도 할당될 수 있지만, `never`에는 아무것도 할당할 수 없다.
 - **`any`** 는 이 계층을 무시한다. 규칙 밖에 있다.
 
-![TypeScript 타입 계층 다이어그램](/assets/typescript/type-hierarchy.png)
+![TypeScript 타입 계층 다이어그램](/assets/typescript/unknown-any-never/type-hierarchy.png)
 
 <br/>
 
@@ -79,7 +79,7 @@ result.toUpperCase(); // 에러 없음 — result도 any이기 때문
 
 `any`에서 무언가를 꺼내면 그것도 `any`가 된다. 타입 안전성이 연쇄적으로 무너진다.
 
-![any 전염 흐름 다이어그램](/assets/typescript/any-infection.png)
+![any 전염 흐름 다이어그램](/assets/typescript/unknown-any-never/any-infection.png)
 
 <br/>
 
@@ -128,7 +128,7 @@ if (typeof x === "string") {
 }
 ```
 
-![any vs unknown 동작 비교](/assets/typescript/any-vs-unknown.png)
+![any vs unknown 동작 비교](/assets/typescript/unknown-any-never/any-vs-unknown.png)
 
 <br/>
 
@@ -278,7 +278,7 @@ type Shape = "circle" | "square" | "triangle" | "hexagon"; // 추가
 // → 런타임 전에 누락을 발견할 수 있다
 ```
 
-![Exhaustive Check 동작 원리](/assets/typescript/exhaustive-check-never.png)
+![Exhaustive Check 동작 원리](/assets/typescript/unknown-any-never/exhaustive-check-never.png)
 
 <br/>
 

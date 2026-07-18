@@ -3,7 +3,7 @@ title: "자바스크립트의 메모리 관리"
 date: "2026-01-14"
 description: "자바스크립트 메모리 생명주기, 가비지 컬렉션 알고리즘, V8 엔진의 Minor/Major GC와 stop-the-world 최적화 전략까지 정리한 글"
 tags: ["javascript", "memory", "garbage-collection", "v8", "performance"]
-thumbnail: "/assets/thumbnails/js-memory-management.png"
+thumbnail: "/assets/thumbnails/javascript/js-memory-management.png"
 ---
 
 자바스크립트는 개발자가 메모리를 직접 할당·해제하지 않아도 된다. 가비지 컬렉터가 자동으로 처리해주기 때문이다. 하지만 이 동작 원리를 모르면 메모리 누수를 만들거나 성능 문제를 놓치기 쉽다.

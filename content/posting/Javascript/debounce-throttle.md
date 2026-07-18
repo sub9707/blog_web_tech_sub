@@ -3,7 +3,7 @@ title: "Debounce와 Throttle"
 date: "2026-07-18"
 description: "디바운스와 쓰로틀의 동작 원리를 비교 정리함"
 tags: ["javascript", "debounce", "throttle", "performance", "event"]
-thumbnail: "/assets/thumbnails/debounce-throttle.png"
+thumbnail: "/assets/thumbnails/javascript/debounce-throttle.png"
 ---
 
 한창 Three.js를 활용해 3D 모델을 다루는 업무를 맡을 때였다.
@@ -20,7 +20,7 @@ thumbnail: "/assets/thumbnails/debounce-throttle.png"
 
 <br/>
 
-![짧은 시간에 몰아치는 이벤트](/assets/Javascript/event-frequency-problem.png)
+![짧은 시간에 몰아치는 이벤트](/assets/Javascript/debounce-throttle/event-frequency-problem.png)
 
 연산 장치나 브라우저/서버가 이런 비명을 지르는 상황에서 연속적인 이벤트 발생 빈도/통신 빈도 자체를 줄여주는 두 가지 대표적인 기법이 **디바운스(Debounce)** 와 **쓰로틀(Throttle)** 이다.
 
@@ -45,7 +45,7 @@ thumbnail: "/assets/thumbnails/debounce-throttle.png"
  이 개념이 현대 웹 프로그래밍으로 넘어오면서 "연속으로 발생하는 이벤트를 하나로 묶어 마지막에 딱 한 번만 실행하는 기술"을 뜻하는 용어가 되었다.
 
 
- ![디바운스 스위치](/assets/Javascript/switch-debouncing.png)
+ ![디바운스 스위치](/assets/Javascript/debounce-throttle/switch-debouncing.png)
 
 <br/>
 
@@ -53,7 +53,7 @@ thumbnail: "/assets/thumbnails/debounce-throttle.png"
 
 쉽게 비유한 예들 중, 하나는 엘리베이터 예시가 있다.
 
-![디바운스 예시](/assets/Javascript/debounce-elevator.png)
+![디바운스 예시](/assets/Javascript/debounce-throttle/debounce-elevator.png)
 
 <br/>
 
@@ -77,7 +77,7 @@ thumbnail: "/assets/thumbnails/debounce-throttle.png"
 
 디바운스를 적용하면 이벤트가 계속 발생하는 동안에는 실행을 계속 미루다가, 이벤트가 멈추고 나서야 비로소 함수가 실행된다.
 
-![디바운스 타임라인](/assets/Javascript/debounce-timeline.png)
+![디바운스 타임라인](/assets/Javascript/debounce-throttle/debounce-timeline.png)
 
 검색창 자동완성이 대표적인 예시다. 사용자가 타이핑할 때마다 요청을 보내는 게 아니라, 타이핑이 멈춘 뒤에야 요청을 보내야 서버 부하도 줄고 화면도 덜 깜빡인다.
 
@@ -123,7 +123,7 @@ input.addEventListener("input", debouncedInput);
 
 아래 데모를 통해 직접 디바운스를 경험해보자.
 
-<interactive-demo src="/assets/Javascript/sources/debounce.html" title="Debounce Demo" height="640" caption="빠르게 연타할수록 실행이 계속 뒤로 밀린다"></interactive-demo>
+<interactive-demo src="/assets/Javascript/debounce-throttle/sources/debounce.html" title="Debounce Demo" height="640" caption="빠르게 연타할수록 실행이 계속 뒤로 밀린다"></interactive-demo>
 
 버튼을 빠르게 여러 번 눌러보면, 클릭 횟수는 계속 올라가지만 실제 실행(주황색 카운트)은 클릭을 멈추고 1초가 지난 뒤에야 딱 한 번 올라가는 걸 확인할 수 있다.
 
@@ -142,7 +142,7 @@ input.addEventListener("input", debouncedInput);
 
 기계공학에서는 자동차 엔진으로 들어가는 공기와 연료의 통로를 조절하는 '쓰로틀 밸브'를 의미했다. 
 
-![바이크 쓰로틀](/assets/Javascript/bike-throttle.jpg)
+![바이크 쓰로틀](/assets/Javascript/debounce-throttle/bike-throttle.jpg)
 
 가속 페달을 통해 이 목구멍을 열고 닫으면서, 엔진으로 유입되는 전체적인 유량의 흐름을 물리적으로 통제하고 과부하를 막는 기술이었다.
 
@@ -150,7 +150,7 @@ input.addEventListener("input", debouncedInput);
 
 디바운스처럼 실행을 미루는 게 아니라, 한 번 실행하고 나면 정해진 시간 동안 잠기고(lock), 일정 시간이 지나야 다시 실행 가능한 상태가 된다.
 
-![쓰로틀 타임라인](/assets/Javascript/throttle-timeline.png)
+![쓰로틀 타임라인](/assets/Javascript/debounce-throttle/throttle-timeline.png)
 
 스크롤 위치를 추적해서 헤더를 숨기거나, `mousemove`로 드래그 좌표를 계산하는 경우가 대표적이다. 이런 경우엔 이벤트를 아예 안 받는 게 아니라, "일정 주기로는 꾸준히 반응은 해야 하는" 상황이라 디바운스보다 쓰로틀이 맞다.
 
@@ -185,7 +185,7 @@ function throttle(fn, interval) {
 
 버튼을 연타해보면, 시도 횟수는 계속 올라가지만 실제 실행은 1.2초에 한 번씩만 이루어지는 걸 확인할 수 있다. 잠긴 동안은 버튼 색이 바뀌고 진행 바가 채워진다.
 
-<interactive-demo src="/assets/Javascript/sources/throttle.html" title="Throttle Demo" height="640" caption="문이 잠긴 동안의 클릭은 전부 무시된다"></interactive-demo>
+<interactive-demo src="/assets/Javascript/debounce-throttle/sources/throttle.html" title="Throttle Demo" height="640" caption="문이 잠긴 동안의 클릭은 전부 무시된다"></interactive-demo>
 
 <br/>
 
@@ -194,7 +194,7 @@ function throttle(fn, interval) {
 
 두 데모를 나란히 눌러보면 차이가 명확해진다. 디바운스는 "멈춰야 실행"되고, 쓰로틀은 "주기적으로 실행"된다.
 
-![디바운스와 쓰로틀 비교](/assets/Javascript/debounce-vs-throttle-comparison.png)
+![디바운스와 쓰로틀 비교](/assets/Javascript/debounce-throttle/debounce-vs-throttle-comparison.png)
 
 | | 디바운스 | 쓰로틀 |
 |---|---|---|

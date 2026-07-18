@@ -51,7 +51,7 @@ tags: ["javascript", "execution-context", "scope", "hoisting", "closure", "lexic
 함수가 종료되면 실행 컨텍스트가 스택에서 제거되는 방식이다.
 
 
-![실행 컨텍스트 스택](/assets/Javascript/execution-context-stack.png)
+![실행 컨텍스트 스택](/assets/Javascript/execution-context/execution-context-stack.png)
 
 <br/>
 
@@ -138,7 +138,7 @@ LexicalEnvironment {
 }
 ```
 
-![렉시컬 환경 구조](/assets/Javascript/lexical-environment-structure.png)
+![렉시컬 환경 구조](/assets/Javascript/execution-context/lexical-environment-structure.png)
 
 <br/>
 
@@ -203,7 +203,7 @@ function outer() {
   inner();
 }
 ```
-![스코프 체인 탐색 경로](/assets/Javascript/scope-chain.png)
+![스코프 체인 탐색 경로](/assets/Javascript/execution-context/scope-chain.png)
 
 <br/>
 

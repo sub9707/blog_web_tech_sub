@@ -3,7 +3,7 @@ title: "라이브러리 개발기 (3) — Zustand 소스코드 해체분석"
 date: "2026-07-10"
 description: "zui 만들기 전에, Zustand 소스를 해체분석"
 tags: ["library", "zustand", "source-code", "open-source", "devtools"]
-thumbnail: "/assets/thumbnails/zui.png"
+thumbnail: "/assets/thumbnails/etc/zui.png"
 ---
 
 보일러플레이트까지 다 잡아놓고 나니, 이제 진짜 코드를 짤 차례였다.
@@ -46,7 +46,7 @@ GitHub 레포에서 봐도 되고 설치된 `node_modules/zustand/src`에 IDE로
 
 `vanilla.ts`를 열자마자 타입에, 제네릭 범벅인 시그니처를 보고 잠깐 멈췄다.
 
-![StateCreator 제네릭 시그니처](/assets/etc/zustand-state-creator-type.png)
+![StateCreator 제네릭 시그니처](/assets/etc/zui/zustand-state-creator-type.png)
 
 `Mis`, `Mos`가 뭔지, `StoreMutatorIdentifier`가 뭔지부터 막막했다.
 
@@ -56,7 +56,7 @@ GitHub 레포에서 봐도 되고 설치된 `node_modules/zustand/src`에 IDE로
 
 타입 유틸을 따라 들어가다가 `TakeTwo`라는 타입을 마주쳤는데, 그야말로 타입 타워였다.
 
-![TakeTwo 타입 타워](/assets/etc/zustand-type-tower.png)
+![TakeTwo 타입 타워](/assets/etc/zui/zustand-type-tower.png)
 
 삼항 연산자가 이렇게 계단식으로 몇 단이나 쌓인 걸 처음 봤다.
 
@@ -238,7 +238,7 @@ const initialState = (state = createState(setState, getState, api))
 
 <br/>
 
-![pub-sub 패턴](/assets/etc/pub-sub-arch.jpg)
+![pub-sub 패턴](/assets/etc/zui/pub-sub-arch.jpg)
 
 > **알아둘 개념 — Pub/Sub 패턴**
 >
@@ -314,7 +314,7 @@ function useStore(api, selector = identity) {
 
 `useSyncExternalStore`는 처음엔 "React 스토어 시스템과 외부 스토어를 연결할 때 쓰는 API인가보다" 정도로만 추측했는데, 실제로 맞는 방향이었다.
 
-![useSyncExternalStore 공식 문서](/assets/etc/use-sync-external-store-docs.png)
+![useSyncExternalStore 공식 문서](/assets/etc/zui/use-sync-external-store-docs.png)
 
 <bookmark url="https://ko.react.dev/reference/react/useSyncExternalStore"></bookmark>
 
@@ -514,7 +514,7 @@ const extractConnectionInformation = (store, extensionConnector, options) => {
 
 상태 트리랑 액션 로그가 실시간으로 찍히는 화면이다.
 
-![Redux DevTools 확장 프로그램 패널](/assets/etc/redux-devtools-panel.png)
+![Redux DevTools 확장 프로그램 패널](/assets/etc/zui/redux-devtools-panel.png)
 
 <br/>
 

@@ -3,7 +3,7 @@ title: "`Mapped Type이 생소하다면?"
 date: "2025-12-10"
 description: "Partial이 어떻게 만들어지는지, Readonly가 왜 그런 문법인지 궁금했다면 Mapped Type을 알면 된다. keyof, in, as 이 세 가지가 전부이다."
 tags: ["typescript", "mapped-types", "keyof", "utility-types", "type-system"]
-thumbnail: "/assets/thumbnails/mapped-types.png"
+thumbnail: "/assets/thumbnails/typescript/mapped-types.png"
 ---
 
 `Partial<T>` 구현을 한 번이라도 들여다봤다면 이런 코드를 봤을 것이다.
@@ -102,7 +102,7 @@ type Mutable<T> = {
 
 `Required`가 `Partial`의 반대인 이유가 여기에 있다.
 
-![Mapped Type 수식어 조합 정리표](/assets/typescript/Mapped-type-combination-table.png)
+![Mapped Type 수식어 조합 정리표](/assets/typescript/mapped-types/Mapped-type-combination-table.png)
 
 <br/>
 
@@ -186,7 +186,7 @@ type StringFields = OnlyStrings<Mixed>;
 
 앞에서 만든 `PickByValue`가 바로 이 패턴이다.
 
-![as 절로 키 필터링 동작 원리](/assets/typescript/mapped-type-filtering.png)
+![as 절로 키 필터링 동작 원리](/assets/typescript/mapped-types/mapped-type-filtering.png)
 
 <br/>
 
