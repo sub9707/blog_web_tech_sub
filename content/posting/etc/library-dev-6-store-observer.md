@@ -1,7 +1,7 @@
 ---
-title: "라이브러리 개발기 (6)"
+title: "라이브러리 개발기 (6) - vite 플러그인 활용과 core-gui 연결 정리"
 date: "2026-07-24"
-description: "Store Observer 구현과 진입점 정리, Vite Plugin, CLI까지 이어진 삽질 기록"
+description: "더 개발자가 편하게 사용하도록 진입점 정리, Vite Plugin, CLI까지 구현한 기록"
 tags: ["library", "zustand", "websocket", "vite", "cli"]
 thumbnail: "/assets/thumbnails/etc/zui.png"
 ---
