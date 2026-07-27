@@ -23,7 +23,7 @@ thumbnail: "/assets/thumbnails/etc/zui.png"
 
 <br/>
 
-## 과제 1-1. 메시지 프로토콜 설계 (protocol.ts)
+## 메시지 프로토콜 설계 (protocol.ts)
 
 GUI와 앱 사이에 오갈 메시지 타입부터 정의해야 했다.
 
@@ -169,7 +169,7 @@ export type ClientMessage =
 
 <br/>
 
-## 과제 1-2. WebSocket 서버 구현 (server.ts)
+## WebSocket 서버 구현 (server.ts)
 
 `ws` 패키지의 `WebSocketServer`를 감싸서 `createZuiServer()` 팩토리 함수를 만드는 과제였는데, 질문도 많이 하고, devtool 파일도 살펴보면서 하느라 과제 중 제일 오래 걸렸다.
 
@@ -342,7 +342,7 @@ wss.on("message", ...)
 
 <br/>
 
-## 과제 1-3. Store Registry 구현 (registry.ts)
+## Store Registry 구현 (registry.ts)
 
 스토어 이름을 키로, `StoreEntry`를 값으로 갖는 `Map` 기반 레지스트리를 만드는 과제였다.
 
