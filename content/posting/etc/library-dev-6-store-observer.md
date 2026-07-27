@@ -52,8 +52,12 @@ import.meta.glob("./stores/*.ts", { eager: true });
 
 initZui();
 ```
+<br/>
 
-> **eager import란?**
+> **Eager Import(즉시 로드)란?**
+>
+> Eager Import는 Lazy Import(지연 로드)의 반대 개념이다.
+> 데이터나 모듈을 실제 사용하는 시점이 아니라, 프로그램 시작이나 부모 데이터 조회 시점에 미리 전부 불러오는 방식을 말한다.
 >
 > `import.meta.glob`은 Vite가 제공하는 기능으로, 패턴에 맞는 파일들을 한 번에 찾아서 import해준다. 기본값은 `{ eager: false }`인데, 이때는 각 파일이 실제로 `import()`(동적 import)로 lazy하게 나중에 로드되는 함수 형태로 반환된다. 즉 코드만 있고, 그 파일이 실제로 실행되는 시점은 따로 호출해야 한다.
 >
@@ -61,14 +65,15 @@ initZui();
 >
 > 여기서는 스토어 파일 내용 자체(`useCounterStore`, `useUserStore` 등)가 필요한 게 아니라, 그 파일이 로드되면서 안에 있는 `zui(...)` 호출이 실행되는 것만 필요하다. 그래서 반환값은 쓰지 않고 `import.meta.glob(...)`만 호출해서, 스토어 폴더 안의 모든 파일을 강제로 즉시 로드시키는 용도로 썼다.
 
+<br/>
+
 `main.tsx`가 개별 스토어를 일일이 알 필요 없이, 폴더 안에 스토어 파일을 추가하기만 하면 자동으로 등록되는 구조다. 
 
 스토어를 지우면 등록도 자동으로 같이 사라진다. 
 
 등록 목록을 별도로 관리할 필요가 없어진다.
 
-
-<br/>
+<br/> 
 
 ## 무한 루프와 `isApplyingRemoteUpdate`
 
