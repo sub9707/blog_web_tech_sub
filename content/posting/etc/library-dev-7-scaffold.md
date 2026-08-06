@@ -4,6 +4,16 @@ date: "2026-07-28"
 description: "GUI에서 zustand 스토어 파일을 생성/삭제하는 scaffold 기능 구현기"
 tags: ["library", "zustand"]
 thumbnail: "/assets/thumbnails/etc/zui.png"
+relatedPosts:
+  - "라이브러리 개발기 (1) — 주제 선택"
+  - "라이브러리 개발기 (2) — 보일러 플레이트 생성"
+  - "라이브러리 개발기 (3) — Zustand 소스코드 해체분석"
+  - "라이브러리 개발기 (4) — 스토리보드"
+  - "라이브러리 개발기 (5) — 구현 전, 코어 기능 테스트"
+  - "라이브러리 개발기 (6) - vite 플러그인 활용과 core-gui 연결 정리"
+  - "라이브러리 개발기 (7) — GUI에서 스토어 생성"
+  - "라이브러리 개발기 (8) — GUI에 코어 붙이기"
+  - "라이브러리 개발기 (9) — React Flow로 스토어를 캔버스 위에 올려보자"
 ---
 
 지금까지 앱에 붙는 observer(`zui`/`initZui`) 쪽은 어느 정도 마무리됐다.

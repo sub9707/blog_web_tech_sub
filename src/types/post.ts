@@ -7,6 +7,7 @@ export interface PostMeta {
   thumbnail?: string;
   tags: string[];
   readTime: number;
+  relatedPosts?: string[];
 }
 
 export interface Post extends PostMeta {

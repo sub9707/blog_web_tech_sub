@@ -8,6 +8,8 @@ import ImageZoomWrapper from '@/components/post/ImageZoomWrapper';
 import TableOfContents from '@/components/post/TableOfContents';
 import MobileTocDrawer from '@/components/post/MobileTocDrawer';
 import HeadingBreadcrumb from '@/components/post/HeadingBreadcrumb';
+import RelatedPostList from '@/components/post/RelatedPostList';
+import { getRelatedPosts } from '@/services/posts/getRelatedPosts';
 import ReadingProgressBar from '@/components/common/ReadingProgressBar';
 import Badge from '@/components/ui/Badge';
 import { ROUTES } from '@/constants/routes';
@@ -47,6 +49,7 @@ export default async function PostPage({ params }: Props) {
 
   if (!post) notFound();
 
+  const relatedPosts = await getRelatedPosts(post.relatedPosts ?? []);
   const headings = extractHeadings(post.content);
   const formattedDate = post.date
     ? format(new Date(post.date), 'MMMM dd, yyyy')
@@ -104,6 +107,8 @@ export default async function PostPage({ params }: Props) {
               </div>
             )}
           </header>
+
+          <RelatedPostList posts={relatedPosts} currentSlug={post.slug} />
 
           {post.thumbnail && (
             <div className="relative w-full aspect-video overflow-hidden rounded-lg mb-10">

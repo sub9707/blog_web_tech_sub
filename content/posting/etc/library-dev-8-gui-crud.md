@@ -4,6 +4,16 @@ date: "2026-08-01"
 description: "WebSocket 클라이언트 훅과 GUI 자신의 zustand 상태로 스토어 조회·수정·생성·삭제를 붙여봄"
 tags: ["library", "react", "zustand", "websocket", "gui"]
 thumbnail: "/assets/thumbnails/etc/zui.png"
+relatedPosts:
+  - "라이브러리 개발기 (1) — 주제 선택"
+  - "라이브러리 개발기 (2) — 보일러 플레이트 생성"
+  - "라이브러리 개발기 (3) — Zustand 소스코드 해체분석"
+  - "라이브러리 개발기 (4) — 스토리보드"
+  - "라이브러리 개발기 (5) — 구현 전, 코어 기능 테스트"
+  - "라이브러리 개발기 (6) - vite 플러그인 활용과 core-gui 연결 정리"
+  - "라이브러리 개발기 (7) — GUI에서 스토어 생성"
+  - "라이브러리 개발기 (8) — GUI에 코어 붙이기"
+  - "라이브러리 개발기 (9) — React Flow로 스토어를 캔버스 위에 올려보자"
 ---
 
 이번 글부터는 스토리보드에 그려뒀던 화면들을 실제로 `packages/gui`에 옮기는 작업이다. 

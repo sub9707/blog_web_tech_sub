@@ -32,6 +32,7 @@ export async function getPost(
         thumbnail: data.thumbnail,
         tags: data.tags ?? [],
         readTime: calculateReadTime(content),
+        relatedPosts: data.relatedPosts ?? [],
         content,
       };
     }
