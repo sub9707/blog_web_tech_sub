@@ -8,9 +8,16 @@ interface Props {
   content: string
 }
 
+function decodeHtmlEntities(value: string): string {
+  return value
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
+    .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
+    .replace(/&amp;/g, '&')
+}
+
 function extractBookmarkUrls(html: string): string[] {
   const matches = [...html.matchAll(/<bookmark[^>]+url=["']([^"']+)["']/g)]
-  return [...new Set(matches.map((m) => m[1]))]
+  return [...new Set(matches.map((m) => decodeHtmlEntities(m[1])))]
 }
 
 export default async function MarkdownRenderer({ content }: Props) {
@@ -42,7 +49,15 @@ export default async function MarkdownRenderer({ content }: Props) {
       if (domNode.name === 'bookmark') {
         const { url } = domNode.attribs
         if (!url) return
-        return <BookmarkCard url={url} ogData={ogDataMap[url]} />
+        const ogData: OgData = ogDataMap[url] ?? {
+          title: url,
+          description: '',
+          image: null,
+          url,
+          siteName: null,
+          favicon: null,
+        }
+        return <BookmarkCard url={url} ogData={ogData} />
       }
     },
   }

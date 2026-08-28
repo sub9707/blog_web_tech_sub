@@ -3,11 +3,17 @@ import type { OgData } from '@/utils/fetchOgData'
 
 interface Props {
   url: string
-  ogData: OgData
+  ogData?: OgData
 }
 
 export default function BookmarkCard({ url, ogData }: Props) {
-  const { title, description, image, siteName, favicon } = ogData
+  const { title, description, image, siteName, favicon } = ogData ?? {
+    title: url,
+    description: '',
+    image: null,
+    siteName: null,
+    favicon: null,
+  }
   const displayHost = (() => {
     try { return new URL(url).hostname } catch { return url }
   })()
