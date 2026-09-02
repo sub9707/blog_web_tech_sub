@@ -227,7 +227,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
 
                 {/* 뒷면 (카메라를 향할 때만) */}
                 {showBack && (
-                  <div className="absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(-4px)_rotateY(180deg)]">
+                  <div className="card-reflect absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(-4px)_rotateY(180deg)]">
                     {project.thumbnail ? (
                       <Image
                         src={project.thumbnail}
