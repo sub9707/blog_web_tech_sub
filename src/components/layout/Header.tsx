@@ -8,6 +8,7 @@ import ThemeToggle from '@/components/ui/ThemeToggle';
 
 const NAV_ITEMS = [
   { label: 'Home', href: ROUTES.HOME },
+  { label: 'Portfolio', href: ROUTES.PORTFOLIO },
   { label: 'Archive', href: ROUTES.ARCHIVE },
   { label: 'About', href: ROUTES.ABOUT },
 ];
