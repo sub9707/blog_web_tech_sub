@@ -215,7 +215,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                   }
                 }}
                 style={style}
-                className={`group absolute top-1/2 left-1/2 block aspect-square w-52 transform-3d will-change-transform sm:w-72 lg:w-84 ${
+                className={`group absolute top-1/2 left-1/2 block aspect-video w-64 transform-3d will-change-transform sm:w-88 lg:w-108 ${
                   isActive ? 'card-glow' : ''
                 }`}
               >
@@ -233,7 +233,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                         src={project.thumbnail}
                         alt=""
                         fill
-                        sizes="(max-width: 640px) 288px, (max-width: 1024px) 384px, 448px"
+                        sizes="(max-width: 640px) 256px, (max-width: 1024px) 352px, 576px"
                         className="object-cover"
                       />
                     ) : (
@@ -250,7 +250,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                       alt={project.title}
                       fill
                       priority={isActive}
-                      sizes="(max-width: 640px) 288px, (max-width: 1024px) 384px, 448px"
+                      sizes="(max-width: 640px) 256px, (max-width: 1024px) 352px, 576px"
                       className="object-cover"
                     />
                   ) : (

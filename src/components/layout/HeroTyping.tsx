@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 const PHRASES = [
-  'React에 빠진',
+  'Web에 빠진',
   '끈질기게 배우는',
   '트러블슈터',
   '클라이언트와 소통하는',

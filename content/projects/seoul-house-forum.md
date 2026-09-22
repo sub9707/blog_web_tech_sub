@@ -40,7 +40,7 @@ order: 1
 
 ## 프로젝트 아키텍처
 
-![2026 서울주거포럼 프로젝트 구조도 — 시민과 운영자가 Cloudflare Workers 위의 Next.js 애플리케이션에 접근하고, 애플리케이션이 Cloudflare D1·Supabase Storage·GA4 Data API와 연결된다. 시민 의견은 검수 대기로 저장돼 운영자 승인 후에만 공개된다](/assets/projects/seoul-house-forum/architecture.svg)
+![2026 서울주거포럼 프로젝트 구조도 — 시민과 운영자가 Cloudflare Workers 위의 Next.js 애플리케이션에 접근하고, 애플리케이션이 Cloudflare D1·Supabase Storage·GA4 Data API·검색엔진과 연결된다. 시민 의견은 검수 대기로 저장돼 운영자 승인 후에만 공개된다](/assets/projects/seoul-house-forum/architecture.webp)
 
 - Next.js App Router 단일 프로젝트에서 페이지와 API를 함께 구성하고, `@opennextjs/cloudflare` 어댑터로 Cloudflare Workers에 배포했습니다.
 - 공개 페이지 `(site)`와 관리자 `admin/(panel)`을 라우트 그룹으로 분리했습니다. 관리자 영역은 `X-Robots-Tag: noindex`와 `Cache-Control: no-store`를 함께 붙여 색인과 캐시 양쪽에서 제외했습니다.
