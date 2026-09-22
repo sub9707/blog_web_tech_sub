@@ -4,7 +4,7 @@ date: "2025-08"
 period: "2025.07 — 2025.08"
 description: "행사 부스용 360도 회전 촬영·자동 편집·QR 전달 시스템 — 안드로이드 촬영 앱과 Electron 제어 앱"
 category: "데스크톱 앱"
-thumbnail: "/assets/projects/360-kiosk/360-kiosk.png"
+thumbnail: "/assets/projects/360-kiosk/360-kiosk-thumbnail.webp"
 tags:
   - Electron
   - React
@@ -35,9 +35,7 @@ order: 5
 
 제어 신호는 Electron(클라이언트) → 안드로이드(서버)로 `ws://<안드로이드 IP>:8080`을 통해 오가고, 녹화 원본은 안드로이드의 HTTP 파일 서버에서 PC로 전송됩니다. 참여자는 생성된 QR 코드로 편집 영상을 열람·다운로드합니다.
 
-![안드로이드 앱 ↔ Electron 앱 데이터 흐름도 — WebSocket 제어 신호, HTTP 영상 전송, FFmpeg 편집, Google Drive 업로드와 QR 생성](/assets/projects/360-kiosk/system-diagram.png)
-
-<!-- 시스템 구성 다이어그램. 안드로이드(CameraX 녹화 / WS 서버 :8080 / HTTP 파일 서버 :8081) ↔ Electron(WS 클라이언트 / FFmpeg / Drive 업로드 + QR / React UI) ↔ Google Drive ↔ 참여자 스마트폰. 파일명 system-diagram.png -->
+![360도 촬영 키오스크 시스템 구성도 — 촬영 기기(안드로이드 앱, WS 서버 8080, HTTP 파일 서버 8081), 제어·편집 PC(Electron 앱의 키오스크 UI·FFmpeg 편집·QR 생성), 저장·전달(Google Drive, 로컬 저장, 참여자)의 3단 구조. PC가 촬영 신호를 보내면 기기가 영상을 전송하고, 편집본과 QR이 Drive에 올라가 공유 링크로 참여자에게 전달된다](/assets/projects/360-kiosk/system-diagram.webp)
 
 ## 주요 기능
 
