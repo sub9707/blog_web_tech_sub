@@ -13,7 +13,7 @@ tags:
   - Cloudflare Workers
   - Supabase
 featured: true
-order: 1
+order: 2
 ---
 
 ## 프로젝트 개요

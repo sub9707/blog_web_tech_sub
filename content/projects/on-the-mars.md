@@ -13,7 +13,7 @@ tags:
   - C#
   - MetaMask
 featured: true
-order: 6
+order: 7
 ---
 
 ## 프로젝트 소개
@@ -35,33 +35,33 @@ order: 6
 
 ## 서비스 기능 소개 — 나의 농장 (Unity)
 
-![Unity 게임 접속 — React에서 게임 시작을 누르면 Unity 로딩 후 게임이 시작된다](/assets/projects/on-the-mars/unity-game-access.gif)
-
-<!-- gif: unity게임접속.gif — React에서 "게임 시작" 클릭 → Unity 로딩 완료 → 게임 시작 장면 -->
+<figure>
+  <video src="/assets/projects/on-the-mars/unity-game-access.mp4" width="1280" height="704" autoplay loop muted playsinline preload="metadata" aria-label="Unity 게임 접속 — React에서 게임 시작을 누르면 Unity 로딩 후 게임이 시작된다"></video>
+</figure>
 
 React에서 게임 시작을 클릭한 뒤 Unity 로딩이 완료되면 게임을 시작할 수 있습니다.
 
-![Unity 씨앗 구매 — 보유한 이더리움(O2 코인)으로 씨앗을 구매하는 장면](/assets/projects/on-the-mars/unity-buy-seed.gif)
-
-<!-- gif: unity씨앗구매.gif — 보유 이더리움(O2 코인)으로 씨앗 구매 -->
+<figure>
+  <video src="/assets/projects/on-the-mars/unity-buy-seed.mp4" width="1280" height="712" autoplay loop muted playsinline preload="metadata" aria-label="Unity 씨앗 구매 — 보유한 이더리움(O2 코인)으로 씨앗을 구매하는 장면"></video>
+</figure>
 
 보유하고 있는 이더리움(O2 코인)으로 씨앗을 구매할 수 있습니다.
 
-![Unity 씨앗 심기 — 씨앗을 심고 물주기 퀘스트를 2회 완료해 랜덤 작물을 수확하는 장면](/assets/projects/on-the-mars/unity-plant-seed.gif)
-
-<!-- gif: unity씨앗심기.gif — 씨앗 심기 → '물주기' 퀘스트 2회 완료 → 랜덤 작물 수확 -->
+<figure>
+  <video src="/assets/projects/on-the-mars/unity-plant-seed.mp4" width="1280" height="712" autoplay loop muted playsinline preload="metadata" aria-label="Unity 씨앗 심기 — 씨앗을 심고 물주기 퀘스트를 2회 완료해 랜덤 작물을 수확하는 장면"></video>
+</figure>
 
 구매한 씨앗을 심고 '물주기' 퀘스트를 2회 완료하면 랜덤 작물을 수확할 수 있습니다.
 
-![Unity 씨앗 부족 — 보유 씨앗이 없을 때 심을 수 없다는 경고가 뜨는 장면](/assets/projects/on-the-mars/unity-no-seed.gif)
-
-<!-- gif: unity씨앗부족.gif — 보유 씨앗 부족 시 경고 표시 -->
+<figure>
+  <video src="/assets/projects/on-the-mars/unity-no-seed.mp4" width="1280" height="712" autoplay loop muted playsinline preload="metadata" aria-label="Unity 씨앗 부족 — 보유 씨앗이 없을 때 심을 수 없다는 경고가 뜨는 장면"></video>
+</figure>
 
 보유 씨앗이 부족할 때는 씨앗을 심을 수 없다는 경고가 뜹니다.
 
-![Unity 저장하기 — 수확한 작물을 저장해 메타마스크와 연동, NFT로 발급되는 장면](/assets/projects/on-the-mars/unity-save.gif)
-
-<!-- gif: unity저장하기.gif — 수확 작물 저장 → 메타마스크 연동 → NFT 발급 -->
+<figure>
+  <video src="/assets/projects/on-the-mars/unity-save.mp4" width="1280" height="712" autoplay loop muted playsinline preload="metadata" aria-label="Unity 저장하기 — 수확한 작물을 저장해 메타마스크와 연동, NFT로 발급되는 장면"></video>
+</figure>
 
 수확한 작물은 저장을 통해 메타마스크와 연동해 NFT로 발급됩니다.
 

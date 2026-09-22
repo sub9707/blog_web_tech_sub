@@ -13,7 +13,7 @@ tags:
   - Supabase
   - Cloudflare R2
 featured: true
-order: 2
+order: 3
 ---
 
 ## 프로젝트 개요
