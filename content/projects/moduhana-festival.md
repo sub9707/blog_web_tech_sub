@@ -2,7 +2,7 @@
 title: "모두하나대축제"
 date: "2025-10"
 period: "2025.09 — 2025.10"
-description: "서울시한부모가족지원센터 모두하나대축제 사전등록·온라인 이벤트·관리자 대시보드를 포함한 풀스택 축제 참여 플랫폼"
+description: "서울시한부모가족지원센터 모두하나대축제 참여 플랫폼 — 사전등록·다양한 온라인 이벤트·관리자 대시보드를 갖춘 풀스택 구성"
 category: "공공기관 행사"
 thumbnail: "/assets/projects/moduhana-festival/moduhana.png"
 tags:
@@ -13,7 +13,7 @@ tags:
   - MySQL
   - Naver OAuth
 featured: true
-order: 4
+order: 5
 ---
 
 ## 프로젝트 개요

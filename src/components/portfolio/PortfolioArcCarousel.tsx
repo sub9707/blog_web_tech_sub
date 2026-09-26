@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ProjectMeta } from '@/types/project';
 import { ROUTES } from '@/constants/routes';
+import ProjectDescription from '@/components/portfolio/ProjectDescription';
 
 interface Props {
   projects: ProjectMeta[];
@@ -333,10 +334,10 @@ export default function PortfolioArcCarousel({ projects }: Props) {
 
           <p
             key={`desc-${activeProject.slug}`}
-            className="fade-down mx-auto mt-4 max-w-2xl text-base leading-relaxed text-gray-500 sm:text-lg dark:text-slate-400"
+            className="fade-down mx-auto mt-4 max-w-2xl text-base leading-relaxed break-keep text-balance text-gray-500 sm:text-lg dark:text-slate-400"
             style={{ animationDelay: '90ms' }}
           >
-            {activeProject.description}
+            <ProjectDescription description={activeProject.description} />
           </p>
         </div>
       </div>

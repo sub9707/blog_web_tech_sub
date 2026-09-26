@@ -2,7 +2,7 @@
 title: "2026 파주 K-컬처 페스티벌"
 date: "2026-08"
 period: "2026.07 — 2026.08"
-description: "경기미래교육 파주캠퍼스 공식 행사 홈페이지 — Cloudflare Workers 서버리스 배포로 유지비 없는 운영 환경 구축"
+description: "경기미래교육 파주캠퍼스 공식 행사 홈페이지 — 2026 파주 K-컬처 페스티벌 정보 제공 및 공지사항, 팝업 관리 및 등록 포함"
 category: "공공기관 행사"
 thumbnail: "/assets/projects/kculture-festival/kculture.png"
 tags:
@@ -13,7 +13,7 @@ tags:
   - Cloudflare Workers
   - Supabase
 featured: true
-order: 2
+order: 3
 ---
 
 ## 프로젝트 개요

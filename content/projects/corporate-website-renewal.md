@@ -2,7 +2,7 @@
 title: "기업 홈페이지 리뉴얼"
 date: "2025-11"
 period: "2025.11 — 2025.11"
-description: "WordPress 기반 사이트를 Next.js로 전면 리뉴얼 — SEO 구조 재설계와 자체 CMS·검색 통계 대시보드 구축"
+description: "WordPress 기반 사이트를 Next.js로 전면 리뉴얼 — SEO 재설계와 자체 CMS, 검색 통계 대시보드 구축"
 category: "기업 웹사이트"
 thumbnail: "/assets/projects/corporate-website-renewal/corporate.png"
 tags:
@@ -14,7 +14,7 @@ tags:
   - Cloudflare R2
   - Vercel
 featured: true
-order: 3
+order: 4
 ---
 
 ## 프로젝트 개요

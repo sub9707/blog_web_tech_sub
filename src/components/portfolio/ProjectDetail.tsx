@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { Project } from '@/types/project';
 import MarkdownRenderer from '@/components/post/MarkdownRenderer';
 import ImageZoomWrapper from '@/components/post/ImageZoomWrapper';
+import ProjectDescription from '@/components/portfolio/ProjectDescription';
 import Badge from '@/components/ui/Badge';
 import { ROUTES } from '@/constants/routes';
 
@@ -18,7 +19,6 @@ export default function ProjectDetail({ project, showBackLink = false }: Props) 
     : project.date
       ? format(new Date(project.date), 'yyyy.MM')
       : '';
-
   return (
     <>
       {showBackLink && (
@@ -39,8 +39,8 @@ export default function ProjectDetail({ project, showBackLink = false }: Props) 
           {project.title}
         </h1>
         {project.description && (
-          <p className="mt-3 text-base leading-relaxed text-gray-500 dark:text-slate-400">
-            {project.description}
+          <p className="mt-3 text-base leading-relaxed break-keep text-balance text-gray-500 dark:text-slate-400">
+            <ProjectDescription description={project.description} />
           </p>
         )}
         <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 dark:text-slate-500">

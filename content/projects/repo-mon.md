@@ -2,7 +2,7 @@
 title: "레포몬"
 date: "2023-05"
 period: "2023.04 — 2023.05"
-description: "GitHub 레포지터리를 캐릭터로 시각화해 기여도와 완성도를 확인하는 REPO-MON 서비스"
+description: "GitHub 레포지터리 캐릭터화 서비스 REPO-MON — 레포지터리의 기여도와 완성도를 캐릭터로 시각화 및 사용자 간 배틀 게임"
 category: "웹 애플리케이션"
 thumbnail: "/assets/projects/repo-mon/repomon.png"
 tags:
@@ -12,7 +12,7 @@ tags:
   - Three.js
   - React Three Fiber
 featured: true
-order: 6
+order: 7
 ---
 
 ## 프로젝트 소개

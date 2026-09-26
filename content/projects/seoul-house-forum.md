@@ -2,7 +2,7 @@
 title: "2026 서울주거포럼"
 date: "2026-09"
 period: "2026.09.14 — 2026.09.20"
-description: "서울특별시 주거정책 포럼 공식 홈페이지 — 시민 의견 게시판과 운영자 검수 시스템을 갖춘 Cloudflare Workers 서버리스 구성"
+description: "서울특별시 주거정책 포럼 공식 홈페이지 — 2026서울주거포럼 정보와 시민 의견 게시판, 운영자 검수 시스템 포함"
 category: "공공기관 행사"
 thumbnail: "/assets/projects/seoul-house-forum/seoul-house-forum.webp"
 tags:

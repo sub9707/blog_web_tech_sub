@@ -2,7 +2,7 @@
 title: "온더마스"
 date: "2023-05"
 period: "2023.04 — 2023.05"
-description: "화성 테라포밍 콘셉트의 파밍 게임과 NFT 작물 수집·거래를 결합한 웹 + Unity 메타버스 서비스"
+description: "화성 테라포밍 콘셉트의 웹 + Unity 메타버스 서비스 — 파밍 게임과 NFT 작물 수집·거래 결합"
 category: "인터랙티브"
 thumbnail: "/assets/projects/on-the-mars/on-the-mars-thumbnail.jpg"
 tags:
@@ -13,7 +13,7 @@ tags:
   - C#
   - MetaMask
 featured: true
-order: 7
+order: 8
 ---
 
 ## 프로젝트 소개
