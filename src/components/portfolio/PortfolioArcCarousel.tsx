@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
+import ProjectLink from '@/components/portfolio/ProjectLink';
 import { ProjectMeta } from '@/types/project';
 import { ROUTES } from '@/constants/routes';
 import ProjectDescription from '@/components/portfolio/ProjectDescription';
@@ -18,21 +18,44 @@ const FRONT_MIN = -30; // rel 이 이보다 크면 앞면이 카메라를 향함
 const BACK_MAX = 30; // rel 이 이보다 작으면 뒷면이 카메라를 향함
 const SWIPE_THRESHOLD = 56;
 const STAGE_TILT = 5; // 카메라 높이: 클수록 위(탑뷰), 작을수록 눈높이에 가까움
-const ELEVATION = 160; // active 카드만 위로
-const ACTIVE_SCALE = 1.28;
-const ACTIVE_POP = 60;
-const NEIGHBOR_GAP = 120; // 선택 카드와 바로 양옆 카드 사이 추가 여백(px)
 const DEG = Math.PI / 180;
 
 const ARROW_CLASS =
-  'absolute top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-900/10 bg-gray-900/85 text-white backdrop-blur-sm transition-colors hover:bg-gray-900 dark:border-white/15 dark:bg-white/90 dark:text-gray-900 dark:hover:bg-white';
+  'absolute top-1/2 z-40 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-900/10 sm:flex bg-gray-900/85 text-white backdrop-blur-sm transition-colors hover:bg-gray-900 dark:border-white/15 dark:bg-white/90 dark:text-gray-900 dark:hover:bg-white';
 
-function resolveRadius(width: number): number {
-  if (width >= 1536) return 720;
-  if (width >= 1280) return 640;
-  if (width >= 1024) return 560;
-  if (width >= 640) return 420;
-  return 290;
+// 카드는 active 크기로 렌더하고 나머지를 축소 → active 카드가 원본 해상도로 래스터됨
+const CARD_SIZE_CLASS = 'w-60 sm:w-112 lg:w-138';
+const CARD_IMAGE_SIZES = '(max-width: 640px) 240px, (max-width: 1024px) 448px, 552px';
+
+interface StageLayout {
+  radius: number;
+  elevation: number; // active 카드만 위로
+  activePop: number;
+  neighborGap: number; // 선택 카드와 바로 양옆 카드 사이 추가 여백(px)
+  inactiveScale: number;
+}
+
+const DESKTOP_LAYOUT: Omit<StageLayout, 'radius'> = {
+  elevation: 160,
+  activePop: 60,
+  neighborGap: 120,
+  inactiveScale: 0.78,
+};
+
+const MOBILE_LAYOUT: StageLayout = {
+  radius: 130,
+  elevation: 64,
+  activePop: 24,
+  neighborGap: 20,
+  inactiveScale: 0.8,
+};
+
+function resolveLayout(width: number): StageLayout {
+  if (width >= 1536) return { ...DESKTOP_LAYOUT, radius: 720 };
+  if (width >= 1280) return { ...DESKTOP_LAYOUT, radius: 640 };
+  if (width >= 1024) return { ...DESKTOP_LAYOUT, radius: 560 };
+  if (width >= 640) return { ...DESKTOP_LAYOUT, radius: 420 };
+  return MOBILE_LAYOUT;
 }
 
 function mod(n: number, m: number): number {
@@ -44,7 +67,8 @@ export default function PortfolioArcCarousel({ projects }: Props) {
   const angleStep = 360 / total;
 
   const [rotation, setRotation] = useState(0);
-  const [radius, setRadius] = useState(560);
+  const [layout, setLayout] = useState<StageLayout>(() => resolveLayout(1024));
+  const { radius, elevation, activePop, neighborGap, inactiveScale } = layout;
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const dragStartX = useRef<number | null>(null);
@@ -56,18 +80,18 @@ export default function PortfolioArcCarousel({ projects }: Props) {
     motionQuery.addEventListener('change', syncMotion);
 
     let frame = 0;
-    const syncRadius = () => {
+    const syncLayout = () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() =>
-        setRadius(resolveRadius(window.innerWidth))
+        setLayout(resolveLayout(window.innerWidth))
       );
     };
-    syncRadius();
-    window.addEventListener('resize', syncRadius);
+    syncLayout();
+    window.addEventListener('resize', syncLayout);
 
     return () => {
       motionQuery.removeEventListener('change', syncMotion);
-      window.removeEventListener('resize', syncRadius);
+      window.removeEventListener('resize', syncLayout);
       cancelAnimationFrame(frame);
     };
   }, []);
@@ -182,7 +206,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
             const depth = Math.cos(relRad); // 앞 1 … 뒤 -1
             // 선택 카드에 가까운 카드일수록 좌우로 더 벌려 간격 확보
             const gapPush =
-              Math.sign(rel) * NEIGHBOR_GAP * Math.max(0, depth) ** 2;
+              Math.sign(rel) * neighborGap * Math.max(0, depth) ** 2;
             const x = Math.sin(relRad) * radius + gapPush;
             const z = (depth - 1) * radius;
 
@@ -190,8 +214,8 @@ export default function PortfolioArcCarousel({ projects }: Props) {
             const alpha = a - 90;
 
             const transform = isActive
-              ? `translate(-50%, -50%) translate3d(0px, ${-ELEVATION}px, ${ACTIVE_POP}px) rotateX(${STAGE_TILT}deg) scale(${ACTIVE_SCALE})`
-              : `translate(-50%, -50%) translate3d(${x}px, 0px, ${z}px) rotateY(${alpha}deg)`;
+              ? `translate(-50%, -50%) translate3d(0px, ${-elevation}px, ${activePop}px) rotateX(${STAGE_TILT}deg)`
+              : `translate(-50%, -50%) translate3d(${x}px, 0px, ${z}px) rotateY(${alpha}deg) scale(${inactiveScale})`;
 
             const style: React.CSSProperties = {
               transform,
@@ -204,7 +228,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
             const shade = isActive ? 0 : Math.min(0.42, (1 - depth) * 0.2);
 
             return (
-              <Link
+              <ProjectLink
                 key={project.slug}
                 href={ROUTES.PROJECT(project.slug)}
                 aria-hidden={!isActive}
@@ -216,7 +240,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                   }
                 }}
                 style={style}
-                className={`group absolute top-1/2 left-1/2 block aspect-video w-64 transform-3d will-change-transform sm:w-88 lg:w-108 ${
+                className={`group absolute top-1/2 left-1/2 block aspect-video transform-3d ${CARD_SIZE_CLASS} ${
                   isActive ? 'card-glow' : ''
                 }`}
               >
@@ -234,7 +258,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                         src={project.thumbnail}
                         alt=""
                         fill
-                        sizes="(max-width: 640px) 256px, (max-width: 1024px) 352px, 576px"
+                        sizes={CARD_IMAGE_SIZES}
                         className="object-cover"
                       />
                     ) : (
@@ -251,7 +275,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                       alt={project.title}
                       fill
                       priority={isActive}
-                      sizes="(max-width: 640px) 256px, (max-width: 1024px) 352px, 576px"
+                      sizes={CARD_IMAGE_SIZES}
                       className="object-cover"
                     />
                   ) : (
@@ -268,7 +292,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                     />
                   )}
                 </div>
-              </Link>
+              </ProjectLink>
             );
           })}
         </div>

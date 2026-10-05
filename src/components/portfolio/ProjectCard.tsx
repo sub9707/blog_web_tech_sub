@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import ProjectLink from '@/components/portfolio/ProjectLink';
 import { ProjectMeta } from '@/types/project';
 import { ROUTES } from '@/constants/routes';
 
@@ -9,7 +9,7 @@ interface Props {
 
 export default function ProjectCard({ project }: Props) {
   return (
-    <Link href={ROUTES.PROJECT(project.slug)} className="group block">
+    <ProjectLink href={ROUTES.PROJECT(project.slug)} className="group block">
       <div className="relative aspect-4/3 overflow-hidden bg-gray-100 dark:bg-navy-800">
         {project.thumbnail ? (
           <Image
@@ -44,6 +44,6 @@ export default function ProjectCard({ project }: Props) {
           </p>
         )}
       </div>
-    </Link>
+    </ProjectLink>
   );
 }
