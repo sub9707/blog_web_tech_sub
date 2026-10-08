@@ -38,6 +38,12 @@ order: 2
 - **인증 / 보안**: JWT(jose) + httpOnly 쿠키 세션, bcryptjs, Web Crypto(AES-256-GCM, HMAC-SHA256, SHA-256)
 - **외부 연동 / QR**: Solapi 카카오 알림톡, qrcode(SVG 렌더), qr-scanner(카메라 스캔)
 
+## 직접 체험해보기
+
+참가자가 대학 커뮤니티 링크로 들어왔을 때의 화면입니다. 설문 5문항에 답하고 정보를 입력하면 디지털 패스가 발급되는 흐름을 그대로 따라가 볼 수 있습니다. 서버 대신 브라우저 안의 예시 데이터로 동작하는 데모라 실제 알림톡은 발송되지 않습니다.
+
+<interactive-demo src="https://subdevpi.mywire.org:9000/qr-pass/event/my-first-collagen/u/HK7Q2M9X" title="Digital Pass Demo" width="420" height="820" caption="참가자 화면 — 대학별 전용 링크로 들어온 상태"></interactive-demo>
+
 ## 기술 목표
 
 - **대학별 선착순 정원을 정확히 지키기** — 수백 명이 동시에 신청해도 정원보다 많이 발급되지 않도록 처리
@@ -55,7 +61,7 @@ order: 2
 
 ## 주요 기능
 
-### 참가자 — 설문과 디지털 패스 발급
+### 참가자 측 — 설문과 디지털 패스 발급
 
 <div class="screens">
 <img src="/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass-landing.webp" width="570" height="1267" alt="랜딩 페이지 — 행사 로고, '나에게 맞는 콜라겐 루틴 찾기' 시작 버튼, 모델 이미지" loading="lazy" />
@@ -81,7 +87,7 @@ order: 2
 
 **카카오 알림톡** — 승인받은 템플릿으로 이름, 고객번호, 패스 페이지 링크를 보냅니다. QR 이미지를 직접 보내지 않고 링크만 보내며, QR은 패스 페이지를 열 때마다 그 자리에서 그립니다. 그래서 QR 이미지를 따로 저장해 둘 곳이 필요 없습니다.
 
-### 스태프 — 현장 QR 입장 처리
+### 스태프 측 — 현장 QR 입장 처리
 
 <div class="screens">
 <img src="/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass-scanner.webp" width="388" height="849" alt="QR 스캐너 페이지 — 검은 전체화면, 상단 '오늘 입장' 인원 수와 카메라 종료 버튼, 가운데 사각 스캔 영역과 카메라 권한 요청 안내, QR을 사각형 안에 맞추면 자동 인식된다는 안내" loading="lazy" />
@@ -91,9 +97,13 @@ order: 2
 
 결과 알림은 2.5초간 떠 있지만 스캐너는 1.2초 뒤 바로 다음 QR을 찍을 수 있게 돌아가고, 같은 QR을 5초 안에 다시 비추면 무시해서 같은 요청이 여러 번 가지 않게 했습니다. 스캐너에 들어가면 전체화면으로 바뀌고, 위쪽에 오늘 입장한 인원 수가 보입니다.
 
-### 관리자 — 운영 대시보드
+### 관리자 측 — 운영 대시보드
 
 > 통계 화면은 행사가 진행 중이라 실제 수치를 가린 이미지입니다. 행사가 끝나고 공개해도 괜찮은 시점이 되면 실제 데이터가 담긴 이미지로 바꿀 예정입니다.
+
+아래 데모에서는 예시 데이터로 관리자 대시보드를 직접 둘러볼 수 있습니다. 통계, 참여자 관리, 현장 검색, 설정 화면을 모두 열어볼 수 있습니다.
+
+<interactive-demo src="https://subdevpi.mywire.org:9000/qr-pass/admin/mfc" title="Admin Dashboard Demo" width="420" height="820" allow="camera; fullscreen" caption="관리자 대시보드 — 예시 데이터"></interactive-demo>
 
 <div class="screens">
 <img src="/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass-admin-stats.webp" width="396" height="851" alt="관리자 통계 페이지 — 대학별 발급, 잔여, 입장, 입장률 표와 대학 필터, 누적 참여자와 입장 수, 오늘 참여와 입장 수, 알림톡 발송 완료, 대기, 실패 집계. 수치는 가림" loading="lazy" />

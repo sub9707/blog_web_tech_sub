@@ -34,14 +34,16 @@ export default async function MarkdownRenderer({ content }: Props) {
       if (!(domNode instanceof Element)) return
 
       if (domNode.name === 'interactive-demo') {
-        const { src, title, height, caption } = domNode.attribs
+        const { src, title, height, width, caption, allow } = domNode.attribs
         if (!src) return
         return (
           <InteractiveDemo
             src={src}
             title={title ?? 'Interactive Demo'}
             height={height ? Number(height) : undefined}
+            width={width ? Number(width) : undefined}
             caption={caption}
+            allow={allow}
           />
         )
       }

@@ -6,7 +6,9 @@ interface Props {
   src: string
   title: string
   height?: number
+  width?: number
   caption?: string
+  allow?: string
 }
 
 const ExternalLinkIcon = () => (
@@ -30,7 +32,7 @@ const RetryIcon = () => (
   </svg>
 )
 
-export default function InteractiveDemo({ src, title, height = 840, caption }: Props) {
+export default function InteractiveDemo({ src, title, height = 840, width, caption, allow }: Props) {
   const [started, setStarted] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -43,7 +45,7 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
   }
 
   return (
-    <figure className="my-8 not-prose">
+    <figure className="my-8 not-prose mx-auto" style={width ? { maxWidth: width } : undefined}>
       <div className="block md:hidden rounded-xl border border-neutral-200 dark:border-neutral-800 overflow-hidden">
         <div className="px-5 py-6 bg-neutral-50 dark:bg-neutral-900 flex flex-col gap-3">
           <div className="flex items-center gap-2">
@@ -135,6 +137,7 @@ export default function InteractiveDemo({ src, title, height = 840, caption }: P
                 title={title}
                 width="100%"
                 height={height}
+                allow={allow}
                 className="block border-0"
                 onLoad={() => setLoaded(true)}
                 onError={() => setFailed(true)}

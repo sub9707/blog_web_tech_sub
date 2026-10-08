@@ -358,6 +358,16 @@ body {
   border-radius: 6px;
 }
 
+.prose .portrait-video video {
+  max-width: 360px;
+  margin-inline: auto;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+
+.dark .prose .portrait-video video {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
+}
+
 .prose .not-prose,
 .prose .not-prose * {
   text-decoration: none;
