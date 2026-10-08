@@ -18,7 +18,7 @@ order: 3
 
 ## 프로젝트 개요
 
-[코스메틱 B사 팝업 디지털 패스](/portfolio/cosmetic-popup-pass)와 같은 행사에서 쓴 **현장용 설문 키오스크**입니다.
+[코스메틱 B사 팝업 디지털 패스](/portfolio/코스메틱-B사-팝업-디지털-패스)와 같은 행사에서 쓴 **현장용 설문 키오스크**입니다.
 
 디지털 패스는 참가자가 행사 전에 자기 휴대폰으로 설문에 답하고 입장용 QR을 받는 웹 서비스였다면, 키오스크는 팝업 현장에 세워둔 세로형 터치 모니터에서 방문객이 바로 설문에 답하고 그 자리에서 **나에게 맞는 스킨케어 루틴 추천**을 받는 Windows 앱입니다. 설문 문항은 같고, 쓰는 장소와 사람, 기기가 달라서 만드는 방식도 많이 달라졌습니다.
 
@@ -62,11 +62,6 @@ order: 3
 
 인터넷 없이 동작하게 만든 것도 같은 이유입니다. 야외 팝업은 와이파이가 불안정한 경우가 많고, 키오스크는 개인정보를 받지 않으니 서버에 바로 올릴 필요도 없었습니다. 참여 기록은 기기 안 파일에 쌓아두고, 필요할 때 Excel로 뽑아 전달하는 방식으로 정했습니다.
 
-## 앱 시연
-
-<figure class="portrait-video">
-  <video src="/assets/projects/cosmetic-popup-kiosk/cosmetic-popup-kiosk-demo.mp4" width="720" height="1280" autoplay loop muted playsinline preload="metadata" aria-label="키오스크 앱 시연 — 메인 화면을 터치해 설문 5문항에 답하고, 추천 로딩 후 컨페티와 함께 스킨케어 루틴 결과가 나오는 전체 흐름"></video>
-</figure>
 
 ## 화면 흐름
 

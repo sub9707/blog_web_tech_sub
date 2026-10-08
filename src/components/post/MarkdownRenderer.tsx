@@ -1,7 +1,15 @@
-import parse, { type HTMLReactParserOptions, type DOMNode, Element } from 'html-react-parser'
+import parse, {
+  type HTMLReactParserOptions,
+  type DOMNode,
+  Element,
+  attributesToProps,
+  domToReact,
+} from 'html-react-parser'
 import { processMarkdown } from '@/lib/processMarkdown'
 import InteractiveDemo from './InteractiveDemo'
 import BookmarkCard from './BookmarkCard'
+import ProjectLink from '@/components/portfolio/ProjectLink'
+import { ROUTES } from '@/constants/routes'
 import { fetchOgData, type OgData } from '@/utils/fetchOgData'
 
 interface Props {
@@ -45,6 +53,15 @@ export default async function MarkdownRenderer({ content }: Props) {
             caption={caption}
             allow={allow}
           />
+        )
+      }
+
+      if (domNode.name === 'a' && domNode.attribs.href?.startsWith(`${ROUTES.PORTFOLIO}/`)) {
+        const { href, ...rest } = domNode.attribs
+        return (
+          <ProjectLink href={href} {...attributesToProps(rest)}>
+            {domToReact(domNode.children as DOMNode[], parserOptions)}
+          </ProjectLink>
         )
       }
 
