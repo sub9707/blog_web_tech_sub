@@ -1,8 +1,8 @@
 ---
-title: "코스메틱 B사 팝업 디지털 패스"
+title: "바이오던스 팝업 디지털 패스"
 date: "2026-09"
 period: "2026.09.07 — 2026.09.13"
-description: "코스메틱 B사 대학가 팝업 행사 운영 플랫폼 — 사전 설문과 디지털 패스(QR) 발급, 현장 QR 스캔 입장 처리, 운영 및 통계 대시보드 구축"
+description: "바이오던스 대학가 팝업 행사 운영 플랫폼 — 사전 설문과 디지털 패스(QR) 발급, 현장 QR 스캔 입장 처리, 운영 및 통계 대시보드 구축"
 category: "브랜드 행사"
 thumbnail: "/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass.webp"
 tags:
@@ -18,7 +18,7 @@ order: 2
 
 ## 프로젝트 개요
 
-코스메틱 B사가 서울 소재 대학 네 곳을 돌며 여는 제품 팝업 행사의 **사전 참여 플랫폼**입니다.
+바이오던스가 서울 소재 대학 네 곳을 돌며 여는 제품 팝업 행사의 **사전 참여 플랫폼**입니다.
 
 참가자는 대학 커뮤니티에 올라온 전용 링크로 들어와 스킨케어 설문 5문항에 답하고 이름과 연락처를 남기면, 카카오 알림톡으로 **팝업 행사장 입장용 디지털 패스(QR)**를 받습니다. 행사 당일에는 현장 스태프가 휴대폰 카메라로 QR을 찍어 바로 입장 처리하고, 운영 측은 대학별 발급 현황과 설문 응답 결과를 대시보드와 엑셀로 확인합니다.
 
@@ -26,7 +26,7 @@ order: 2
 
 | 항목 | 내용 |
 | --- | --- |
-| **클라이언트** | 코스메틱 B사 |
+| **클라이언트** | 바이오던스 |
 | **개발 기간** | 2026.09.07 — 2026.09.13 (1주) |
 | **참여 인원** | 개발(FE + BE + 배포) 1인 |
 | **행사 규모** | 대학 4곳 순회 팝업, 대학별 선착순 정원 2,000명 |
@@ -53,7 +53,7 @@ order: 2
 
 ## 프로젝트 아키텍처
 
-![코스메틱 B사 팝업 디지털 패스 구조도 — 참가자, 현장 스태프, 관리자가 하나의 Cloudflare Worker에 접근하고, Worker 안의 React SPA와 Hono API가 공유 로직(암호화,QR 토큰,정원 판정)을 함께 쓰며 Cloudflare D1, Turnstile, 카카오 알림톡(Solapi)과 연결된다](/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass-architecture.webp)
+![바이오던스 팝업 디지털 패스 구조도 — 참가자, 현장 스태프, 관리자가 하나의 Cloudflare Worker에 접근하고, Worker 안의 React SPA와 Hono API가 공유 로직(암호화,QR 토큰,정원 판정)을 함께 쓰며 Cloudflare D1, Turnstile, 카카오 알림톡(Solapi)과 연결된다](/assets/projects/cosmetic-popup-pass/cosmetic-popup-pass-architecture.webp)
 
 - Cloudflare Worker 하나에서 화면과 API를 함께 띄웠습니다. `/api/*`로 들어온 요청은 Hono가 처리하고, 나머지 경로는 React 화면을 보여줍니다.
 - 암호화, QR 토큰, 입력값 검사, 정원 계산처럼 화면과 서버 양쪽에서 필요한 코드는 `src/lib` 한곳에 모아 같이 썼습니다. 화면에 뜨는 '신청 가능 / 마감' 표시와 서버가 실제로 신청을 받아주는 기준이 어긋나지 않습니다.
