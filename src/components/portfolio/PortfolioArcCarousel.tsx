@@ -19,6 +19,7 @@ const BACK_MAX = 30; // rel 이 이보다 작으면 뒷면이 카메라를 향�
 const SWIPE_THRESHOLD = 56;
 const STAGE_TILT = 5; // 카메라 높이: 클수록 위(탑뷰), 작을수록 눈높이에 가까움
 const DEG = Math.PI / 180;
+const OFFSCREEN_MARGIN = '200px 0px';
 
 const ARROW_CLASS =
   'absolute top-1/2 z-40 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-900/10 sm:flex bg-gray-900/85 text-white backdrop-blur-sm transition-colors hover:bg-gray-900 dark:border-white/15 dark:bg-white/90 dark:text-gray-900 dark:hover:bg-white';
@@ -62,15 +63,46 @@ function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
 }
 
+function normalizeAngle(angle: number): number {
+  return angle - 360 * Math.round(angle / 360); // [-180, 180]
+}
+
+// 회전 전환 중 지나는 각도 범위에서 앞면이 카메라를 향할 수 있는가
+function canFrontFaceCamera(start: number, sweep: number): boolean {
+  if (sweep >= 360 + FRONT_MIN) return true;
+  const from = normalizeAngle(start);
+  return from > FRONT_MIN || from + sweep > FRONT_MIN;
+}
+
+interface Motion {
+  rotation: number;
+  // 전환이 끝나기 전까지 거쳐간 rotation 범위
+  sweepMin: number;
+  sweepMax: number;
+}
+
+const INITIAL_MOTION: Motion = { rotation: 0, sweepMin: 0, sweepMax: 0 };
+
+function moveTo(motion: Motion, rotation: number): Motion {
+  return {
+    rotation,
+    sweepMin: Math.min(motion.sweepMin, rotation),
+    sweepMax: Math.max(motion.sweepMax, rotation),
+  };
+}
+
 export default function PortfolioArcCarousel({ projects }: Props) {
   const total = projects.length;
   const angleStep = 360 / total;
 
-  const [rotation, setRotation] = useState(0);
+  const [motion, setMotion] = useState<Motion>(INITIAL_MOTION);
+  const { rotation } = motion;
   const [layout, setLayout] = useState<StageLayout>(() => resolveLayout(1024));
   const { radius, elevation, activePop, neighborGap, inactiveScale } = layout;
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [isOnScreen, setIsOnScreen] = useState(true);
 
+  const sectionRef = useRef<HTMLElement>(null);
   const dragStartX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -89,26 +121,49 @@ export default function PortfolioArcCarousel({ projects }: Props) {
     syncLayout();
     window.addEventListener('resize', syncLayout);
 
+    // 화면 밖에서는 3D 월드를 합성 대상에서 제외
+    const visibilityObserver = new IntersectionObserver(
+      ([entry]) => setIsOnScreen(entry.isIntersecting),
+      { rootMargin: OFFSCREEN_MARGIN }
+    );
+    if (sectionRef.current) visibilityObserver.observe(sectionRef.current);
+
     return () => {
       motionQuery.removeEventListener('change', syncMotion);
       window.removeEventListener('resize', syncLayout);
       cancelAnimationFrame(frame);
+      visibilityObserver.disconnect();
     };
   }, []);
 
   const activeIndex = mod(Math.round(-rotation / angleStep), total);
 
-  const goNext = useCallback(() => setRotation((r) => r - angleStep), [angleStep]);
-  const goPrev = useCallback(() => setRotation((r) => r + angleStep), [angleStep]);
+  const goNext = useCallback(
+    () => setMotion((m) => moveTo(m, m.rotation - angleStep)),
+    [angleStep]
+  );
+  const goPrev = useCallback(
+    () => setMotion((m) => moveTo(m, m.rotation + angleStep)),
+    [angleStep]
+  );
   const goToIndex = useCallback(
     (index: number) =>
-      setRotation((r) => {
+      setMotion((m) => {
         const base = -index * angleStep;
-        const turns = Math.round((r - base) / 360);
-        return base + turns * 360;
+        const turns = Math.round((m.rotation - base) / 360);
+        return moveTo(m, base + turns * 360);
       }),
     [angleStep]
   );
+
+  const handleTransitionEnd = (event: React.TransitionEvent) => {
+    if (event.propertyName !== 'transform') return;
+    setMotion((m) =>
+      m.sweepMin === m.rotation && m.sweepMax === m.rotation
+        ? m
+        : { rotation: m.rotation, sweepMin: m.rotation, sweepMax: m.rotation }
+    );
+  };
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -157,6 +212,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
 
   return (
     <section
+      ref={sectionRef}
       aria-roledescription="carousel"
       aria-label="포트폴리오 프로젝트"
       tabIndex={0}
@@ -166,7 +222,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
       onPointerCancel={() => {
         dragStartX.current = null;
       }}
-      className="relative flex h-[calc(100svh-3.5rem)] min-h-155 w-full cursor-grab touch-pan-y flex-col overflow-hidden bg-white select-none focus-visible:outline-none active:cursor-grabbing dark:bg-navy-950"
+      className="relative isolate flex h-[calc(100svh-3.5rem)] min-h-155 w-full cursor-grab touch-pan-y flex-col overflow-hidden bg-white contain-layout contain-paint select-none focus-visible:outline-none active:cursor-grabbing dark:bg-navy-950"
     >
       <div className="absolute top-6 left-4 z-40 sm:top-10 sm:left-8">
         <p className="text-xs font-semibold tracking-[0.25em] text-gray-400 uppercase dark:text-slate-500">
@@ -188,7 +244,8 @@ export default function PortfolioArcCarousel({ projects }: Props) {
       >
         {/* radial world: 하나의 방사형 시스템 (불꽃놀이). 월드를 기울여 위에서 내려다봄 */}
         <div
-          className="absolute inset-0 transform-3d"
+          className={`absolute inset-0 transform-3d ${isOnScreen ? '' : 'invisible'}`}
+          onTransitionEnd={handleTransitionEnd}
           style={
             reducedMotion
               ? undefined
@@ -198,7 +255,7 @@ export default function PortfolioArcCarousel({ projects }: Props) {
           {projects.map((project, index) => {
             // 원주상 각도 (rotation 누적 → 방사형 시스템 전체가 회전)
             const a = index * angleStep + rotation;
-            const rel = a - 360 * Math.round(a / 360); // [-180, 180]
+            const rel = normalizeAngle(a);
             const relRad = rel * DEG;
             const isActive = index === activeIndex;
 
@@ -225,6 +282,14 @@ export default function PortfolioArcCarousel({ projects }: Props) {
 
             const showFront = isActive || rel > FRONT_MIN;
             const showBack = !isActive && rel < BACK_MAX;
+            // 카메라 반대편 앞면은 backface-hidden 으로 보이지 않으므로 DOM 에서 제외 (전환 중에는 유지)
+            const renderFront =
+              showFront ||
+              (!reducedMotion &&
+                canFrontFaceCamera(
+                  index * angleStep + motion.sweepMin,
+                  motion.sweepMax - motion.sweepMin
+                ));
             const shade = isActive ? 0 : Math.min(0.42, (1 - depth) * 0.2);
 
             return (
@@ -268,30 +333,32 @@ export default function PortfolioArcCarousel({ projects }: Props) {
                 )}
 
                 {/* 앞면 */}
-                <div className="card-reflect absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(4px)]">
-                  {showFront && project.thumbnail ? (
-                    <Image
-                      src={project.thumbnail}
-                      alt={project.title}
-                      fill
-                      priority={isActive}
-                      sizes={CARD_IMAGE_SIZES}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-navy-900 px-3 text-center">
-                      <span className="font-serif text-xs font-bold tracking-widest text-slate-500 uppercase">
-                        {project.category}
-                      </span>
-                    </div>
-                  )}
-                  {shade > 0.02 && (
-                    <div
-                      className="pointer-events-none absolute inset-0 bg-navy-950"
-                      style={{ opacity: shade }}
-                    />
-                  )}
-                </div>
+                {renderFront && (
+                  <div className="card-reflect absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(4px)]">
+                    {showFront && project.thumbnail ? (
+                      <Image
+                        src={project.thumbnail}
+                        alt={project.title}
+                        fill
+                        priority={isActive}
+                        sizes={CARD_IMAGE_SIZES}
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-navy-900 px-3 text-center">
+                        <span className="font-serif text-xs font-bold tracking-widest text-slate-500 uppercase">
+                          {project.category}
+                        </span>
+                      </div>
+                    )}
+                    {shade > 0.02 && (
+                      <div
+                        className="pointer-events-none absolute inset-0 bg-navy-950"
+                        style={{ opacity: shade }}
+                      />
+                    )}
+                  </div>
+                )}
               </ProjectLink>
             );
           })}
