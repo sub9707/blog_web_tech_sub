@@ -1,0 +1,77 @@
+export const CATEGORIES = ['Next.js', 'React', 'JavaScript', 'TypeScript', 'Web Platform', 'Tooling'];
+
+export const SOURCES = [
+  { name: 'Next.js Blog', url: 'https://nextjs.org/feed.xml', category: 'Next.js', priority: 5 },
+  {
+    name: 'Next.js Releases',
+    url: 'https://github.com/vercel/next.js/releases.atom',
+    category: 'Next.js',
+    priority: 4,
+    isRelease: true,
+  },
+  {
+    name: 'Vercel Changelog',
+    url: 'https://vercel.com/changelog/rss.xml',
+    category: 'Next.js',
+    priority: 2,
+    requiresKeyword: true,
+  },
+  { name: 'React Blog', url: 'https://react.dev/rss.xml', category: 'React', priority: 5 },
+  {
+    name: 'React Releases',
+    url: 'https://github.com/facebook/react/releases.atom',
+    category: 'React',
+    priority: 4,
+    isRelease: true,
+  },
+  {
+    name: 'This Week in React',
+    url: 'https://thisweekinreact.com/newsletter/rss.xml',
+    category: 'React',
+    priority: 2,
+  },
+  {
+    name: 'TypeScript Blog',
+    url: 'https://devblogs.microsoft.com/typescript/feed/',
+    category: 'TypeScript',
+    priority: 4,
+  },
+  { name: 'V8 Blog', url: 'https://v8.dev/blog.atom', category: 'JavaScript', priority: 3 },
+  { name: 'Node.js Blog', url: 'https://nodejs.org/en/feed/blog.xml', category: 'JavaScript', priority: 3 },
+  {
+    name: 'JavaScript Weekly',
+    url: 'https://cprss.s3.amazonaws.com/javascriptweekly.com.xml',
+    category: 'JavaScript',
+    priority: 2,
+  },
+  { name: 'web.dev', url: 'https://web.dev/static/blog/feed.xml', category: 'Web Platform', priority: 3 },
+  {
+    name: 'Frontend Focus',
+    url: 'https://cprss.s3.amazonaws.com/frontendfoc.us.xml',
+    category: 'Web Platform',
+    priority: 2,
+  },
+];
+
+export const RELEVANCE_KEYWORDS = [
+  'next.js',
+  'nextjs',
+  'react',
+  'javascript',
+  'typescript',
+  'node',
+  'turbopack',
+  'webpack',
+  'vite',
+  'css',
+  'html',
+  'browser',
+  'baseline',
+  'server component',
+  'app router',
+  'hydration',
+  'performance',
+  'core web vitals',
+  'framework',
+  'frontend',
+];

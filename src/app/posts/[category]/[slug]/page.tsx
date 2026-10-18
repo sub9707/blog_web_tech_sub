@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import Link from 'next/link';
+import BackLink from '@/components/common/BackLink';
 import { getPost } from '@/services/posts/getPost';
 import { getPosts } from '@/services/posts/getPosts';
 import MarkdownRenderer from '@/components/post/MarkdownRenderer';
@@ -62,24 +62,7 @@ export default async function PostPage({ params }: Props) {
     <div className="max-w-5xl mx-auto px-6 py-16">
       <div className="flex gap-24 items-start">
         <div className="min-w-0 flex-1">
-          <Link
-            href={ROUTES.HOME}
-            className="inline-flex items-center gap-1.5 text-xs text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-colors mb-10"
-          >
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M19 12H5M12 5l-7 7 7 7" />
-            </svg>
-            Back to Blog
-          </Link>
+          <BackLink href={ROUTES.HOME} label="Back to Blog" />
 
           <header className="mb-10">
             <Badge>{post.category}</Badge>

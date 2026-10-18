@@ -1,0 +1,50 @@
+name: FE News
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: fe-news
+  cancel-in-progress: false
+
+jobs:
+  draft:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Collect and summarize news
+        id: news
+        run: npm run news
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TZ: Asia/Seoul
+
+      - name: Create review pull request
+        if: steps.news.outputs.has_news == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: news/weekly-draft
+          delete-branch: true
+          add-paths: content/news
+          commit-message: 'add: ${{ steps.news.outputs.title }}'
+          title: 'add: ${{ steps.news.outputs.title }}'
+          body-path: ${{ steps.news.outputs.body_path }}
+          labels: fe-news
