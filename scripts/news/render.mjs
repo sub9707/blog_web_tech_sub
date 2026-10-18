@@ -1,9 +1,10 @@
 import matter from 'gray-matter';
-import { format, getWeekOfMonth } from 'date-fns';
-import { CATEGORIES } from './sources.mjs';
+import { format } from 'date-fns';
 
+const MAX_MAIN_ITEMS = 10;
 const MAX_BOOKMARKS = 8;
-const FALLBACK_SUMMARY_LENGTH = 160;
+const FALLBACK_SUMMARY_LENGTH = 200;
+const SECTION_BREAK = '<br/>';
 
 function toFallbackItem(entry) {
   return {
@@ -19,9 +20,15 @@ function toBookmark(url) {
   return `<bookmark url="${url.replace(/"/g, '%22')}"></bookmark>`;
 }
 
-function renderMainItem(item, useBookmark) {
-  const link = useBookmark ? toBookmark(item.url) : `[원문 · ${item.sourceName}](${item.url})`;
-  return [`### ${item.titleKo}`, item.summaryKo, link].filter(Boolean).join('\n\n');
+function renderSection(item, index, useBookmark) {
+  const source = useBookmark ? toBookmark(item.url) : `[원문 · ${item.sourceName}](${item.url})`;
+  return [`## ${index + 1}. ${item.titleKo}`, source, item.summaryKo].filter(Boolean).join('\n\n');
+}
+
+function renderFallbackTitle(mainItems) {
+  const [first] = mainItems;
+  if (!first) return '이번 주 프론트엔드 소식';
+  return mainItems.length > 1 ? `${first.titleKo} 외 ${mainItems.length - 1}건` : first.titleKo;
 }
 
 export function renderDigest({ entries, summary, since, until }) {
@@ -33,37 +40,34 @@ export function renderDigest({ entries, summary, since, until }) {
     })
     .sort((a, b) => b.importance - a.importance);
 
-  const mainItems = items.filter((item) => item.importance >= 2);
-  const minorItems = items.filter((item) => item.importance < 2);
-  const bookmarkIds = new Set(mainItems.slice(0, MAX_BOOKMARKS).map((item) => item.id));
+  const mainItems = items.filter((item) => item.importance >= 2).slice(0, MAX_MAIN_ITEMS);
+  const mainIds = new Set(mainItems.map((item) => item.id));
+  const minorItems = items.filter((item) => !mainIds.has(item.id));
 
-  const sections = CATEGORIES.map((category) => {
-    const categoryItems = mainItems.filter((item) => item.category === category);
-    if (categoryItems.length === 0) return null;
-    const body = categoryItems.map((item) => renderMainItem(item, bookmarkIds.has(item.id)));
-    return [`## ${category}`, ...body].join('\n\n');
-  }).filter(Boolean);
+  const sections = mainItems.map((item, index) => renderSection(item, index, index < MAX_BOOKMARKS));
 
   if (minorItems.length > 0) {
     const list = minorItems.map((item) => `- [${item.titleKo}](${item.url}) · ${item.sourceName}`);
-    sections.push(['## 기타 소식', list.join('\n')].join('\n\n'));
+    sections.push(['## 함께 볼 소식', list.join('\n')].join('\n\n'));
   }
 
-  const tags = [...new Set(mainItems.map((item) => item.category))];
-  const description =
-    summary?.headline ?? mainItems.slice(0, 3).map((item) => item.titleKo).join(', ');
+  const intro =
+    summary?.intro ??
+    `${format(since, 'M월 d일')}부터 ${format(until, 'M월 d일')}까지 올라온 프론트엔드 소식 ${items.length}건을 정리했다.`;
 
   const frontmatter = {
-    title: `FE News ${format(until, 'yyyy년 M월')} ${getWeekOfMonth(until, { weekStartsOn: 1 })}주차`,
+    title: summary?.title ?? renderFallbackTitle(mainItems),
     date: format(until, 'yyyy-MM-dd'),
     period: `${format(since, 'yyyy-MM-dd')} ~ ${format(until, 'yyyy-MM-dd')}`,
-    description,
-    tags,
+    description: summary?.headline ?? mainItems.slice(0, 3).map((item) => item.titleKo).join(', '),
+    tags: [...new Set(mainItems.map((item) => item.category))],
     sourceCount: items.length,
   };
 
+  const body = [intro, ...sections].join(`\n\n${SECTION_BREAK}\n\n`);
+
   return {
     frontmatter,
-    markdown: matter.stringify(`\n${sections.join('\n\n')}\n`, frontmatter),
+    markdown: matter.stringify(`\n${body}\n`, frontmatter),
   };
 }
