@@ -20,9 +20,28 @@ function toBookmark(url) {
   return `<bookmark url="${url.replace(/"/g, '%22')}"></bookmark>`;
 }
 
+function escapeLinkText(text) {
+  return text.replace(/([[\]])/g, '\\$1');
+}
+
+function formatPublishedDate(publishedAt) {
+  return format(new Date(publishedAt), 'yyyy.MM.dd');
+}
+
+function renderCitation(item) {
+  const link = `[${escapeLinkText(item.originalTitle)}](${item.url})`;
+  return `출처: ${link} · ${item.sourceName} · ${formatPublishedDate(item.publishedAt)}`;
+}
+
 function renderSection(item, index, useBookmark) {
-  const source = useBookmark ? toBookmark(item.url) : `[원문 · ${item.sourceName}](${item.url})`;
-  return [`## ${index + 1}. ${item.titleKo}`, source, item.summaryKo].filter(Boolean).join('\n\n');
+  return [
+    `## ${index + 1}. ${item.titleKo}`,
+    useBookmark && toBookmark(item.url),
+    item.summaryKo,
+    renderCitation(item),
+  ]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 function renderFallbackTitle(mainItems) {
@@ -36,7 +55,13 @@ export function renderDigest({ entries, summary, since, until }) {
   const items = (summary?.items ?? entries.map(toFallbackItem))
     .map((item) => {
       const entry = entryById.get(item.id);
-      return { ...item, url: entry.url, sourceName: entry.source.name };
+      return {
+        ...item,
+        url: entry.url,
+        originalTitle: entry.title,
+        sourceName: entry.source.name,
+        publishedAt: entry.publishedAt,
+      };
     })
     .sort((a, b) => b.importance - a.importance);
 
@@ -47,7 +72,10 @@ export function renderDigest({ entries, summary, since, until }) {
   const sections = mainItems.map((item, index) => renderSection(item, index, index < MAX_BOOKMARKS));
 
   if (minorItems.length > 0) {
-    const list = minorItems.map((item) => `- [${item.titleKo}](${item.url}) · ${item.sourceName}`);
+    const list = minorItems.map(
+      (item) =>
+        `- [${escapeLinkText(item.titleKo)}](${item.url}) · ${item.sourceName} · ${formatPublishedDate(item.publishedAt)}`
+    );
     sections.push(['## 함께 볼 소식', list.join('\n')].join('\n\n'));
   }
 
