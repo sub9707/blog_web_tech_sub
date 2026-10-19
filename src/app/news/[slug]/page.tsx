@@ -5,6 +5,7 @@ import { getNews } from '@/services/news/getNews';
 import { getNewsList } from '@/services/news/getNewsList';
 import MarkdownRenderer from '@/components/post/MarkdownRenderer';
 import ImageZoomWrapper from '@/components/post/ImageZoomWrapper';
+import GlossaryWrapper from '@/components/news/GlossaryWrapper';
 import TableOfContents from '@/components/post/TableOfContents';
 import MobileTocDrawer from '@/components/post/MobileTocDrawer';
 import HeadingBreadcrumb from '@/components/post/HeadingBreadcrumb';
@@ -92,7 +93,9 @@ export default async function NewsDetailPage({ params }: Props) {
             </header>
 
             <ImageZoomWrapper>
-              <MarkdownRenderer content={news.content} />
+              <GlossaryWrapper glossary={news.glossary}>
+                <MarkdownRenderer content={news.content} />
+              </GlossaryWrapper>
             </ImageZoomWrapper>
 
             <p className="mt-16 pt-6 border-t border-gray-100 dark:border-navy-700 text-xs text-gray-400 dark:text-slate-500 leading-relaxed">

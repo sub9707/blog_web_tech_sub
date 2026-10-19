@@ -6,6 +6,8 @@ export const NEWS_PAGE = {
     '이 글은 공식 블로그와 뉴스레터의 공개 RSS에서 모은 소식을 바탕으로 Claude가 작성하고, 작성자가 원문과 대조해 검토한 뒤 발행했습니다. 자세한 내용은 각 출처의 원문을 확인해 주세요.',
 } as const;
 
+export const GLOSSARY_TERM_ATTRIBUTE = 'data-glossary-id';
+
 export const NEWS_PIPELINE = [
   {
     title: '수집',

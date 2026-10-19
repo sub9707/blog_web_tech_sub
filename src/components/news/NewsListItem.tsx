@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { NewsMeta } from '@/types/news';
 import { ROUTES } from '@/constants/routes';
 import { getNewsThumbnail } from '@/services/news/parseNews';
+import { formatNewsWeek } from '@/utils/formatNewsWeek';
 import { format } from 'date-fns';
 
 interface Props {
@@ -29,7 +30,7 @@ export default function NewsListItem({ news }: Props) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-gray-400 dark:text-slate-500">
-          <span>{news.period || formattedDate}</span>
+          <span>{formatNewsWeek(news.date)}</span>
           {news.isDraft && <span className="text-amber-600 dark:text-amber-400">Draft</span>}
         </div>
         <h2 className="mt-1 text-base sm:text-lg font-semibold text-gray-900 dark:text-slate-200 leading-snug group-hover:text-gray-500 dark:group-hover:text-slate-400 transition-colors line-clamp-2">

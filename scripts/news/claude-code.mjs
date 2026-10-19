@@ -3,7 +3,9 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-const TIMEOUT_MS = 10 * 60 * 1000;
+const TIMEOUT_MS = 20 * 60 * 1000;
+const MAX_TURNS_WITH_SEARCH = 40;
+const WEB_TOOLS = 'WebSearch,WebFetch';
 
 function runClaude(args, input, cwd) {
   return new Promise((resolve, reject) => {
@@ -25,7 +27,14 @@ function runClaude(args, input, cwd) {
   });
 }
 
-export async function requestWithClaudeCode(model, systemPrompt, prompt) {
+function buildToolArgs(allowWebSearch) {
+  if (allowWebSearch) {
+    return ['--tools', WEB_TOOLS, '--allowedTools', WEB_TOOLS, '--max-turns', String(MAX_TURNS_WITH_SEARCH)];
+  }
+  return ['--tools', process.platform === 'win32' ? '""' : ''];
+}
+
+export async function requestWithClaudeCode(model, systemPrompt, prompt, { allowWebSearch = false } = {}) {
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'fe-news-'));
   const systemPromptFile = path.join(workDir, 'system-prompt.md');
   fs.writeFileSync(systemPromptFile, systemPrompt);
@@ -40,8 +49,7 @@ export async function requestWithClaudeCode(model, systemPrompt, prompt) {
         model,
         '--system-prompt-file',
         systemPromptFile,
-        '--tools',
-        process.platform === 'win32' ? '""' : '',
+        ...buildToolArgs(allowWebSearch),
         '--no-session-persistence',
       ],
       prompt,

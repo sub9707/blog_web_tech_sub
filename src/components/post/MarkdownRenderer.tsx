@@ -10,6 +10,7 @@ import InteractiveDemo from './InteractiveDemo'
 import BookmarkCard from './BookmarkCard'
 import ProjectLink from '@/components/portfolio/ProjectLink'
 import { ROUTES } from '@/constants/routes'
+import { GLOSSARY_TERM_ATTRIBUTE } from '@/constants/news'
 import { fetchOgData, type OgData } from '@/utils/fetchOgData'
 
 interface Props {
@@ -65,6 +66,22 @@ export default async function MarkdownRenderer({ content }: Props) {
         )
       }
 
+      if (domNode.name === 'glossary-term') {
+        const { term } = domNode.attribs
+        const children = domToReact(domNode.children as DOMNode[], parserOptions)
+        if (!term) return <>{children}</>
+        return (
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            {...{ [GLOSSARY_TERM_ATTRIBUTE]: term }}
+            className="inline p-0 text-left font-[inherit] text-inherit underline decoration-dotted decoration-gray-400 underline-offset-4 hover:decoration-gray-900 dark:decoration-slate-500 dark:hover:decoration-slate-200 cursor-help transition-colors"
+          >
+            {children}
+          </button>
+        )
+      }
+
       if (domNode.name === 'bookmark') {
         const { url } = domNode.attribs
         if (!url) return
@@ -76,7 +93,7 @@ export default async function MarkdownRenderer({ content }: Props) {
           siteName: null,
           favicon: null,
         }
-        return <BookmarkCard url={url} ogData={ogData} />
+        return <BookmarkCard url={url} ogData={ogData} isImageHidden={'hide-image' in domNode.attribs} />
       }
     },
   }

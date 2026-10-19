@@ -4,9 +4,10 @@ import type { OgData } from '@/utils/fetchOgData'
 interface Props {
   url: string
   ogData?: OgData
+  isImageHidden?: boolean
 }
 
-export default function BookmarkCard({ url, ogData }: Props) {
+export default function BookmarkCard({ url, ogData, isImageHidden = false }: Props) {
   const { title, description, image, siteName, favicon } = ogData ?? {
     title: url,
     description: '',
@@ -42,7 +43,7 @@ export default function BookmarkCard({ url, ogData }: Props) {
         </div>
       </div>
 
-      {image && (
+      {image && !isImageHidden && (
         <div className="relative shrink-0 w-28 sm:w-36">
           <Image src={image} alt={title} fill className="object-cover my-0" unoptimized />
         </div>

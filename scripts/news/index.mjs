@@ -8,6 +8,7 @@ import { dedupeByUrl, loadState, saveState, selectEntries, splitFeatured } from 
 import { attachArticleBodies, resolveUrls } from './enrich.mjs';
 import { writeArticle } from './write.mjs';
 import { renderArticle } from './render.mjs';
+import { resolveArticleImages } from './images.mjs';
 import { collectConferences, renderConferences } from './conferences.mjs';
 
 const NEWS_DIR = path.join(process.cwd(), 'content', 'news');
@@ -94,13 +95,14 @@ ${renderConferences(conferences) ?? '다가오는 컨퍼런스 없음'}`);
     return;
   }
 
-  const { article, usage, model } = await writeArticle(featured, briefs, {
+  const { article: draft, usage, model } = await writeArticle(featured, briefs, {
     provider: process.env.NEWS_LLM_PROVIDER || (process.env.CLAUDE_CODE_OAUTH_TOKEN ? 'claude-code' : 'openai'),
     apiKey: process.env.NEWS_LLM_API_KEY,
     baseUrl: process.env.NEWS_LLM_BASE_URL,
     models: process.env.NEWS_LLM_MODELS?.split(',').map((name) => name.trim()).filter(Boolean),
   });
   console.log(`모델: ${model}, 토큰 사용: ${formatUsage(usage)}`);
+  const article = await resolveArticleImages(draft, featured);
 
   const { frontmatter, markdown } = renderArticle({
     entries: resolved,

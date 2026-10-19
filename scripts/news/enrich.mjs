@@ -1,4 +1,5 @@
 import { toPlainText } from './text.mjs';
+import { extractImages } from './images.mjs';
 
 const FETCH_TIMEOUT_MS = 10_000;
 const ARTICLE_TEXT_LIMIT = 6000;
@@ -27,24 +28,27 @@ export async function resolveUrls(entries) {
   return Promise.all(entries.map(resolveUrl));
 }
 
-async function fetchArticleText(url) {
+async function fetchArticle(url) {
   try {
     const response = await fetchPage(url);
-    if (!response.ok) return '';
+    if (!response.ok) return { text: '', images: [] };
 
-    const html = (await response.text()).replace(NOISE_BLOCKS, ' ');
-    return toPlainText(pickBlock(html, 'article') ?? pickBlock(html, 'main') ?? pickBlock(html, 'body') ?? '');
+    const fullHtml = await response.text();
+    const cleanHtml = fullHtml.replace(NOISE_BLOCKS, ' ');
+    const contentHtml = pickBlock(cleanHtml, 'article') ?? pickBlock(cleanHtml, 'main') ?? pickBlock(cleanHtml, 'body') ?? '';
+
+    return { text: toPlainText(contentHtml), images: extractImages(fullHtml, contentHtml, response.url || url) };
   } catch {
-    return '';
+    return { text: '', images: [] };
   }
 }
 
 export async function attachArticleBodies(entries) {
   return Promise.all(
     entries.map(async (entry) => {
-      const pageText = await fetchArticleText(entry.url);
-      const body = pageText.length > entry.fullText.length ? pageText : entry.fullText;
-      return { ...entry, body: body.slice(0, ARTICLE_TEXT_LIMIT) };
+      const article = await fetchArticle(entry.url);
+      const body = article.text.length > entry.fullText.length ? article.text : entry.fullText;
+      return { ...entry, body: body.slice(0, ARTICLE_TEXT_LIMIT), images: article.images };
     })
   );
 }
