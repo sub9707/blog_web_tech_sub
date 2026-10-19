@@ -24,7 +24,12 @@ export function extractHeadings(markdown: string): Heading[] {
     if (!match) continue;
 
     const level = match[1].length;
-    const text = match[2].trim().replace(/`([^`]*)`/g, '$1');
+    const text = match[2]
+      .trim()
+      .replace(/`([^`]*)`/g, '$1')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&');
     const id = slugger.slug(text);
 
     headings.push({ id, text, level });

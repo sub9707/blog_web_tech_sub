@@ -2,6 +2,7 @@ import matter from 'gray-matter';
 import { format } from 'date-fns';
 import { CATEGORIES } from './sources.mjs';
 import { createGlossaryLinker, toGlossaryFrontmatter } from './glossary.mjs';
+import { escapeRawHtml } from './text.mjs';
 
 const MAX_BOOKMARKS = 8;
 const SECTION_BREAK = '<br/>';
@@ -48,7 +49,7 @@ function renderFigure(image) {
 function renderSection(section, index, entryById, linker) {
   const entries = section.ids.map((id) => entryById.get(id));
   return [
-    `## ${index + 1}. ${section.heading}`,
+    `## ${index + 1}. ${escapeRawHtml(section.heading)}`,
     renderFigure(section.image),
     linker.link(section.body.trim()),
     index < MAX_BOOKMARKS && toBookmark(entries[0].url, { isImageHidden: Boolean(section.image) }),
@@ -60,7 +61,7 @@ function renderSection(section, index, entryById, linker) {
 
 function renderBriefItem(brief, entry, linker) {
   const summary = brief.summary ? ` ${linker.link(brief.summary)}` : '';
-  return `- **${brief.titleKo}**${summary}\n  출처: ${toSourceLink(entry)}`;
+  return `- **${escapeRawHtml(brief.titleKo)}**${summary}\n  출처: ${toSourceLink(entry)}`;
 }
 
 function renderBriefs(briefs, entryById, linker) {

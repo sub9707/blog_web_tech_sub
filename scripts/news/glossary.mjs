@@ -1,3 +1,5 @@
+import { escapeRawHtml } from './text.mjs';
+
 const PROTECTED_SEGMENT =
   /(<glossary-term\b[^>]*>[\s\S]*?<\/glossary-term>|```[\s\S]*?```|`[^`\n]*`|\[[^\]]*\]\([^)]*\)|<[^>]+>)/;
 
@@ -16,11 +18,12 @@ function linkFirstOccurrence(text, entry) {
 
 export function createGlossaryLinker(glossary) {
   const linkedIds = new Set();
+  const searchableEntries = glossary.map((entry) => ({ ...entry, match: escapeRawHtml(entry.match) }));
 
   return {
     link(text) {
-      let result = text;
-      for (const entry of glossary) {
+      let result = escapeRawHtml(text);
+      for (const entry of searchableEntries) {
         if (linkedIds.has(entry.id)) continue;
         const linked = linkFirstOccurrence(result, entry);
         if (linked === null) continue;

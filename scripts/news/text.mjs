@@ -1,4 +1,13 @@
-const ENTITIES = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', '#39': "'" };
+const CODE_SEGMENT = /(```[\s\S]*?```|`[^`\n]*`)/;
+
+export function escapeRawHtml(markdown = '') {
+  return markdown
+    .split(CODE_SEGMENT)
+    .map((segment, index) => (index % 2 === 1 ? segment : segment.replace(/</g, '&lt;')))
+    .join('');
+}
+
+const ENTITIES ={ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', '#39': "'" };
 
 export function toPlainText(html = '') {
   return html
