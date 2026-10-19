@@ -1,8 +1,13 @@
 import { CATEGORIES } from './sources.mjs';
 
 const DEFAULT_BASE_URL = 'https://openrouter.ai/api/v1';
-const DEFAULT_MODELS = ['google/gemma-4-31b-it:free', 'nvidia/nemotron-3-super-120b-a12b:free'];
+const DEFAULT_MODELS = [
+  'google/gemma-4-31b-it:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+  'nvidia/nemotron-3.5-super-vl:free',
+];
 const MAX_OUTPUT_TOKENS = 8000;
+const FOREIGN_SCRIPT = /(?:(?![\p{Script=Hangul}\p{Script=Latin}])\p{L})+/u;
 
 const OUTPUT_FORMAT = `{
   "title": "글 제목",
@@ -19,7 +24,12 @@ const OUTPUT_FORMAT = `{
 
 const SYSTEM_PROMPT = `너는 프론트엔드 기술 블로그를 운영하는 개발자다.
 이번 주 프론트엔드 소식을 바탕으로 블로그 글 한 편을 쓴다. 소식을 나열하는 정리가 아니라, 맥락을 짚고 풀어 쓰는 읽을거리여야 한다.
-독자는 실무 프론트엔드 개발자다. 모든 글은 한국어로 쓰고, 문체는 "~다"로 끝나는 평서체로 통일한다.
+독자는 실무 프론트엔드 개발자다.
+
+언어와 문체
+- 한국어(한글)로만 쓴다. 일본어, 한자, 중국어, 러시아어 등 한글과 영어 알파벳이 아닌 문자는 한 글자도 섞지 않는다. 예: "リリース"가 아니라 "릴리스", "公開"가 아니라 "공개", "версия"가 아니라 "버전".
+- 영어는 제품명, 버전, API 이름, 코드에만 쓴다.
+- 모든 문장은 "~다", "~했다", "~이다"로 끝낸다. "~습니다", "~해요"는 쓰지 않는다.
 
 입력
 - [주요 소식]: 각 항목은 "### id | 출처 | 원문 제목" 줄 다음에 원문 본문이 온다.
@@ -93,10 +103,21 @@ function sanitizeArticle(article, knownIds) {
   return { ...article, sections, briefs };
 }
 
-export async function writeArticle(featured, briefs, { apiKey, baseUrl, models }) {
-  if (!apiKey) throw new Error('NEWS_LLM_API_KEY가 설정되지 않았습니다.');
+function findForeignScript(article) {
+  const text = [
+    article.title,
+    article.description,
+    article.intro,
+    article.outro,
+    ...article.sections.flatMap((section) => [section.heading, section.body]),
+    ...article.briefs.flatMap((brief) => [brief.titleKo, brief.summary]),
+  ].join('\n');
+  const match = text.match(FOREIGN_SCRIPT);
+  if (!match) return null;
+  return text.slice(Math.max(0, match.index - 20), match.index + match[0].length + 20).replace(/\s+/g, ' ');
+}
 
-  const modelList = models?.length ? models : DEFAULT_MODELS;
+async function requestArticle(model, prompt, { apiKey, baseUrl }) {
   const response = await fetch(`${baseUrl || DEFAULT_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
@@ -105,30 +126,51 @@ export async function writeArticle(featured, briefs, { apiKey, baseUrl, models }
       'X-Title': 'FE News',
     },
     body: JSON.stringify({
-      model: modelList[0],
-      ...(modelList.length > 1 && { models: modelList }),
+      model,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: buildPrompt(featured, briefs) },
+        { role: 'user', content: prompt },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.5,
+      temperature: 0.4,
       max_tokens: MAX_OUTPUT_TOKENS,
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`LLM API ${response.status}: ${(await response.text()).slice(0, 500)}`);
+    throw new Error(`LLM API ${response.status}: ${(await response.text()).slice(0, 300)}`);
   }
 
   const data = await response.json();
   const text = data.choices?.[0]?.message?.content;
-  if (!text) throw new Error(`LLM 응답이 비어 있습니다: ${JSON.stringify(data).slice(0, 500)}`);
+  if (!text) throw new Error(`응답이 비어 있습니다: ${JSON.stringify(data).slice(0, 300)}`);
 
+  return { article: parseArticle(text), usage: data.usage, model: data.model ?? model };
+}
+
+export async function writeArticle(featured, briefs, { apiKey, baseUrl, models }) {
+  if (!apiKey) throw new Error('NEWS_LLM_API_KEY가 설정되지 않았습니다.');
+
+  const modelList = models?.length ? models : DEFAULT_MODELS;
+  const prompt = buildPrompt(featured, briefs);
   const knownIds = new Set([...featured, ...briefs].map((entry) => entry.id));
-  return {
-    article: sanitizeArticle(parseArticle(text), knownIds),
-    usage: data.usage,
-    model: data.model,
-  };
+  const failures = [];
+
+  for (const model of modelList) {
+    try {
+      const result = await requestArticle(model, prompt, { apiKey, baseUrl });
+      const foreign = findForeignScript(result.article);
+      if (foreign) {
+        failures.push(`${model}: 한글, 영어 외 문자가 섞임 ("${foreign}")`);
+        console.warn(failures.at(-1));
+        continue;
+      }
+      return { ...result, article: sanitizeArticle(result.article, knownIds) };
+    } catch (error) {
+      failures.push(`${model}: ${error.message}`);
+      console.warn(failures.at(-1));
+    }
+  }
+
+  throw new Error(`모든 모델이 글 작성에 실패했습니다.\n${failures.join('\n')}`);
 }
