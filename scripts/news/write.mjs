@@ -6,7 +6,8 @@ const DEFAULT_MODELS = [
   'nvidia/nemotron-3-super-120b-a12b:free',
   'nvidia/nemotron-3.5-super-vl:free',
 ];
-const MAX_OUTPUT_TOKENS = 8000;
+const MAX_OUTPUT_TOKENS = 16000;
+const RETRY_DELAYS_MS = [20_000, 40_000];
 const FOREIGN_SCRIPT = /(?:(?![\p{Script=Hangul}\p{Script=Latin}])\p{L})+/u;
 
 const OUTPUT_FORMAT = `{
@@ -117,8 +118,17 @@ function findForeignScript(article) {
   return text.slice(Math.max(0, match.index - 20), match.index + match[0].length + 20).replace(/\s+/g, ' ');
 }
 
-async function requestArticle(model, prompt, { apiKey, baseUrl }) {
-  const response = await fetch(`${baseUrl || DEFAULT_BASE_URL}/chat/completions`, {
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function isRetryable(status) {
+  return status === 429 || status >= 500;
+}
+
+async function fetchCompletion(model, prompt, { apiKey, baseUrl }) {
+  const url = baseUrl || DEFAULT_BASE_URL;
+  const isOpenRouter = url === DEFAULT_BASE_URL;
+
+  return fetch(`${url}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -134,15 +144,32 @@ async function requestArticle(model, prompt, { apiKey, baseUrl }) {
       response_format: { type: 'json_object' },
       temperature: 0.4,
       max_tokens: MAX_OUTPUT_TOKENS,
+      ...(isOpenRouter && { reasoning: { effort: 'low' } }),
     }),
   });
+}
+
+async function requestArticle(model, prompt, options) {
+  let response;
+  for (let attempt = 0; ; attempt += 1) {
+    response = await fetchCompletion(model, prompt, options);
+    if (response.ok || !isRetryable(response.status) || attempt >= RETRY_DELAYS_MS.length) break;
+
+    console.warn(`${model}: ${response.status} 응답, ${RETRY_DELAYS_MS[attempt] / 1000}초 후 다시 시도`);
+    await wait(RETRY_DELAYS_MS[attempt]);
+  }
 
   if (!response.ok) {
     throw new Error(`LLM API ${response.status}: ${(await response.text()).slice(0, 300)}`);
   }
 
   const data = await response.json();
-  const text = data.choices?.[0]?.message?.content;
+  const choice = data.choices?.[0];
+  const text = choice?.message?.content;
+
+  if (!text && choice?.finish_reason === 'length') {
+    throw new Error(`출력 한도(${MAX_OUTPUT_TOKENS} 토큰)를 생각하는 데 다 써서 본문이 비었습니다.`);
+  }
   if (!text) throw new Error(`응답이 비어 있습니다: ${JSON.stringify(data).slice(0, 300)}`);
 
   return { article: parseArticle(text), usage: data.usage, model: data.model ?? model };
