@@ -63,6 +63,24 @@ export function saveState(stateFile, state, newIds, now) {
   fs.writeFileSync(stateFile, `${JSON.stringify({ lastRunAt: now.toISOString(), seen }, null, 2)}\n`);
 }
 
+export function splitFeatured(entries, { maxFeatured, maxPerSource }) {
+  const countBySource = new Map();
+  const featured = [];
+  const briefs = [];
+
+  for (const entry of entries) {
+    const count = countBySource.get(entry.source.name) ?? 0;
+    if (featured.length < maxFeatured && count < maxPerSource) {
+      featured.push(entry);
+      countBySource.set(entry.source.name, count + 1);
+    } else {
+      briefs.push(entry);
+    }
+  }
+
+  return { featured, briefs };
+}
+
 export function selectEntries(entries, { seen, since, maxItems }) {
   const candidates = entries
     .filter((entry) => entry.url && entry.title && entry.publishedAt)

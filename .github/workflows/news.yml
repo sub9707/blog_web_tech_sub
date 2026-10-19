@@ -35,6 +35,7 @@ jobs:
         run: npm run news
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NEWS_GEMINI_MODEL: ${{ vars.NEWS_GEMINI_MODEL }}
           TZ: Asia/Seoul
 
       - name: Create review pull request

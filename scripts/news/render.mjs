@@ -1,101 +1,77 @@
 import matter from 'gray-matter';
 import { format } from 'date-fns';
 
-const MAX_MAIN_ITEMS = 10;
 const MAX_BOOKMARKS = 8;
-const FALLBACK_SUMMARY_LENGTH = 200;
 const SECTION_BREAK = '<br/>';
 
-function toFallbackItem(entry) {
-  return {
-    id: entry.id,
-    category: entry.source.category,
-    titleKo: entry.title,
-    summaryKo: entry.excerpt.slice(0, FALLBACK_SUMMARY_LENGTH),
-    importance: entry.source.priority >= 4 ? 3 : 2,
-  };
+function escapeLinkText(text) {
+  return text.replace(/([[\]])/g, '\\$1');
 }
 
 function toBookmark(url) {
   return `<bookmark url="${url.replace(/"/g, '%22')}"></bookmark>`;
 }
 
-function escapeLinkText(text) {
-  return text.replace(/([[\]])/g, '\\$1');
+function toSourceLink(entry) {
+  const date = format(new Date(entry.publishedAt), 'yyyy.MM.dd');
+  return `[${escapeLinkText(entry.title)}](${entry.url}) · ${entry.source.name} · ${date}`;
 }
 
-function formatPublishedDate(publishedAt) {
-  return format(new Date(publishedAt), 'yyyy.MM.dd');
+function renderCitation(entries) {
+  if (entries.length === 1) return `출처: ${toSourceLink(entries[0])}`;
+  return ['출처', ...entries.map((entry) => `- ${toSourceLink(entry)}`)].join('\n\n');
 }
 
-function renderCitation(item) {
-  const link = `[${escapeLinkText(item.originalTitle)}](${item.url})`;
-  return `출처: ${link} · ${item.sourceName} · ${formatPublishedDate(item.publishedAt)}`;
-}
-
-function renderSection(item, index, useBookmark) {
+function renderSection(section, index, entryById) {
+  const entries = section.ids.map((id) => entryById.get(id));
   return [
-    `## ${index + 1}. ${item.titleKo}`,
-    useBookmark && toBookmark(item.url),
-    item.summaryKo,
-    renderCitation(item),
+    `## ${index + 1}. ${section.heading}`,
+    index < MAX_BOOKMARKS && toBookmark(entries[0].url),
+    section.body.trim(),
+    renderCitation(entries),
   ]
     .filter(Boolean)
     .join('\n\n');
 }
 
-function renderFallbackTitle(mainItems) {
-  const [first] = mainItems;
-  if (!first) return '이번 주 프론트엔드 소식';
-  return mainItems.length > 1 ? `${first.titleKo} 외 ${mainItems.length - 1}건` : first.titleKo;
+function renderBriefs(briefs, entryById) {
+  const lines = briefs.map((brief) => {
+    const entry = entryById.get(brief.id);
+    const summary = brief.summary ? ` ${brief.summary}` : '';
+    return `- **${brief.titleKo}**${summary}\n  출처: ${toSourceLink(entry)}`;
+  });
+  return ['## 한눈에 보는 단신', lines.join('\n')].join('\n\n');
 }
 
-export function renderDigest({ entries, summary, since, until }) {
+export function renderArticle({ entries, article, since, until }) {
   const entryById = new Map(entries.map((entry) => [entry.id, entry]));
-  const items = (summary?.items ?? entries.map(toFallbackItem))
-    .map((item) => {
-      const entry = entryById.get(item.id);
-      return {
-        ...item,
-        url: entry.url,
-        originalTitle: entry.title,
-        sourceName: entry.source.name,
-        publishedAt: entry.publishedAt,
-      };
-    })
-    .sort((a, b) => b.importance - a.importance);
+  const mentionedIds = new Set([
+    ...article.sections.flatMap((section) => section.ids),
+    ...article.briefs.map((brief) => brief.id),
+  ]);
+  const unmentionedBriefs = entries
+    .filter((entry) => !mentionedIds.has(entry.id))
+    .map((entry) => ({ id: entry.id, titleKo: entry.title, summary: '' }));
+  const briefs = [...article.briefs, ...unmentionedBriefs];
 
-  const mainItems = items.filter((item) => item.importance >= 2).slice(0, MAX_MAIN_ITEMS);
-  const mainIds = new Set(mainItems.map((item) => item.id));
-  const minorItems = items.filter((item) => !mainIds.has(item.id));
-
-  const sections = mainItems.map((item, index) => renderSection(item, index, index < MAX_BOOKMARKS));
-
-  if (minorItems.length > 0) {
-    const list = minorItems.map(
-      (item) =>
-        `- [${escapeLinkText(item.titleKo)}](${item.url}) · ${item.sourceName} · ${formatPublishedDate(item.publishedAt)}`
-    );
-    sections.push(['## 함께 볼 소식', list.join('\n')].join('\n\n'));
-  }
-
-  const intro =
-    summary?.intro ??
-    `${format(since, 'M월 d일')}부터 ${format(until, 'M월 d일')}까지 올라온 프론트엔드 소식 ${items.length}건을 정리했다.`;
+  const blocks = [
+    article.intro.trim(),
+    ...article.sections.map((section, index) => renderSection(section, index, entryById)),
+    briefs.length > 0 && renderBriefs(briefs, entryById),
+    `## 마무리\n\n${article.outro.trim()}`,
+  ].filter(Boolean);
 
   const frontmatter = {
-    title: summary?.title ?? renderFallbackTitle(mainItems),
+    title: article.title,
     date: format(until, 'yyyy-MM-dd'),
     period: `${format(since, 'yyyy-MM-dd')} ~ ${format(until, 'yyyy-MM-dd')}`,
-    description: summary?.headline ?? mainItems.slice(0, 3).map((item) => item.titleKo).join(', '),
-    tags: [...new Set(mainItems.map((item) => item.category))],
-    sourceCount: items.length,
+    description: article.description,
+    tags: [...new Set(article.sections.map((section) => section.category))],
+    sourceCount: entries.length,
   };
-
-  const body = [intro, ...sections].join(`\n\n${SECTION_BREAK}\n\n`);
 
   return {
     frontmatter,
-    markdown: matter.stringify(`\n${body}\n`, frontmatter),
+    markdown: matter.stringify(`\n${blocks.join(`\n\n${SECTION_BREAK}\n\n`)}\n`, frontmatter),
   };
 }

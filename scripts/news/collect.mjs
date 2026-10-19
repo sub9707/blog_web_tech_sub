@@ -1,4 +1,5 @@
 import Parser from 'rss-parser';
+import { toPlainText } from './text.mjs';
 
 const FETCH_TIMEOUT_MS = 10_000;
 const EXCERPT_LENGTH = 200;
@@ -14,21 +15,15 @@ async function fetchFeed(url) {
   return parser.parseString(await response.text());
 }
 
-function toExcerpt(value = '') {
-  return value
-    .replace(/<[^>]*>/g, ' ')
-    .replace(/&[a-z#0-9]+;/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, EXCERPT_LENGTH);
-}
-
 function toEntry(item, source) {
+  const fullText = toPlainText(item['content:encoded'] ?? item.content ?? item.summary ?? '');
+
   return {
     url: item.link,
     title: item.title?.trim() ?? '',
     publishedAt: item.isoDate ?? item.pubDate ?? null,
-    excerpt: toExcerpt(item.contentSnippet ?? item.summary ?? item.content),
+    excerpt: (item.contentSnippet ? toPlainText(item.contentSnippet) : fullText).slice(0, EXCERPT_LENGTH),
+    fullText,
     source,
   };
 }

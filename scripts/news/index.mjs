@@ -4,13 +4,16 @@ import path from 'path';
 import { format } from 'date-fns';
 import { SOURCES } from './sources.mjs';
 import { collectFeeds } from './collect.mjs';
-import { loadState, saveState, selectEntries } from './dedupe.mjs';
-import { summarizeEntries } from './summarize.mjs';
-import { renderDigest } from './render.mjs';
+import { loadState, saveState, selectEntries, splitFeatured } from './dedupe.mjs';
+import { enrichEntries } from './enrich.mjs';
+import { writeArticle } from './write.mjs';
+import { renderArticle } from './render.mjs';
 
 const NEWS_DIR = path.join(process.cwd(), 'content', 'news');
 const STATE_FILE = path.join(NEWS_DIR, '.state', 'seen.json');
 const MAX_ITEMS = Number(process.env.NEWS_MAX_ITEMS ?? 25);
+const MAX_FEATURED = Number(process.env.NEWS_MAX_FEATURED ?? 6);
+const MAX_FEATURED_PER_SOURCE = 2;
 const DEFAULT_LOOKBACK_DAYS = 7;
 
 const args = new Set(process.argv.slice(2));
@@ -23,21 +26,38 @@ function writeOutput(values) {
   fs.appendFileSync(process.env.GITHUB_OUTPUT, `${lines.join('\n')}\n`);
 }
 
-function buildPrBody({ frontmatter, failures, aiError, usage, fileName }) {
+function formatUsage(usage) {
+  const thoughts = usage.thoughtsTokenCount ? ` / 생각 ${usage.thoughtsTokenCount}` : '';
+  return `입력 ${usage.promptTokenCount} / 출력 ${usage.candidatesTokenCount}${thoughts}`;
+}
+
+function buildPrBody({ frontmatter, failures, usage, fileName }) {
   const lines = [
-    `자동 수집된 FE News 초안입니다. 내용을 검토하고 수정한 뒤 merge하면 배포됩니다.`,
+    'AI가 작성한 FE News 초안입니다. 원문과 대조해 검토하고 수정한 뒤 merge하면 배포됩니다.',
     '',
     `- 파일: \`content/news/${fileName}\``,
     `- 기간: ${frontmatter.period}`,
     `- 소식: ${frontmatter.sourceCount}건`,
   ];
-  if (usage) lines.push(`- 토큰: 입력 ${usage.promptTokenCount} / 출력 ${usage.candidatesTokenCount}`);
-  if (aiError) lines.push('', `> [!WARNING]`, `> AI 요약 없이 원문 발췌로 작성되었습니다. ${aiError}`);
+  if (usage) lines.push(`- 토큰: ${formatUsage(usage)}`);
   if (failures.length > 0) {
     lines.push('', '수집 실패 소스', ...failures.map((f) => `- ${f.name}: ${f.reason}`));
   }
-  lines.push('', '검토 체크리스트', '- [ ] 요약이 원문과 일치하는지', '- [ ] 제목과 description', '- [ ] 불필요한 항목 삭제');
+  lines.push(
+    '',
+    '검토 체크리스트',
+    '- [ ] 본문 내용이 원문과 일치하는지 (버전, 날짜, 수치)',
+    '- [ ] 제목과 description',
+    '- [ ] 어색한 문장, 불필요한 섹션'
+  );
   return lines.join('\n');
+}
+
+function printSelection(featured, briefs) {
+  console.log('\n[주요 소식]');
+  featured.forEach((entry) => console.log(`- ${entry.title} (${entry.source.name}, 본문 ${entry.body.length}자)`));
+  console.log('\n[단신]');
+  briefs.forEach((entry) => console.log(`- ${entry.title} (${entry.source.name})`));
 }
 
 async function main() {
@@ -59,17 +79,22 @@ async function main() {
     return;
   }
 
-  const { result: summary, usage, error: aiError } = isAiDisabled
-    ? { result: null, error: '--no-ai 옵션으로 AI 요약을 건너뛰었습니다.' }
-    : await summarizeEntries(selected, {
-        apiKey: process.env.GEMINI_API_KEY,
-        model: process.env.NEWS_GEMINI_MODEL,
-      });
+  const split = splitFeatured(selected, { maxFeatured: MAX_FEATURED, maxPerSource: MAX_FEATURED_PER_SOURCE });
+  const featured = await enrichEntries(split.featured);
+  const { briefs } = split;
 
-  if (aiError) console.warn(aiError);
-  if (usage) console.log(`토큰 사용: 입력 ${usage.promptTokenCount}, 출력 ${usage.candidatesTokenCount}`);
+  if (isAiDisabled) {
+    printSelection(featured, briefs);
+    return;
+  }
 
-  const { frontmatter, markdown } = renderDigest({ entries: selected, summary, since, until: now });
+  const { article, usage } = await writeArticle(featured, briefs, {
+    apiKey: process.env.GEMINI_API_KEY,
+    model: process.env.NEWS_GEMINI_MODEL,
+  });
+  console.log(`토큰 사용: ${formatUsage(usage)}`);
+
+  const { frontmatter, markdown } = renderArticle({ entries: selected, article, since, until: now });
   const fileName = `${format(now, 'yyyy-MM-dd')}-weekly.md`;
 
   if (isDryRun) {
@@ -82,13 +107,13 @@ async function main() {
   saveState(STATE_FILE, state, seenIds, now);
 
   const prBodyPath = path.join(process.env.RUNNER_TEMP ?? os.tmpdir(), 'news-pr-body.md');
-  fs.writeFileSync(prBodyPath, buildPrBody({ frontmatter, failures, aiError, usage, fileName }));
+  fs.writeFileSync(prBodyPath, buildPrBody({ frontmatter, failures, usage, fileName }));
 
   console.log(`작성 완료: content/news/${fileName}`);
   writeOutput({ has_news: 'true', title: frontmatter.title, body_path: prBodyPath });
 }
 
 main().catch((error) => {
-  console.error(error);
+  console.error(error.message ?? error);
   process.exit(1);
 });

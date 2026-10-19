@@ -16,8 +16,8 @@ export const NEWS_PIPELINE = [
     description: '이미 다룬 소식과 같은 내용의 중복 글, canary 같은 사전 릴리스를 걸러내고 관련도 높은 소식만 남깁니다.',
   },
   {
-    title: 'AI 요약',
-    description: 'Google Gemini Flash 모델이 제목과 짧은 발췌만 읽고 분류, 한국어 요약, 중요도를 정리합니다. 링크는 원문 그대로 사용합니다.',
+    title: 'AI 작성',
+    description: '주요 소식은 원문 본문까지 가져와 Google Gemini Flash 모델이 읽고, 같은 주제끼리 묶어 해설하는 한국어 글로 씁니다. 출처와 링크는 원문 데이터를 그대로 붙입니다.',
   },
   {
     title: '직접 검토',
