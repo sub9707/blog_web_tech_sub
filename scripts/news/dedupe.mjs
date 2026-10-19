@@ -1,13 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { RELEVANCE_KEYWORDS } from './sources.mjs';
+import { IMPACT_KEYWORDS, RELEVANCE_KEYWORDS } from './sources.mjs';
 
 const TRACKING_PARAMS = /^(utm_|ref$|ref_src$|fbclid$|gclid$|mc_cid$|mc_eid$)/;
 const PRERELEASE_PATTERN = /[-.](canary|rc|alpha|beta|nightly|experimental)/i;
 const SIMILARITY_THRESHOLD = 0.6;
 const SEEN_RETENTION_DAYS = 90;
 const DAY_MS = 24 * 60 * 60 * 1000;
+const IMPACT_WEIGHT = 3;
 
 export function normalizeUrl(rawUrl) {
   try {
@@ -42,9 +43,9 @@ function jaccard(a, b) {
   return union === 0 ? 0 : intersection / union;
 }
 
-function countKeywords(text) {
+function countKeywords(text, keywords = RELEVANCE_KEYWORDS) {
   const lowerText = text.toLowerCase();
-  return RELEVANCE_KEYWORDS.filter((keyword) => lowerText.includes(keyword)).length;
+  return keywords.filter((keyword) => lowerText.includes(keyword)).length;
 }
 
 export function loadState(stateFile) {
@@ -63,22 +64,44 @@ export function saveState(stateFile, state, newIds, now) {
   fs.writeFileSync(stateFile, `${JSON.stringify({ lastRunAt: now.toISOString(), seen }, null, 2)}\n`);
 }
 
-export function splitFeatured(entries, { maxFeatured, maxPerSource }) {
-  const countBySource = new Map();
-  const featured = [];
-  const briefs = [];
-
+export function dedupeByUrl(entries) {
+  const byUrl = new Map();
   for (const entry of entries) {
-    const count = countBySource.get(entry.source.name) ?? 0;
-    if (featured.length < maxFeatured && count < maxPerSource) {
-      featured.push(entry);
-      countBySource.set(entry.source.name, count + 1);
-    } else {
-      briefs.push(entry);
+    const key = normalizeUrl(entry.url);
+    if (!byUrl.has(key)) byUrl.set(key, entry);
+  }
+  return [...byUrl.values()];
+}
+
+export function splitFeatured(entries, { maxFeatured, maxPerSource }) {
+  const queues = new Map();
+  for (const entry of entries) {
+    if (!queues.has(entry.category)) queues.set(entry.category, []);
+    queues.get(entry.category).push(entry);
+  }
+
+  const countBySource = new Map();
+  const featuredIds = new Set();
+  let hasPicked = true;
+
+  while (featuredIds.size < maxFeatured && hasPicked) {
+    hasPicked = false;
+    for (const queue of queues.values()) {
+      if (featuredIds.size >= maxFeatured) break;
+      const index = queue.findIndex((entry) => (countBySource.get(entry.source.name) ?? 0) < maxPerSource);
+      if (index < 0) continue;
+
+      const [entry] = queue.splice(index, 1);
+      featuredIds.add(entry.id);
+      countBySource.set(entry.source.name, (countBySource.get(entry.source.name) ?? 0) + 1);
+      hasPicked = true;
     }
   }
 
-  return { featured, briefs };
+  return {
+    featured: entries.filter((entry) => featuredIds.has(entry.id)),
+    briefs: entries.filter((entry) => !featuredIds.has(entry.id)),
+  };
 }
 
 export function selectEntries(entries, { seen, since, maxItems }) {
@@ -110,7 +133,8 @@ export function selectEntries(entries, { seen, since, maxItems }) {
   const ranked = merged
     .map((entry) => ({
       ...entry,
-      score: entry.source.priority * 10 + entry.keywordCount,
+      score:
+        entry.source.priority * 10 + entry.keywordCount + countKeywords(entry.title, IMPACT_KEYWORDS) * IMPACT_WEIGHT,
     }))
     .sort((a, b) => b.score - a.score);
 

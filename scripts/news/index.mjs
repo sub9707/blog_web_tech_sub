@@ -4,15 +4,16 @@ import path from 'path';
 import { format } from 'date-fns';
 import { SOURCES } from './sources.mjs';
 import { collectFeeds } from './collect.mjs';
-import { loadState, saveState, selectEntries, splitFeatured } from './dedupe.mjs';
-import { enrichEntries } from './enrich.mjs';
+import { dedupeByUrl, loadState, saveState, selectEntries, splitFeatured } from './dedupe.mjs';
+import { attachArticleBodies, resolveUrls } from './enrich.mjs';
 import { writeArticle } from './write.mjs';
 import { renderArticle } from './render.mjs';
+import { collectConferences, renderConferences } from './conferences.mjs';
 
 const NEWS_DIR = path.join(process.cwd(), 'content', 'news');
 const STATE_FILE = path.join(NEWS_DIR, '.state', 'seen.json');
-const MAX_ITEMS = Number(process.env.NEWS_MAX_ITEMS ?? 25);
-const MAX_FEATURED = Number(process.env.NEWS_MAX_FEATURED ?? 6);
+const MAX_ITEMS = Number(process.env.NEWS_MAX_ITEMS ?? 40);
+const MAX_FEATURED = Number(process.env.NEWS_MAX_FEATURED ?? 8);
 const MAX_FEATURED_PER_SOURCE = 2;
 const DEFAULT_LOOKBACK_DAYS = 7;
 
@@ -57,9 +58,9 @@ function buildPrBody({ frontmatter, failures, usage, model, fileName }) {
 
 function printSelection(featured, briefs) {
   console.log('\n[주요 소식]');
-  featured.forEach((entry) => console.log(`- ${entry.title} (${entry.source.name}, 본문 ${entry.body.length}자)`));
+  featured.forEach((entry) => console.log(`- [${entry.category}] ${entry.title} (${entry.source.name}, 본문 ${entry.body.length}자)`));
   console.log('\n[단신]');
-  briefs.forEach((entry) => console.log(`- ${entry.title} (${entry.source.name})`));
+  briefs.forEach((entry) => console.log(`- [${entry.category}] ${entry.title} (${entry.source.name})`));
 }
 
 async function main() {
@@ -69,7 +70,7 @@ async function main() {
     ? new Date(state.lastRunAt)
     : new Date(now.getTime() - DEFAULT_LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
 
-  const { entries, failures } = await collectFeeds(SOURCES);
+  const [{ entries, failures }, conferences] = await Promise.all([collectFeeds(SOURCES), collectConferences(now)]);
   const { selected, seenIds } = selectEntries(entries, { seen: state.seen, since, maxItems: MAX_ITEMS });
 
   console.log(`수집 ${entries.length}건 → 선별 ${selected.length}건 (실패 소스 ${failures.length}개)`);
@@ -81,12 +82,15 @@ async function main() {
     return;
   }
 
-  const split = splitFeatured(selected, { maxFeatured: MAX_FEATURED, maxPerSource: MAX_FEATURED_PER_SOURCE });
-  const featured = await enrichEntries(split.featured);
+  const resolved = dedupeByUrl(await resolveUrls(selected));
+  const split = splitFeatured(resolved, { maxFeatured: MAX_FEATURED, maxPerSource: MAX_FEATURED_PER_SOURCE });
+  const featured = await attachArticleBodies(split.featured);
   const { briefs } = split;
 
   if (isAiDisabled) {
     printSelection(featured, briefs);
+    console.log(`
+${renderConferences(conferences) ?? '다가오는 컨퍼런스 없음'}`);
     return;
   }
 
@@ -97,7 +101,13 @@ async function main() {
   });
   console.log(`모델: ${model}, 토큰 사용: ${formatUsage(usage)}`);
 
-  const { frontmatter, markdown } = renderArticle({ entries: selected, article, since, until: now });
+  const { frontmatter, markdown } = renderArticle({
+    entries: resolved,
+    article,
+    conferenceSection: renderConferences(conferences),
+    since,
+    until: now,
+  });
   const fileName = `${format(now, 'yyyy-MM-dd')}-weekly.md`;
 
   if (isDryRun) {

@@ -18,7 +18,7 @@ const OUTPUT_FORMAT = `{
     { "ids": ["대표 id", "함께 묶은 id"], "category": "${CATEGORIES.join(' | ')}", "heading": "소제목", "body": "본문 (Markdown)" }
   ],
   "briefs": [
-    { "id": "id", "titleKo": "한국어 제목", "summary": "한 문장" }
+    { "id": "id", "category": "분류", "titleKo": "한국어 제목", "summary": "한두 문장" }
   ],
   "outro": "마무리 문단 (Markdown)"
 }`;
@@ -33,19 +33,21 @@ const SYSTEM_PROMPT = `너는 프론트엔드 기술 블로그를 운영하는 �
 - 모든 문장은 "~다", "~했다", "~이다"로 끝낸다. "~습니다", "~해요"는 쓰지 않는다.
 
 입력
-- [주요 소식]: 각 항목은 "### id | 출처 | 원문 제목" 줄 다음에 원문 본문이 온다.
-- [단신]: "id | 출처 | 원문 제목 | 발췌" 한 줄씩.
+- [주요 소식]: 각 항목은 "### id | 분류 | 출처 | 원문 제목" 줄 다음에 원문 본문이 온다.
+- [단신]: "id | 분류 | 출처 | 원문 제목 | 발췌" 한 줄씩.
+- 소식은 Next.js, React, JavaScript, CSS, HTML, 브라우저, 런타임, 프레임워크, 도구 등 여러 분야에 걸쳐 있다. 특정 분야에 치우치지 않게 고르게 다룬다.
 
 작성 규칙
 - title: 이번 주 가장 궁금해할 만하거나 파장이 큰 주제를 앞세운 글 제목. 40자 안팎. 주차나 "FE News"는 넣지 않는다.
 - description: 목록과 검색 결과에 보일 한 문장 요약.
-- intro: 이번 주 흐름을 짚는 도입 1~2문단.
+- intro: 여러 분야를 아울러 이번 주 흐름을 짚는 도입 1~2문단.
 - sections: 주요 소식으로 쓰는 본문 섹션. 중요한 순서대로 쓴다.
-  - 같은 주제(예: 같은 보안 이슈의 블로그 공지와 여러 버전 릴리스)는 한 섹션으로 묶고 ids에 모두 넣는다. 첫 번째 id가 대표 원문이다.
+  - 주요 소식은 하나당 섹션 하나로 쓰는 것이 원칙이다. 섹션은 최소 6개 이상 쓴다.
+  - 정말 같은 사건(예: 같은 보안 이슈의 블로그 공지와 그 버전 릴리스)일 때만 한 섹션으로 묶고 ids에 모두 넣는다. 같은 제품의 다른 소식은 묶지 않는다. 첫 번째 id가 대표 원문이다. [단신]에 같은 사건의 소식이 있으면 그 id도 섹션 ids에 넣는다.
   - heading: 한국어 소제목. 제품명, 버전, API 이름은 원문 그대로 둔다.
   - body: Markdown 2~4문단. 무엇이 바뀌었는지, 왜 중요한지, 개발자가 지금 무엇을 하면 되는지를 풀어 쓴다. 필요하면 목록, 인라인 코드, 짧은 코드 블록을 쓴다. 제목 기호(#)는 쓰지 않는다.
-  - 원문 내용이 빈약하거나 단순 홍보인 주요 소식은 sections 대신 briefs에 넣는다.
-- briefs: 짧게 소개할 소식. titleKo(한국어 제목)와 summary(한 문장).
+  - 단순 광고인 주요 소식만 sections 대신 briefs에 넣는다.
+- briefs: [단신] 목록에서 섹션에 쓰지 않은 id를 하나도 빠뜨리지 않고 넣는다. category(입력의 분류 그대로), titleKo(한국어 제목), summary(무엇인지와 왜 볼 만한지 한두 문장)를 쓴다.
 - outro: 이번 주를 정리하고 무엇을 챙기면 좋을지 짚는 마무리 1문단.
 
 금지
@@ -60,10 +62,10 @@ const clean = (value) => value.replace(/[|\n]/g, ' ');
 
 function buildPrompt(featured, briefs) {
   const featuredBlock = featured
-    .map((entry) => `### ${entry.id} | ${entry.source.name} | ${clean(entry.title)}\n${entry.body}`)
+    .map((entry) => `### ${entry.id} | ${entry.category} | ${entry.source.name} | ${clean(entry.title)}\n${entry.body}`)
     .join('\n\n');
   const briefBlock = briefs
-    .map((entry) => `${entry.id} | ${entry.source.name} | ${clean(entry.title)} | ${clean(entry.excerpt)}`)
+    .map((entry) => `${entry.id} | ${entry.category} | ${entry.source.name} | ${clean(entry.title)} | ${clean(entry.excerpt)}`)
     .join('\n');
 
   return `[주요 소식]\n\n${featuredBlock}\n\n[단신]\n${briefBlock || '(없음)'}`;

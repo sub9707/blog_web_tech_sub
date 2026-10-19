@@ -9,11 +9,11 @@ export const NEWS_PAGE = {
 export const NEWS_PIPELINE = [
   {
     title: '수집',
-    description: 'Next.js, React, TypeScript, Node.js 공식 블로그와 릴리스 노트, 주요 뉴스레터의 RSS를 매주 월요일 자동으로 모읍니다.',
+    description: 'Next.js, React, Vue 등 공식 블로그와 CSS, 브라우저, 런타임 소식, 프론트엔드 뉴스레터 26곳의 RSS와 컨퍼런스 일정을 매주 월요일 자동으로 모읍니다.',
   },
   {
     title: '선별',
-    description: '이미 다룬 소식과 같은 내용의 중복 글, canary 같은 사전 릴리스를 걸러내고 관련도 높은 소식만 남깁니다.',
+    description: '이미 다룬 소식과 중복 글, canary 같은 사전 릴리스를 걸러내고, 특정 분야에 치우치지 않도록 분야별로 주요 소식을 고릅니다.',
   },
   {
     title: 'AI 작성',

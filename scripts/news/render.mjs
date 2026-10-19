@@ -1,5 +1,6 @@
 import matter from 'gray-matter';
 import { format } from 'date-fns';
+import { CATEGORIES } from './sources.mjs';
 
 const MAX_BOOKMARKS = 8;
 const SECTION_BREAK = '<br/>';
@@ -34,16 +35,27 @@ function renderSection(section, index, entryById) {
     .join('\n\n');
 }
 
-function renderBriefs(briefs, entryById) {
-  const lines = briefs.map((brief) => {
-    const entry = entryById.get(brief.id);
-    const summary = brief.summary ? ` ${brief.summary}` : '';
-    return `- **${brief.titleKo}**${summary}\n  출처: ${toSourceLink(entry)}`;
-  });
-  return ['## 한눈에 보는 단신', lines.join('\n')].join('\n\n');
+function renderBriefItem(brief, entry) {
+  const summary = brief.summary ? ` ${brief.summary}` : '';
+  return `- **${brief.titleKo}**${summary}\n  출처: ${toSourceLink(entry)}`;
 }
 
-export function renderArticle({ entries, article, since, until }) {
+function renderBriefs(briefs, entryById) {
+  const groups = CATEGORIES.map((category) => {
+    const items = briefs.filter((brief) => {
+      const briefCategory = CATEGORIES.includes(brief.category) ? brief.category : entryById.get(brief.id).category;
+      return briefCategory === category;
+    });
+    if (items.length === 0) return null;
+    return [`### ${category}`, items.map((brief) => renderBriefItem(brief, entryById.get(brief.id))).join('\n')].join(
+      '\n\n'
+    );
+  }).filter(Boolean);
+
+  return ['## 한눈에 보는 단신', ...groups].join('\n\n');
+}
+
+export function renderArticle({ entries, article, conferenceSection, since, until }) {
   const entryById = new Map(entries.map((entry) => [entry.id, entry]));
   const mentionedIds = new Set([
     ...article.sections.flatMap((section) => section.ids),
@@ -58,6 +70,7 @@ export function renderArticle({ entries, article, since, until }) {
     article.intro.trim(),
     ...article.sections.map((section, index) => renderSection(section, index, entryById)),
     briefs.length > 0 && renderBriefs(briefs, entryById),
+    conferenceSection,
     `## 마무리\n\n${article.outro.trim()}`,
   ].filter(Boolean);
 
