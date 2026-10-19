@@ -17,7 +17,7 @@ export const NEWS_PIPELINE = [
   },
   {
     title: 'AI 작성',
-    description: '주요 소식은 원문 본문까지 가져와 Google Gemini Flash 모델이 읽고, 같은 주제끼리 묶어 해설하는 한국어 글로 씁니다. 출처와 링크는 원문 데이터를 그대로 붙입니다.',
+    description: '주요 소식은 원문 본문까지 가져와 AI 언어 모델(OpenRouter를 통한 오픈 모델)이 읽고, 같은 주제끼리 묶어 해설하는 한국어 글로 씁니다. 출처와 링크는 원문 데이터를 그대로 붙입니다.',
   },
   {
     title: '직접 검토',

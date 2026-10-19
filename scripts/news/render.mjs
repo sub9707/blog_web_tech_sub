@@ -19,7 +19,7 @@ function toSourceLink(entry) {
 
 function renderCitation(entries) {
   if (entries.length === 1) return `출처: ${toSourceLink(entries[0])}`;
-  return ['출처', ...entries.map((entry) => `- ${toSourceLink(entry)}`)].join('\n\n');
+  return `출처\n\n${entries.map((entry) => `- ${toSourceLink(entry)}`).join('\n')}`;
 }
 
 function renderSection(section, index, entryById) {
@@ -66,7 +66,7 @@ export function renderArticle({ entries, article, since, until }) {
     date: format(until, 'yyyy-MM-dd'),
     period: `${format(since, 'yyyy-MM-dd')} ~ ${format(until, 'yyyy-MM-dd')}`,
     description: article.description,
-    tags: [...new Set(article.sections.map((section) => section.category))],
+    tags: [...new Set(article.sections.map((section) => section.category).filter(Boolean))],
     sourceCount: entries.length,
   };
 

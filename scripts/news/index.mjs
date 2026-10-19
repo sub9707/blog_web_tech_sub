@@ -27,11 +27,13 @@ function writeOutput(values) {
 }
 
 function formatUsage(usage) {
-  const thoughts = usage.thoughtsTokenCount ? ` / 생각 ${usage.thoughtsTokenCount}` : '';
-  return `입력 ${usage.promptTokenCount} / 출력 ${usage.candidatesTokenCount}${thoughts}`;
+  if (!usage) return '알 수 없음';
+  const reasoning = usage.completion_tokens_details?.reasoning_tokens;
+  const thoughts = reasoning ? ` / 생각 ${reasoning}` : '';
+  return `입력 ${usage.prompt_tokens} / 출력 ${usage.completion_tokens}${thoughts}`;
 }
 
-function buildPrBody({ frontmatter, failures, usage, fileName }) {
+function buildPrBody({ frontmatter, failures, usage, model, fileName }) {
   const lines = [
     'AI가 작성한 FE News 초안입니다. 원문과 대조해 검토하고 수정한 뒤 merge하면 배포됩니다.',
     '',
@@ -39,7 +41,7 @@ function buildPrBody({ frontmatter, failures, usage, fileName }) {
     `- 기간: ${frontmatter.period}`,
     `- 소식: ${frontmatter.sourceCount}건`,
   ];
-  if (usage) lines.push(`- 토큰: ${formatUsage(usage)}`);
+  lines.push(`- 모델: ${model}`, `- 토큰: ${formatUsage(usage)}`);
   if (failures.length > 0) {
     lines.push('', '수집 실패 소스', ...failures.map((f) => `- ${f.name}: ${f.reason}`));
   }
@@ -88,11 +90,12 @@ async function main() {
     return;
   }
 
-  const { article, usage } = await writeArticle(featured, briefs, {
-    apiKey: process.env.GEMINI_API_KEY,
-    model: process.env.NEWS_GEMINI_MODEL,
+  const { article, usage, model } = await writeArticle(featured, briefs, {
+    apiKey: process.env.NEWS_LLM_API_KEY,
+    baseUrl: process.env.NEWS_LLM_BASE_URL,
+    models: process.env.NEWS_LLM_MODELS?.split(',').map((name) => name.trim()).filter(Boolean),
   });
-  console.log(`토큰 사용: ${formatUsage(usage)}`);
+  console.log(`모델: ${model}, 토큰 사용: ${formatUsage(usage)}`);
 
   const { frontmatter, markdown } = renderArticle({ entries: selected, article, since, until: now });
   const fileName = `${format(now, 'yyyy-MM-dd')}-weekly.md`;
@@ -107,7 +110,7 @@ async function main() {
   saveState(STATE_FILE, state, seenIds, now);
 
   const prBodyPath = path.join(process.env.RUNNER_TEMP ?? os.tmpdir(), 'news-pr-body.md');
-  fs.writeFileSync(prBodyPath, buildPrBody({ frontmatter, failures, usage, fileName }));
+  fs.writeFileSync(prBodyPath, buildPrBody({ frontmatter, failures, usage, model, fileName }));
 
   console.log(`작성 완료: content/news/${fileName}`);
   writeOutput({ has_news: 'true', title: frontmatter.title, body_path: prBodyPath });
