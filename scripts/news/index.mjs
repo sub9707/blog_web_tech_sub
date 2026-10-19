@@ -95,6 +95,7 @@ ${renderConferences(conferences) ?? '다가오는 컨퍼런스 없음'}`);
   }
 
   const { article, usage, model } = await writeArticle(featured, briefs, {
+    provider: process.env.NEWS_LLM_PROVIDER || (process.env.CLAUDE_CODE_OAUTH_TOKEN ? 'claude-code' : 'openai'),
     apiKey: process.env.NEWS_LLM_API_KEY,
     baseUrl: process.env.NEWS_LLM_BASE_URL,
     models: process.env.NEWS_LLM_MODELS?.split(',').map((name) => name.trim()).filter(Boolean),

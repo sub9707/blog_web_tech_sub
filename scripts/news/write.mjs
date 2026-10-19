@@ -1,11 +1,15 @@
 import { CATEGORIES } from './sources.mjs';
+import { requestWithClaudeCode } from './claude-code.mjs';
 
 const DEFAULT_BASE_URL = 'https://openrouter.ai/api/v1';
-const DEFAULT_MODELS = [
-  'google/gemma-4-31b-it:free',
-  'nvidia/nemotron-3-super-120b-a12b:free',
-  'nvidia/nemotron-3.5-super-vl:free',
-];
+const DEFAULT_MODELS = {
+  'claude-code': ['sonnet', 'haiku'],
+  openai: [
+    'google/gemma-4-31b-it:free',
+    'nvidia/nemotron-3-super-120b-a12b:free',
+    'nvidia/nemotron-3.5-super-vl:free',
+  ],
+};
 const MAX_OUTPUT_TOKENS = 16000;
 const RETRY_DELAYS_MS = [20_000, 40_000];
 const FOREIGN_SCRIPT = /(?:(?![\p{Script=Hangul}\p{Script=Latin}])\p{L})+/u;
@@ -151,7 +155,9 @@ async function fetchCompletion(model, prompt, { apiKey, baseUrl }) {
   });
 }
 
-async function requestArticle(model, prompt, options) {
+async function requestWithOpenAICompatible(model, prompt, options) {
+  if (!options.apiKey) throw new Error('NEWS_LLM_API_KEY가 설정되지 않았습니다.');
+
   let response;
   for (let attempt = 0; ; attempt += 1) {
     response = await fetchCompletion(model, prompt, options);
@@ -174,20 +180,26 @@ async function requestArticle(model, prompt, options) {
   }
   if (!text) throw new Error(`응답이 비어 있습니다: ${JSON.stringify(data).slice(0, 300)}`);
 
-  return { article: parseArticle(text), usage: data.usage, model: data.model ?? model };
+  return { text, usage: data.usage, model: data.model ?? model };
 }
 
-export async function writeArticle(featured, briefs, { apiKey, baseUrl, models }) {
-  if (!apiKey) throw new Error('NEWS_LLM_API_KEY가 설정되지 않았습니다.');
+async function requestArticle(provider, model, prompt, options) {
+  const result =
+    provider === 'claude-code'
+      ? await requestWithClaudeCode(model, SYSTEM_PROMPT, prompt)
+      : await requestWithOpenAICompatible(model, prompt, options);
+  return { ...result, article: parseArticle(result.text) };
+}
 
-  const modelList = models?.length ? models : DEFAULT_MODELS;
+export async function writeArticle(featured, briefs, { provider, apiKey, baseUrl, models }) {
+  const modelList = models?.length ? models : DEFAULT_MODELS[provider];
   const prompt = buildPrompt(featured, briefs);
   const knownIds = new Set([...featured, ...briefs].map((entry) => entry.id));
   const failures = [];
 
   for (const model of modelList) {
     try {
-      const result = await requestArticle(model, prompt, { apiKey, baseUrl });
+      const result = await requestArticle(provider, model, prompt, { apiKey, baseUrl });
       const foreign = findForeignScript(result.article);
       if (foreign) {
         failures.push(`${model}: 한글, 영어 외 문자가 섞임 ("${foreign}")`);
