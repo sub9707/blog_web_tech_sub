@@ -65,13 +65,12 @@ order: 7
 
 ## 동작 흐름
 
-1. **기동**: 안드로이드 앱이 카메라 프리뷰·WebSocket 서버·HTTP 파일 서버를 자동 시작합니다. Electron 앱은 `.env` 설정을 읽어(없으면 기본 파일 생성) 전체 화면 창을 엽니다.
-2. **연결**: 촬영 화면 진입 시 Electron 앱이 `.env`의 `WIRELESS_ADDRESS`로 WebSocket 연결을 시도합니다. 실패 시 최대 2회 자동 재시도하고 이후 수동 재연결 버튼을 노출합니다.
-3. **촬영**: `startRecording` 신호로 안드로이드가 20초간 녹화합니다. 양쪽이 각각 20초 타이머를 두어 자동 종료합니다.
-4. **전송**: 녹화가 끝나면 안드로이드가 `video-saved` 이벤트로 파일명을 알리고, Electron이 `http://IP:8081/video/<파일명>`에서 파일을 내려받아 `BASE_DIRECTORY/YYYYMMDD/`에 저장한 뒤 원본 삭제를 요청합니다.
-5. **편집**: FFmpeg가 구간별 배속으로 슬로 모션 본편을 만들고, 인트로·아웃트로·배경음악을 합성해 `edited_VIDEO_YYYYMMDD_HHMMSS.mp4`를 생성합니다.
-6. **업로드 및 QR**: 편집 영상과 QR 이미지를 Google Drive의 오늘 날짜 폴더에 업로드하고 "링크가 있는 모든 사용자" 읽기 권한을 부여합니다. 공유 링크로 QR 코드를 만들어 결과 화면에 표시합니다.
-7. **열람**: 참여자가 QR을 스캔해 Google Drive에서 영상을 재생·다운로드합니다.
+1. **연결**: 촬영 화면에 들어가면 Electron 앱이 안드로이드 앱에 WebSocket으로 연결합니다. 실패하면 2회까지 자동 재시도하고, 이후에는 수동 재연결 버튼을 보여줍니다.
+2. **촬영**: 촬영 신호를 받은 안드로이드가 20초간 녹화합니다. 양쪽이 각각 20초 타이머를 두어 한쪽 신호가 빠져도 자동 종료됩니다.
+3. **전송**: 녹화가 끝나면 Electron이 안드로이드의 HTTP 파일 서버에서 영상을 내려받아 날짜별 폴더에 저장하고, 기기의 원본 삭제를 요청합니다.
+4. **편집**: FFmpeg로 슬로 모션 본편을 만들고 인트로·아웃트로·배경음악을 합성합니다.
+5. **업로드 및 QR**: 편집 영상을 Google Drive에 올려 공유 링크를 만들고, 그 링크로 QR 코드를 만들어 결과 화면에 띄웁니다.
+6. **열람**: 참여자가 QR을 스캔해 영상을 재생·다운로드합니다.
 
 ## 기술적 구현
 
@@ -83,21 +82,19 @@ order: 7
 
 ### 영상 편집 파이프라인
 
-`edit-video` 요청 시 FFmpeg가 두 단계로 실행되며 모든 출력은 1080×1920 세로로 크롭·스케일됩니다.
+FFmpeg를 두 단계로 실행하며, 모든 출력은 키오스크 화면에 맞춰 1080×1920 세로로 맞춥니다.
 
-1. **구간별 배속(슬로 모션)**: 원본(약 20초)에서 `2.5–6.5s`, `8.5–12.5s` 구간은 0.5배속, `6.5–8.5s`, `12.5–17.5s` 구간은 1.0배속으로 잘라 이어 붙여 약 23초 본편을 만듭니다. `libx264`, CRF 22, 오디오 제거.
-2. **합성**: `intro.mp4` + 본편 + `outro.mp4`를 연결하고, `bgm.mp3`를 0~35초로 잘라 앞뒤 1초 페이드·볼륨 0.8로 믹스합니다. `libx264` CRF 20, `-tune film`, `aac` 192k, `+faststart`.
-
-임시 파일(`temp_main_*.mp4`)은 합성 후 삭제됩니다.
+1. **구간별 배속(슬로 모션)**: 약 20초 원본을 구간별로 나눠 0.5배속과 원래 속도를 번갈아 잘라 이어 붙여 약 23초 본편을 만듭니다.
+2. **합성**: 인트로 + 본편 + 아웃트로를 연결하고, 배경음악은 앞뒤 1초 페이드를 넣어 섞습니다. 휴대폰에서 바로 재생되도록 웹 재생용 옵션(`+faststart`)을 붙였습니다.
 
 ### Google Drive 연동
 
-`oauth2_credentials.json`의 OAuth 2.0 클라이언트로 인증하고, 발급된 토큰은 사용자 데이터 폴더의 `google_drive_token.json`에 저장합니다. 만료 시 refresh token으로 자동 갱신하며, 실패하면 재인증 흐름으로 넘어갑니다. 업로드된 영상·QR 이미지에는 "링크가 있는 모든 사용자" 읽기 권한이 부여됩니다.
+OAuth 2.0으로 인증하고, 토큰이 만료되면 refresh token으로 자동 갱신합니다. 갱신에 실패하면 재인증 흐름으로 넘어가, 행사 도중 업로드가 조용히 멈추지 않게 했습니다.
 
 ## 기술 스택
 
-- **데스크톱 앱**: Electron 36, Electron Forge 7 + Vite 5, React 19, React Router 7(HashRouter), TypeScript, SCSS Modules, `ws`, `axios`, 번들 FFmpeg, `googleapis`(Drive v3), `qrcode` / `react-qr-code`
-- **모바일 앱**: Kotlin, Gradle(Kotlin DSL), compileSdk 35 / minSdk 24, CameraX(`camera-video` / `camera-lifecycle` / `camera-view`), Java-WebSocket, NanoHTTPD, AndroidX Lifecycle(ViewModel / LiveData), Foreground Service + Wi-Fi Lock + WakeLock
+- **데스크톱 앱**: Electron 36, Electron Forge + Vite, React 19, TypeScript, SCSS Modules, FFmpeg, Google Drive API, `ws`
+- **모바일 앱**: Kotlin, CameraX, Java-WebSocket, NanoHTTPD, AndroidX ViewModel / LiveData, Foreground Service
 
 ## 시연
 
