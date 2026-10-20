@@ -35,6 +35,10 @@ order: 5
 - MySQL, axios, Nodemailer, Supabase, Cloudflare R2
 - 배포: Vercel (Pro)
 
+**선택 이유**
+
+- **Next.js** — 기존 WordPress 사이트는 작업물 상세나 연혁이 검색에 잘 잡히지 않았습니다. 서버 사이드 렌더링을 지원하는 Next.js로 옮겨 검색엔진이 내용을 그대로 읽을 수 있게 했습니다.
+
 ## 기술 목표
 
 - **Next.js App Router 기반 풀스택 CMS** — 작업물·연혁·설정을 포함한 관리자 콘텐츠 관리 시스템 구축

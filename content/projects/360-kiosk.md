@@ -96,6 +96,13 @@ OAuth 2.0으로 인증하고, 토큰이 만료되면 refresh token으로 자동 
 - **데스크톱 앱**: Electron 36, Electron Forge + Vite, React 19, TypeScript, SCSS Modules, FFmpeg, Google Drive API, `ws`
 - **모바일 앱**: Kotlin, CameraX, Java-WebSocket, NanoHTTPD, AndroidX ViewModel / LiveData, Foreground Service
 
+**선택 이유**
+
+- **안드로이드 앱 (Kotlin)** — PC에서 회전 암의 스마트폰을 원격으로 촬영시키고 영상을 넘겨받으려면 스마트폰 안에서 서버를 띄워야 해서, 웹이 아닌 앱으로 만들었습니다.
+- **Electron** — 진행자 PC에서 FFmpeg로 영상을 편집하고 로컬 드라이브에 저장해야 해서, 파일과 프로그램을 직접 다룰 수 있는 데스크톱 앱이 필요했습니다.
+- **WebSocket과 HTTP 분리** — 촬영 시작, 중지 같은 짧은 신호는 바로 오가야 해서 WebSocket으로, 용량이 큰 영상 파일은 HTTP로 나눠 주고받았습니다.
+- **Google Drive** — 클라이언트 환경에서 쓸 수 있는 저장소가 제한돼 있었고, 공유 링크만 있으면 참여자가 따로 앱을 설치하지 않고 영상을 볼 수 있었습니다.
+
 ## 시연
 
 ![회전 암에 장착된 촬영용 스마트폰 — 화면에 PC 연결 상태와 프리뷰가 표시된다](/assets/projects/360-kiosk/kiosk-mobile.png)

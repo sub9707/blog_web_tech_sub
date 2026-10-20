@@ -35,6 +35,11 @@ order: 6
 - **FE**: Next.js 15, React, TypeScript, Tailwind CSS 4, Framer Motion, React Hook Form, Zod, Redux, Axios
 - **BE / 인프라**: Next.js API, MySQL + Redis (세션 / 캐싱 / 동시성 제어), Naver OAuth + 세션 기반 인증
 
+**선택 이유**
+
+- **Redis + MySQL** — 룰렛처럼 여러 명이 동시에 누르는 이벤트는 참여 횟수와 남은 상품 수를 빠르게 세고 막아야 해서 메모리에서 바로 처리하는 Redis에 맡기고, 오래 남겨야 하는 기록은 MySQL에 저장했습니다.
+- **세션 방식 로그인** — 다른 기기에서 로그인하면 기존 기기를 바로 끊어야 했는데, 서버가 로그인 상태를 직접 들고 있어야 가능했기에 세션 방식을 선택했습니다.
+
 ## 기술 목표
 
 - **세션 기반 인증 설계**로 클라이언트–서버 간 인증 흐름 구현 (httpOnly 쿠키 + 단일 디바이스 로그인 + OAuth 2.0 연동)

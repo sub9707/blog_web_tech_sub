@@ -46,7 +46,7 @@ order: 4
 
 - Next.js App Router 단일 프로젝트로 페이지와 API를 함께 구성하고, `@opennextjs/cloudflare` 어댑터로 빌드 산출물을 변환해 Cloudflare Workers에 배포했습니다.
 - 공개 페이지 `(site)`와 관리자 `admin/(protected)`를 라우트 그룹으로 분리하고, 세션 검증을 보호 그룹 레이아웃에서 일괄 처리하도록 구현했습니다.
-- 공지·팝업 데이터는 Cloudflare D1에, 업로드 이미지와 첨부파일은 Supabase Storage에 두어 데이터와 미디어 저장소를 분리했습니다.
+- 공지·팝업 데이터는 Cloudflare D1에, 업로드 이미지와 첨부파일은 Supabase Storage에 두어 데이터와 미디어 저장소를 분리했습니다. D1은 Workers 안에서만 쓸 수 있는 연결 방식 대신 REST API로 접근했는데, 라즈베리파이 dev 환경에서도 같은 코드가 그대로 돌아가야 했기 때문입니다.
 - 라즈베리파이 홈서버에 dev 브랜치를 따로 배포해 기관 담당자가 진행 상황을 확인할 수 있도록 하고, 실제 Production 환경과 분리했습니다.
 
 ## 주요 기능

@@ -35,6 +35,11 @@ order: 1
 - **FE**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, TipTap 3
 - **BE / 인프라**: Route Handlers, Cloudflare Workers (`@opennextjs/cloudflare`), Cloudflare D1, Supabase Storage, Cloudflare Turnstile, GA4 Data API
 
+**선택 이유**
+
+- **Cloudflare Workers + D1** — 행사가 끝나면 방문자가 거의 없는 사이트라, 서버를 계속 켜두지 않고 쓴 만큼만 비용을 내는 구성을 골랐습니다. 저장할 데이터도 공지와 의견 정도라 Workers에 바로 붙는 D1(SQLite)로 충분했습니다.
+- **Turnstile** — 로그인 없는 게시판이라 봇을 걸러야 했고, 이미 Cloudflare 위에서 돌고 있어 따로 서비스를 붙이지 않고 쓸 수 있었습니다. 방문자에게 그림 맞히기 같은 문제를 풀게 하지 않는 점도 좋았습니다.
+
 ### 협업 방식
 
 기획 1인, 디자인 1인, 개발 1인이 붙은 프로젝트였고, 주어진 구축 일정이 1주라 세 역할이 순차가 아니라 거의 동시에 돌아갔습니다. 기획이 확정되기를 기다렸다가 디자인을 받고 그때 개발을 시작하면 일정이 맞지 않아, **화면 단위가 아니라 기획이 확정된 순서대로** 넘겨받는 방식을 택했습니다.
