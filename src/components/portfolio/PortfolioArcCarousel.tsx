@@ -22,7 +22,7 @@ const DEG = Math.PI / 180;
 const OFFSCREEN_MARGIN = '200px 0px';
 
 const ARROW_CLASS =
-  'absolute top-1/2 z-40 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-gray-900/10 sm:flex bg-gray-900/85 text-white backdrop-blur-sm transition-colors hover:bg-gray-900 dark:border-white/15 dark:bg-white/90 dark:text-gray-900 dark:hover:bg-white';
+  'absolute top-1/2 z-40 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-gray-900/10 bg-gray-900/45 text-white transition-colors hover:bg-gray-900 sm:h-11 sm:w-11 sm:bg-gray-900/90 dark:border-white/15 dark:bg-white/45 dark:text-gray-900 dark:hover:bg-white sm:dark:bg-white/95';
 
 // 카드는 active 크기로 렌더하고 나머지를 축소 → active 카드가 원본 해상도로 래스터됨
 const CARD_SIZE_CLASS = 'w-60 sm:w-112 lg:w-138';
@@ -89,6 +89,31 @@ function moveTo(motion: Motion, rotation: number): Motion {
     sweepMin: Math.min(motion.sweepMin, rotation),
     sweepMax: Math.max(motion.sweepMax, rotation),
   };
+}
+
+const CARD_SURFACE_CLASS =
+  'overflow-hidden rounded-lg border-4 border-white bg-gray-900';
+
+interface CardFaceProps {
+  className: string;
+  renderContent: (isReflection: boolean) => React.ReactNode;
+}
+
+// 반사를 면 레이어 안에 함께 래스터 → 합성 단계의 반사/마스크 레이어 제거
+function CardFace({ className, renderContent }: CardFaceProps) {
+  return (
+    <div className={`absolute inset-0 backface-hidden ${className}`}>
+      <div className={`absolute inset-0 ${CARD_SURFACE_CLASS}`}>
+        {renderContent(false)}
+      </div>
+      <div
+        aria-hidden="true"
+        className={`card-reflection pointer-events-none absolute inset-x-0 top-[calc(100%+6px)] h-full -scale-y-100 ${CARD_SURFACE_CLASS}`}
+      >
+        {renderContent(true)}
+      </div>
+    </div>
+  );
 }
 
 export default function PortfolioArcCarousel({ projects }: Props) {
@@ -317,47 +342,55 @@ export default function PortfolioArcCarousel({ projects }: Props) {
 
                 {/* 뒷면 (카메라를 향할 때만) */}
                 {showBack && (
-                  <div className="card-reflect absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(-4px)_rotateY(180deg)]">
-                    {project.thumbnail ? (
-                      <Image
-                        src={project.thumbnail}
-                        alt=""
-                        fill
-                        sizes={CARD_IMAGE_SIZES}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-navy-900" />
-                    )}
-                  </div>
+                  <CardFace
+                    className="transform-[translateZ(-4px)_rotateY(180deg)]"
+                    renderContent={() =>
+                      project.thumbnail ? (
+                        <Image
+                          src={project.thumbnail}
+                          alt=""
+                          fill
+                          sizes={CARD_IMAGE_SIZES}
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-navy-900" />
+                      )
+                    }
+                  />
                 )}
 
                 {/* 앞면 */}
                 {renderFront && (
-                  <div className="card-reflect absolute inset-0 overflow-hidden rounded-lg border-4 border-white bg-gray-900 backface-hidden transform-[translateZ(4px)]">
-                    {showFront && project.thumbnail ? (
-                      <Image
-                        src={project.thumbnail}
-                        alt={project.title}
-                        fill
-                        priority={isActive}
-                        sizes={CARD_IMAGE_SIZES}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-navy-900 px-3 text-center">
-                        <span className="font-serif text-xs font-bold tracking-widest text-slate-500 uppercase">
-                          {project.category}
-                        </span>
-                      </div>
+                  <CardFace
+                    className="transform-[translateZ(4px)]"
+                    renderContent={(isReflection) => (
+                      <>
+                        {showFront && project.thumbnail ? (
+                          <Image
+                            src={project.thumbnail}
+                            alt={isReflection ? '' : project.title}
+                            fill
+                            priority={isActive && !isReflection}
+                            sizes={CARD_IMAGE_SIZES}
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center bg-navy-900 px-3 text-center">
+                            <span className="font-serif text-xs font-bold tracking-widest text-slate-500 uppercase">
+                              {project.category}
+                            </span>
+                          </div>
+                        )}
+                        {shade > 0.02 && (
+                          <div
+                            className="pointer-events-none absolute inset-0 bg-navy-950"
+                            style={{ opacity: shade }}
+                          />
+                        )}
+                      </>
                     )}
-                    {shade > 0.02 && (
-                      <div
-                        className="pointer-events-none absolute inset-0 bg-navy-950"
-                        style={{ opacity: shade }}
-                      />
-                    )}
-                  </div>
+                  />
                 )}
               </ProjectLink>
             );

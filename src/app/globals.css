@@ -450,9 +450,8 @@ body {
 /* ─────────────────────────────────────────
    Portfolio 3D card carousel
 ───────────────────────────────────────── */
-.card-reflect {
-  -webkit-box-reflect: below 6px
-    linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+.card-reflection {
+  mask-image: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
 }
 
 .card-glow {
