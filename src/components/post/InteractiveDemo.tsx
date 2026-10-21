@@ -62,7 +62,7 @@ export default function InteractiveDemo({ src, title, height = 840, width, capti
             href={src}
             target="_blank"
             rel="noopener noreferrer"
-            className="self-start mt-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-sm font-medium transition-opacity hover:opacity-80"
+            className="self-start mt-1 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-neutral-900 dark:bg-white text-white! dark:text-neutral-900! no-underline! text-sm font-medium transition-opacity hover:opacity-80"
           >
             데모 체험하기
             <ExternalLinkIcon />
