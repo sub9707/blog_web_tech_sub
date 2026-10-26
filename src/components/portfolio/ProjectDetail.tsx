@@ -33,17 +33,17 @@ export default function ProjectDetail({ project, showBackLink = false }: Props) 
         </Link>
       )}
 
-      <header className="mb-10">
+      <header className="mb-8 sm:mb-10">
         <Badge>{project.category}</Badge>
-        <h1 className="mt-3 text-3xl leading-tight font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-slate-100">
+        <h1 className="mt-2.5 text-2xl leading-tight font-bold tracking-tight text-gray-900 sm:mt-3 sm:text-3xl lg:text-4xl dark:text-slate-100">
           {project.title}
         </h1>
         {project.description && (
-          <p className="mt-3 text-base leading-relaxed break-keep text-balance text-gray-500 dark:text-slate-400">
+          <p className="mt-2.5 text-sm leading-relaxed break-keep text-balance text-gray-500 sm:mt-3 sm:text-base dark:text-slate-400">
             <ProjectDescription description={project.description} />
           </p>
         )}
-        <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400 dark:text-slate-500">
+        <div className="mt-3.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[0.6875rem] text-gray-400 sm:mt-4 sm:text-xs dark:text-slate-500">
           {project.tags.length > 0 && <span>{project.tags.join(' · ')}</span>}
           {project.tags.length > 0 && timeframe && <span aria-hidden>·</span>}
           {timeframe && <span>{timeframe}</span>}
@@ -51,13 +51,13 @@ export default function ProjectDetail({ project, showBackLink = false }: Props) 
       </header>
 
       {project.thumbnail && (
-        <div className="relative mb-10 aspect-video w-full overflow-hidden rounded-lg">
+        <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-lg sm:mb-10">
           <Image
             src={project.thumbnail}
             alt={project.title}
             fill
             priority
-            sizes="(max-width: 768px) 100vw, 768px"
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 896px, 1152px"
             className="object-cover"
           />
         </div>

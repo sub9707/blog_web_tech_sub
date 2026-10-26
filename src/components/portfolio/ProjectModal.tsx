@@ -68,7 +68,7 @@ export default function ProjectModal({ children }: Props) {
 
       <div
         style={{ height: 'calc(100dvh - 11rem)' }}
-        className={`relative flex w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 dark:bg-navy-900 dark:ring-white/10 ${
+        className={`project-modal relative flex w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 md:max-w-4xl xl:max-w-6xl dark:bg-navy-900 dark:ring-white/10 ${
           closing ? 'modal-panel-out' : 'modal-panel-in'
         }`}
         onClick={(event) => event.stopPropagation()}
@@ -88,7 +88,7 @@ export default function ProjectModal({ children }: Props) {
           ref={scrollRef}
           tabIndex={-1}
           data-lenis-prevent
-          className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-12 outline-none sm:px-10"
+          className="modal-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-9 outline-none sm:px-10 sm:py-12 lg:px-14"
         >
           {children}
         </div>
