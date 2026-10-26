@@ -36,6 +36,9 @@ jobs:
         if: env.CLAUDE_CODE_OAUTH_TOKEN != ''
         run: npm install -g @anthropic-ai/claude-code
 
+      - name: Lint news scripts
+        run: npx eslint scripts/news
+
       - name: Collect and summarize news
         id: news
         run: npm run news
