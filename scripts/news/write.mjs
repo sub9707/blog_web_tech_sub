@@ -110,7 +110,7 @@ function formatImageCandidates(images = []) {
   return `\n이미지 후보:\n${lines.join('\n')}`;
 }
 
-function buildPrompt(featured, briefs) {
+export function buildPrompt(featured, briefs) {
   const featuredBlock = featured
     .map(
       (entry) =>
