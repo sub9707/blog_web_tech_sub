@@ -3,7 +3,7 @@ title: "이미지 일괄 처리 batch 유틸리티 만들기"
 date: "2026-10-26"
 description: "비 Vercel 환경에서 이미지 포맷과 크기를 일관되게 맞추기 위해 만든 윈도우 batch 스크립트 2개의 동작 방식 정리"
 tags: ["batch", "imagemagick", "windows", "automation", "webp"]
-thumbnail: "/assets/thumbnails/etc/image-batch.png"
+thumbnail: "/assets/etc/image-batch/converter-format-menu.png"
 ---
 
 이전 회사에서 드론으로 촬영한 데이터를 웹앱에 올리기 위해 데이터를 가공한 적이 있었다.
