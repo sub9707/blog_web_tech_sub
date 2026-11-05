@@ -3,7 +3,7 @@ title: "AI 코딩의 서막"
 date: "2026-07-20"
 description: "개발자 시점에서 필요한 AI의 개념들을 정리함"
 tags: ["ai", "llm", "mcp", "productivity", "tooling"]
-thumbnail: "/assets/thumbnails/etc/ai-coding-era.png"
+thumbnail: "/assets/thumbnails/ai/ai-coding-era.png"
 ---
 
 AI 코딩, 바이브 코딩하면 어떤 생각이 드는가.

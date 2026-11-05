@@ -8,6 +8,8 @@ import parse, {
 import { processMarkdown } from '@/lib/processMarkdown'
 import InteractiveDemo from './InteractiveDemo'
 import BookmarkCard from './BookmarkCard'
+import Callout, { type CalloutVariant } from '@/components/post/Callout'
+import Roadmap from '@/components/post/Roadmap'
 import ProjectLink from '@/components/portfolio/ProjectLink'
 import { ROUTES } from '@/constants/routes'
 import { GLOSSARY_TERM_ATTRIBUTE } from '@/constants/news'
@@ -22,6 +24,12 @@ function decodeHtmlEntities(value: string): string {
     .replace(/&#x([0-9a-fA-F]+);/g, (_, hex) => String.fromCodePoint(parseInt(hex, 16)))
     .replace(/&#(\d+);/g, (_, dec) => String.fromCodePoint(parseInt(dec, 10)))
     .replace(/&amp;/g, '&')
+}
+
+const CALLOUT_VARIANTS: readonly CalloutVariant[] = ['note', 'point', 'target']
+
+function toCalloutVariant(value: string | undefined): CalloutVariant {
+  return CALLOUT_VARIANTS.find((variant) => variant === value) ?? 'note'
 }
 
 function extractBookmarkUrls(html: string): string[] {
@@ -79,6 +87,23 @@ export default async function MarkdownRenderer({ content }: Props) {
           >
             {children}
           </button>
+        )
+      }
+
+      if (domNode.name === 'callout') {
+        const { title, variant } = domNode.attribs
+        return (
+          <Callout title={title} variant={toCalloutVariant(variant)}>
+            {domToReact(domNode.children as DOMNode[], parserOptions)}
+          </Callout>
+        )
+      }
+
+      if (domNode.name === 'roadmap') {
+        return (
+          <Roadmap title={domNode.attribs.title}>
+            {domToReact(domNode.children as DOMNode[], parserOptions)}
+          </Roadmap>
         )
       }
 

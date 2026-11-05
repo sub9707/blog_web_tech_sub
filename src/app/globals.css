@@ -365,6 +365,70 @@ body {
   box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1);
 }
 
+.prose .roadmap ol {
+  list-style: none;
+  counter-reset: roadmap;
+  padding-left: 0;
+  margin: 0;
+}
+
+.prose .roadmap li {
+  counter-increment: roadmap;
+  position: relative;
+  padding: 0 0 1.25em 2.75em;
+  margin: 0;
+}
+
+.prose .roadmap li::before {
+  content: counter(roadmap);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  width: 1.75em;
+  height: 1.75em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #111827;
+}
+
+.prose .roadmap li::after {
+  content: '';
+  position: absolute;
+  left: 0.7em;
+  top: 1.6em;
+  bottom: 0.1em;
+  width: 1px;
+  background: #e5e7eb;
+}
+
+.prose .roadmap li:last-child {
+  padding-bottom: 0;
+}
+
+.prose .roadmap li:last-child::after {
+  display: none;
+}
+
+.prose .roadmap li p {
+  margin: 0;
+}
+
+.dark .prose .roadmap li::before {
+  border-color: #3d4565;
+  background: #161b27;
+  color: #e2e8f0;
+}
+
+.dark .prose .roadmap li::after {
+  background: #2d3450;
+}
+
 .prose video {
   display: block;
   width: 100%;
