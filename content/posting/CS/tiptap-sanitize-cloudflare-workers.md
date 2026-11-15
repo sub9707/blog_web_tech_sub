@@ -1,7 +1,7 @@
 ---
-title: "Cloudflare Workers에서 DOMPurify 없이 TipTap 본문 정제하는 방법"
+title: "Cloudflare Workers에서 DOMPurify없이 TipTap 본문 정제하기"
 date: "2026-11-13"
-description: "DOM이 없는 Workers 환경에서 TipTap 공지 본문을 HTML 대신 JSON으로 저장하고, 허용 목록으로 다시 만들어 XSS를 막은 과정"
+description: "DOM 없는 Workers에서 TipTap 공지 본문을 HTML 대신 JSON으로 저장하고, 허용 목록으로 XSS 방지한 과정 정리"
 tags: ["security", "xss", "tiptap", "prosemirror", "nextjs", "cloudflare", "workers", "d1"]
 thumbnail: "/assets/thumbnails/cs/tiptap-cloudflare-workers.webp"
 relatedPosts:
@@ -133,7 +133,9 @@ HTML 정제라고 하면 보통 **DOMPurify**부터 떠올린다.
 
 하지만 DOMPurify는 브라우저의 DOM API로 HTML을 파싱하고 정리하는 라이브러리다. 브라우저에선 그냥 돌지만, 서버에서 쓰려면 `jsdom` 같은 DOM 구현을 같이 붙여야 한다(`isomorphic-dompurify`).
 
-Cloudflare Workers 런타임에는 DOM이 없다. jsdom을 함께 번들링하면 Worker 번들이 커지고, 요청마다 DOM을 만드는 만큼 CPU 시간도 더 쓴게 된다. 이전 프로젝트에서 Workers CPU 시간 문제가 있었어서 최대한 자원을 아껴야한다는 마음이 컸다(테스트용 무료 플랜이긴 했지만).
+DOM(`document`, `window` 같은 것)은 자바스크립트 언어 기능이 아니라, 화면에 페이지를 그리는 브라우저가 따로 붙여 주는 기능이다. Cloudflare Workers는 화면 없이 요청만 처리하는 서버 런타임이라 `fetch`, `Request`, `crypto` 같은 웹 표준 API는 있어도 그릴 페이지가 없으니 `document`도 없다. Node.js에 DOM이 없는 것과 같은 이유다.
+
+그래서 Workers에서 DOM을 쓰려면 DOM을 흉내 내는 라이브러리를 직접 넣어야 한다. jsdom을 함께 번들링하면 Worker 번들이 커지고, 요청마다 DOM을 만드는 만큼 CPU 시간도 더 쓴게 된다. 이전 프로젝트에서 Workers CPU 시간 문제가 있었어서 최대한 자원을 아껴야한다는 마음이 컸다(테스트용 무료 플랜이긴 했지만).
 
 물론 `sanitize-html`처럼 DOM 없이 문자열 파서로 도는 라이브러리도 있고, 앞서 말한 것처럼 K-컬처 프로젝트에서는 실제로 이걸 썼다. 다만 이 방식도 HTML을 다시 파싱하고, 에디터 설정과 정제 옵션을 따로 맞춰야 하는 건 마찬가지였다.
 
@@ -431,7 +433,223 @@ function sanitizeMark(mark: { type?: unknown; attrs?: Record<string, unknown> })
 - **색상:** `#fff`, `#1a2b3c` 같은 hex, 또는 `rgb(...)`, `rgba(...)`만 통과한다.
 - **글자 크기:** `10px`부터 `72px`까지만 통과한다.
 
-굵게, 기울임처럼 속성이 없는 서식은 `{ type }`만 돌려준다. 혹시 속성이 딸려 와도 버려진다.
+굵게, 기울임처럼 속성이 없는 서식은 `{ type }`만 돌려준다. 속성이 딸려 와도 버려진다.
 
 <br/>
 
+## 링크와 이미지 주소 검사
+
+```ts
+export function isSafeLinkHref(href: unknown): href is string {
+  if (typeof href !== "string" || href.length > 2000) return false;
+  if (href.startsWith("/") && !href.startsWith("//")) return true;
+  try {
+    return ["http:", "https:", "mailto:", "tel:"].includes(new URL(href).protocol);
+  } catch {
+    return false;
+  }
+}
+
+export function isSafeImageSrc(src: unknown): src is string {
+  if (typeof src !== "string" || src.length > 2000) return false;
+  if (/^\/api\/files\/editor\/[\w.-]+$/.test(src)) return true;
+  try {
+    return new URL(src).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+```
+
+**링크**
+
+- `/notice/3` 같은 사이트 내부 상대 경로는 허용한다.
+- 단, `//abusingSite.example`처럼 `//`로 시작하는 주소는 상대 경로처럼 보여도 다른 도메인으로 가는 주소일 수 있기에 막아야한다.
+- 나머지는 `new URL()`로 파싱해서 프로토콜이 `http:`, `https:`, `mailto:`, `tel:` 중 하나일 때만 통과한다.
+
+문자열로 `startsWith("javascript:")`를 검사하지 않고 `new URL()`을 사용했다. `JavaScript:`, ` javascript:`처럼 대소문자를 섞거나 앞에 공백을 넣는 우회가 많은데, `URL`로 파싱하면 브라우저와 같은 규칙으로 프로토콜을 정리해준다. 허용할 것만 적어 두는 방식이라 `data:`, `vbscript:` 같은 것도 따로 신경 쓸 필요가 없다.
+
+**이미지**
+
+- 에디터에서 업로드한 이미지 경로(`/api/files/editor/파일명`)는 허용한다. 파일명은 영문, 숫자, `_`, `.`, `-`만 허용한다.
+- 외부 이미지는 `https:`만 허용한다.
+- `data:image/png;base64,...` 같은 base64 이미지는 여기서 걸러진다. 에디터의 `allowBase64: false` 설정과 같이 이중으로 막힌다.
+
+<br/>
+
+## 실제 필터링 동작
+
+동작 방식을 예시를 보자. 가령 에디터를 거치지 않고 API로 이런 JSON을 직접 보냈다고 해보자.
+
+```json
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "attrs": { "textAlign": "center", "onclick": "alert(1)" },
+      "content": [
+        {
+          "type": "text",
+          "text": "자세히 보기",
+          "marks": [
+            { "type": "link", "attrs": { "href": "javascript:alert(1)" } },
+            { "type": "textStyle", "attrs": { "color": "red; background:url(https://abusingSite.example)" } },
+            { "type": "bold" }
+          ]
+        }
+      ]
+    },
+    { "type": "iframe", "attrs": { "src": "https://abusingSite.example" } },
+    { "type": "image", "attrs": { "src": "data:image/png;base64,AAAA", "onerror": "alert(1)" } }
+  ]
+}
+```
+
+정제 결과는 다음과 같다.
+
+```json
+{
+  "type": "doc",
+  "content": [
+    {
+      "type": "paragraph",
+      "attrs": { "textAlign": "center" },
+      "content": [
+        { "type": "text", "text": "자세히 보기", "marks": [{ "type": "bold" }] }
+      ]
+    }
+  ]
+}
+```
+
+- 문단의 `onclick`: 모르는 속성이라 옮겨지지 않았다.
+- `javascript:` 링크: 프로토콜 검사에서 걸려 링크 서식이 빠졌다. 글자는 남는다.
+- 이어 붙인 스타일 값: 색상 정규식에 안 맞아서 `textStyle`이 통째로 빠졌다.
+- `iframe`: 허용 노드가 아니라서 버려졌다.
+- base64 이미지: 주소 검사에서 걸려 노드째 버려졌다. `onerror`는 볼 것도 없다.
+
+---
+
+# 5. 저장, 출력시 두 번 검사
+
+## 저장 시점
+
+공지 등록(`POST /api/notices`)과 수정(`PATCH /api/notices/[id]`) API는 아래의 같은 입력 파서를 거친다.
+
+```ts
+export async function parseNoticeInput(body: Record<string, unknown>): Promise<ParsedNotice> {
+  const title = normalizeText(body.title);
+  if (!title) return { ok: false, message: "제목을 입력해 주세요." };
+
+  const content = sanitizeRichText(body.content);
+  if (!content) return { ok: false, message: "본문 형식이 올바르지 않습니다." };
+  const contentText = richTextToPlainText(content);
+  if (!contentText && !hasImage(content)) return { ok: false, message: "본문을 입력해 주세요." };
+
+  return { ok: true, value: { title, content, contentText, attachments } };
+}
+```
+
+```ts
+export function sanitizeRichText(input: unknown): JSONContent | null {
+  if (!input || typeof input !== "object" || (input as JSONContent).type !== "doc") return null;
+  return sanitizeNode(input as JSONContent, 0);
+}
+```
+
+- 최상위가 `doc`이 아니면 아예 형식 오류로 돌려보낸다.
+- 정제하고 나서 글자도 없고 이미지도 없으면 "본문을 입력해 주세요"로 막는다. 위험한 것만 잔뜩 넣어서 보내면 정제 후 빈 문서가 되는데, 그런 글이 저장되지 않게 하는 용도다.
+- 검색용 텍스트도 **정제된 JSON에서** 뽑는다.
+
+API 라우트에서는 관리자 확인 이후 바로 이 파서를 호출한다. 에디터를 우회해 API를 직접 호출해도 DB에는 정제된 JSON만 들어간다.
+
+<br/>
+
+## 출력 직전
+
+저장할 때 이미 정제했지만, 화면에 뿌리기 전에 한 번 더 정제한다.
+
+```ts
+import "server-only";
+import { renderToHTMLString } from "@tiptap/static-renderer";
+
+export function renderRichText(content: JSONContent): string {
+  const safe = sanitizeRichText(content);
+  if (!safe) return "";
+  return renderToHTMLString({ extensions: createRichTextExtensions(), content: safe });
+}
+```
+
+굳이? 같지만 한 번 더 거르는 이유가 있다.
+
+- 나중에 허용 목록을 더 좁혔다고 가정해보자, **이전에 저장된 공지**는 예전 기준으로 정제된 상태에서 저장됐다.
+- 마이그레이션이나 콘솔에서 D1에 **직접 넣은 값**은 API를 거치지 않았기에 신뢰할 수 없다.
+
+정제 함수는 객체를 한 번 도는 정도라 비용도 그리 크지 않다. 따라서 출력할 때도 같은 함수를 한 번 더 거치도록 했다.
+
+---
+
+# 6. static-renderer로 서버에서 HTML 생성
+
+마지막으로 JSON을 HTML로 바꾸는 단계다.
+
+TipTap에서 JSON을 HTML로 바꿀 때 보통 쓰는 `generateHTML()`은 ProseMirror의 변환기를 그대로 쓴다. 이 변환기는 `document.createElement()`로 실제 DOM 요소를 하나씩 만든 다음, 그걸 HTML 문자열로 꺼내는 방식이다.
+
+TipTap의 `generateHTML()`은 내부에서 DOM을 쓰기 때문에 런타임에 DOM이 없는 Workers에서 그대로 돌리기 어렵다. 대신 **`@tiptap/static-renderer`** 를 썼다. 이 패키지는 DOM 없이 JSON을 HTML 문자열로 바꿔 준다.
+
+이 렌더러가 해 주는 일은 두 가지다.
+
+- **스키마에 정의된 노드만 출력.** 
+- **텍스트와 속성 값을 이스케이프** 본문 글자에 `<script>`라고 적혀 있어도 `&lt;script&gt;`로 바뀌어서, 화면에는 텍스트로만 보이고 실행되지 않는다.
+
+`server-only`를 import해서 이 파일이 실수로 클라이언트 번들에 들어가지 않게 해야한다.
+
+공지 상세 페이지(Server Component)에서는 아래와 같이 사용했다.
+
+```tsx
+<div
+  className="rich-text border-t border-line-soft py-10"
+  dangerouslySetInnerHTML={{ __html: renderRichText(notice.content) }}
+/>
+```
+
+`dangerouslySetInnerHTML`은 이름부터 잘못 쓰면 위험해 보이고 HTML 문자열을 그대로 넣기에 지양되는 속성이지만, 여기 들어가는 문자열은 정제된 JSON을 스키마 기반 렌더러로 만든 결과라 안전하다. 서버에서 HTML이 완성돼서 내려가니 방문자 브라우저는 TipTap을 불러올 필요도 없다.
+
+---
+
+# 7. 결과
+
+전체 흐름을 정리하면 아래와 같다.
+
+```txt
+[관리자 에디터] ── getJSON() ──▶ [POST/PATCH API]
+                                     │ sanitizeRichText (1차)
+                                     │ richTextToPlainText
+                                     ▼
+                              [D1: content_json, content_text]
+                                     │
+                                     ▼
+[공지 상세 페이지] ◀── HTML ── renderRichText
+                               ├ sanitizeRichText (2차)
+                               └ static-renderer (스키마에 있는 노드만, 값 이스케이프)
+```
+
+- DOM 라이브러리를 추가하지 않고 Workers 런타임 안에서 본문 정제와 렌더링을 끝낸다.
+- 붙여넣기든 API 직접 호출이든, 스크립트, 이벤트 속성, 위험한 프로토콜의 링크, 임의 스타일 값은 저장 단계에서 제외한다.
+- 출력 직전에 한 번 더 검사하고, 렌더러도 스키마 밖의 노드는 그리지 못한다. 저장 시 정제, 출력 직전 정제, 렌더러의 스키마 제한까지 세 단계로 막는 탄탄한 구조다.
+- 허용 목록이 코드 한 곳에 모여 있다. 에디터에 기능을 추가할 때는 확장 목록, 허용 목록, 속성 검사 세 군데를 같이 손보면 된다.
+
+마지막 항목은 반대로 말하면 주의할 점이기도 하다. 예를 들어 표(Table) 확장을 에디터에 붙이고 허용 목록에 `table`을 넣지않으면, 에디터에선 표가 잘 보이는데 저장하는 순간 표가 통째로 사라진다. 기능을 추가할 때 한꺼번에 손봐야 하기에 `extensions.ts`와 `sanitize.ts`를 같은 폴더에 붙여두었다.
+
+---
+
+# 정리
+
+처음 고민은 "DOM을 안쓰는 Workers에서 DOMPurify를 어떻게 돌릴까"였다. 선택한 방식은 DOMPurify를 돌리는 방법이 아니라, **정제할 대상을 HTML 문자열에서 구조가 분명한 JSON으로 바꾸는 것**이었다.
+
+> 정확히 말하면 Workers에 웹 API가 없는 건 아니다. `fetch`, `URL`, `crypto` 같은 건 그대로 쓸 수 있고, 빠진 건 `document`, `DOMParser`처럼 화면과 관련된 DOM API뿐이다. 또 Workers에는 DOM 없이 HTML의 태그나 속성을 바꾸고 지울 수 있는 `HTMLRewriter`라는 자체 API도 있어서, HTML을 꼭 정제해야 한다면 이쪽도 선택지가 될 수 있다.
+
+런타임 제약 때문에 고른 방식이지만, 하다보니 장점이 더 있었다. HTML 정제는 결국 "무엇을 막을지"를 계속 따라가야 한다. 새로운 우회 방법이 나오면 그걸 또 막아야 한다. 반면 이 방식은 **"무엇만 허용할지"** 이기에, 검사 범위가 어디까지인지 코드만 보면 바로 알 수 있다.
+
+리치 텍스트 에디터를 서버에서 다뤄야 하는데 DOM을 쓰기 어려운 환경이라면, HTML 대신 에디터의 JSON을 저장하는 쪽을 한 번 고려해 봐도 좋을 것 같다.
