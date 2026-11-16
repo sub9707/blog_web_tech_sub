@@ -20,6 +20,8 @@ services:
       - certbot-www:/var/www/certbot
       - certbot-certs:/etc/letsencrypt
       - ./logs/nginx:/var/log/nginx/blog
+      - ./nginx/.htpasswd:/etc/nginx/.htpasswd:ro
+      - ../goaccess:/srv/goaccess:ro
     depends_on:
       - blog
     networks:
