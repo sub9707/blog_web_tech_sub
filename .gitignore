@@ -43,3 +43,5 @@ next-env.d.ts
 
 # notes
 posting-ideas.txt
+# nginx access logs
+/logs/
