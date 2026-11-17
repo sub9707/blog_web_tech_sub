@@ -151,6 +151,27 @@ export default async function AboutPage() {
           <TechMarquee />
         </ScrollReveal>
 
+        <br /><br /><br />
+        <ScrollReveal>
+          <h2 className="text-xs tracking-widest uppercase text-gray-400 dark:text-slate-500 pb-3 mb-4 border-b border-gray-200 dark:border-navy-700">
+            Contact
+          </h2>
+          <p className="mb-4 text-base text-gray-600 dark:text-slate-400 leading-relaxed">
+            게시글에 사용된 자료의 저작권 문제, 잘못된 내용 제보, 그 밖의 문의는 아래 메일로 연락 부탁드립니다.
+            확인하는 대로 빠르게 조치하겠습니다.
+          </p>
+          <a
+            href={`mailto:${SITE.EMAIL}`}
+            className="inline-flex items-center gap-2 text-lg text-gray-600 dark:text-slate-400 underline underline-offset-4 decoration-gray-300 dark:decoration-navy-500 hover:text-gray-900 dark:hover:text-slate-200 hover:decoration-gray-600 dark:hover:decoration-navy-400 transition-colors"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect width="20" height="16" x="2" y="4" rx="2" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+            </svg>
+            {SITE.EMAIL}
+          </a>
+        </ScrollReveal>
+
         </div>
 
         {/* Right: particle canvas */}

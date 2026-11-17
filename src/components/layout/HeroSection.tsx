@@ -31,7 +31,7 @@ export default function HeroSection() {
               </svg>
             </a>
             <a
-              href="mailto:sub9707@naver.com"
+              href={`mailto:${SITE.EMAIL}`}
               aria-label="이메일"
               className="text-gray-400 dark:text-slate-500 hover:text-gray-700 dark:hover:text-slate-300 transition-colors"
             >
